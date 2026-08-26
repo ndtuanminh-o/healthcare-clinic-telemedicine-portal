@@ -40,7 +40,6 @@ model:
 - [EER documentation](phase%201/EER/README.md)
 - [Editable EER source](phase%201/EER/healthcare_clinic_telemedicine_portal_eer.drawio)
 - [EER SVG preview](phase%201/EER/healthcare_clinic_telemedicine_portal_eer_preview.svg)
-- [Phase 1 project report](phase%201/Project_Report_Phase_1.pdf)
 
 ### EER coverage
 
@@ -70,17 +69,7 @@ Medicine batches and expiry-date validation are outside the project scope.
 │   │   ├── healthcare_clinic_telemedicine_portal_eer.drawio
 │   │   └── healthcare_clinic_telemedicine_portal_eer_preview.svg
 │   ├── business_rules.md
-│   ├── project_scope.md
-│   └── Project_Report_Phase_1.pdf
+│   └── project_scope.md
 ├── .gitignore
 └── README.md
 ```
-
-## Git Workflow
-
-- `main` is the stable submission branch.
-- Use a focused branch for each change, such as `docs/update-readme` or
-  `eer/refine-diagram`.
-- Review changes before merging them into `main`.
-- Keep documentation and database identifiers in English and use lowercase
-  `snake_case` for identifiers where applicable.
