@@ -2,13 +2,14 @@
 
 Database project for INT1313 - Database Systems, Semester 1, Academic Year 2026-2027.
 
-## Project Information
+## Project Identity
 
-- Project ID: #5
-- Team: G5
-- Scope: Healthcare clinic and telemedicine portal
-- Database design notation: EER / IE Crow's Foot
-- Documentation language: English
+- **Project ID:** 5
+- **Team:** G5
+- **Team Name:** Pingo
+- **Project Title:** Healthcare Clinic & Telemedicine Portal
+- **Design notation:** Chen Enhanced Entity-Relationship (EER)
+- **Documentation language:** English
 
 ## Team Members and Responsibilities
 
@@ -20,15 +21,29 @@ Database project for INT1313 - Database Systems, Semester 1, Academic Year 2026-
 
 ## Phase 1
 
-Phase 1 deliverables are available in [`phase 1/`](phase%201/):
+Phase 1 defines the project scope, business rules, and the database's unified
+Chen EER model:
 
 - [Project Scope](phase%201/project_scope.md)
 - [Business Rules](phase%201/business_rules.md)
-- [EER Diagram](phase%201/EER/er_diagram.drawio)
+- [EER documentation](phase%201/EER/README.md)
+- [Editable EER source](phase%201/EER/healthcare_clinic_telemedicine_portal_eer.drawio)
+- [EER visual preview](phase%201/EER/healthcare_clinic_telemedicine_portal_eer_preview.svg)
+- [Phase 1 Project Report (PDF)](phase%201/Project_Report_Phase_1.pdf)
+
+### EER overview
+
+The EER is maintained as one connected diagram. It covers patient booking and
+telemedicine, doctor specialization and scheduling, medical history and
+referrals, prescriptions and inventory, invoices and payments, and identity
+access management with sessions, notifications, and audit logs. The editable
+Draw.io file is the source of truth; the SVG is provided for quick review.
 
 ## Development Workflow
 
-- `main` contains stable submission-ready versions.
+- `main` contains stable, submission-ready versions.
 - `develop` is used to integrate reviewed work.
-- Work is developed in feature or documentation branches and merged through pull requests.
-- All project documentation and database identifiers use English and lowercase snake_case where applicable.
+- Work is developed in focused feature or documentation branches and merged
+  through pull requests.
+- Project documentation and database identifiers use English and lowercase
+  `snake_case` where applicable.
