@@ -1,32 +1,34 @@
 # Healthcare Clinic & Telemedicine Portal
 
-Database project for the INT1313 - Database Systems course.
+Database project for INT1313 - Database Systems, Semester 1, Academic Year 2026-2027.
 
 ## Project Information
 
 - Project ID: #5
-- Course: INT1313 - Database Systems
-- Semester: Semester 1, Academic Year 2026-2027
 - Team: G5
-- Project Type: Healthcare Clinic and Telemedicine Portal
+- Scope: Healthcare clinic and telemedicine portal
+- Database design notation: EER / IE Crow's Foot
+- Documentation language: English
 
-## Project Objective
+## Team Members and Responsibilities
 
-The system is designed to manage patients, medical staff, doctor schedules,
-clinic appointments, medical records, prescriptions, and telemedicine sessions.
-
-## Team Members
-
-| Student ID | Full Name | Role |
+| Student ID | Member | Responsibility |
 |---|---|---|
-| N25DCAT086 | Ho Thi Truc Linh | To be assigned |
-| N25DCAT087 | Huynh Mai Tri Loc | To be assigned |
-| N25DCAT089 | Nguyen Dang Tuan Minh | Git and project coordination |
+| N25DCAT086 | Ho Thi Truc Linh | Problem statement and project scope |
+| N25DCAT087 | Huynh Mai Tri Loc | Business rules |
+| N25DCAT089 | Nguyen Dang Tuan Minh | Git management and EER diagram |
 
-## Documentation
+## Phase 1
 
-Project documentation will be added according to the official course report template.
+Phase 1 deliverables are available in [`phase 1/`](phase%201/):
 
-## Development Status
+- [Project Scope](phase%201/project_scope.md)
+- [Business Rules](phase%201/business_rules.md)
+- [EER Diagram](phase%201/EER/er_diagram.drawio)
 
-The project is currently in the project initialization phase.
+## Development Workflow
+
+- `main` contains stable submission-ready versions.
+- `develop` is used to integrate reviewed work.
+- Work is developed in feature or documentation branches and merged through pull requests.
+- All project documentation and database identifiers use English and lowercase snake_case where applicable.
