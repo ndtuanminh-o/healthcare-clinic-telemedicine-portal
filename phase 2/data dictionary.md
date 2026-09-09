@@ -1,6 +1,6 @@
 [3_Data_Dictionary.md](https://github.com/user-attachments/files/32012127/3_Data_Dictionary_ISO11179_EN.md)
 
-#Data Dictionary (Adapted from ISO/IEC 11179)
+# Data Dictionary (Adapted from ISO/IEC 11179)
 
 The Data Dictionary provides comprehensive metadata specifications for all eleven (11) entities and relations designed in Phase 1 (Conceptual and Logical Relational Schema), adhering to the international metadata standard **ISO/IEC 11179**. 
 
