@@ -28,20 +28,31 @@ The project aims to:
 
 Each stable key is an immutable UUID-based surrogate identifier unless explicitly described as an inherited identity key. Mutable business attributes, such as phone numbers, license numbers, medicine names, and appointment dates, are not used as primary identity keys.
 
-| Entity | Stable Key | Stable Key Definition |
-|---|---|---|
-| `DOCTOR` | `doctor_id` | Immutable UUID surrogate primary key for a licensed practitioner. `license_no` is a unique business identifier, but it is not the primary key because it is externally assigned and may require correction. |
-| `GENERAL_PRACTITIONER` | `doctor_id` inherited from `DOCTOR` | Primary key and foreign key to `DOCTOR.doctor_id`. The subclass inherits the doctor's immutable identity and does not create a second identifier. |
-| `SPECIALIST` | `doctor_id` inherited from `DOCTOR` | Primary key and foreign key to `DOCTOR.doctor_id`. The subclass inherits the doctor's immutable identity while specialty data remains descriptive. |
-| `DOCTOR_SCHEDULE` | `schedule_id` | Immutable UUID surrogate primary key for one doctor duty interval. It identifies the schedule slot independently of doctor, date, time, and availability status. |
-| `PATIENT` | `patient_id` | Immutable UUID surrogate primary key for a registered patient. `phone_number` is a unique contact value, not the stable identity key, because contact details can change. |
-| `APPOINTMENT` | `appointment_id` | Immutable UUID surrogate primary key for one consultation booking. It remains constant when the date, time, consultation channel, or appointment status changes. |
-| `MEDICAL_RECORD` | `record_id` | Immutable UUID surrogate primary key for one clinical record. `appointment_id` is a unique alternate relationship key enforcing one record per appointment. |
-| `DIGITAL_PRESCRIPTION` | `prescription_id` | Immutable UUID surrogate primary key for one prescription authorization. `record_id` is a unique alternate relationship key enforcing one prescription per medical record. |
-| `PRESCRIPTION_ITEM` | `item_id` | Immutable UUID surrogate primary key for one prescription line item. It preserves the line item's identity when dosage, duration, quantity, or captured price is reviewed before issuance. |
-| `MEDICINE` | `medicine_id` | Immutable UUID surrogate primary key for one medicine catalog record. `medicine_name` is unique but is not the stable key because catalog naming may be revised. |
-| `INVOICE` | `invoice_id` | Immutable UUID surrogate primary key for one financial invoice. `appointment_id` is a unique alternate relationship key enforcing one consolidated invoice per appointment. |
-| `PAYMENT` | `payment_id` | UUID-based primary key for one payment transaction linked to an invoice. It remains independent of mutable payment amount, method, date, and settlement status. |
+|---|---|
+| `DOCTOR` | Common licensed-practitioner details, credentials, contact information, and employment status. Stable key: `doctor_id`. |
+| `GENERAL_PRACTITIONER` | Physical outpatient doctor specialization with clinic room and consultation fee. Stable key: inherited `doctor_id` from `DOCTOR`. |
+| `SPECIALIST` | Specialized-care and telemedicine doctor specialization with specialty and certification information. Stable key: inherited `doctor_id` from `DOCTOR`. |
+| `DOCTOR_SCHEDULE` | Doctor duty interval with work date, start time, end time, and availability status. Stable key: `schedule_id`. |
+| `PATIENT` | Registered patient identity, demographic details, contact information, and account status. Stable key: `patient_id`. |
+| `APPOINTMENT` | In-person or telemedicine booking with patient, doctor, date, time slot, reason, and status. Stable key: `appointment_id`. |
+| `MEDICAL_RECORD` | Consultation encounter record containing diagnosis, clinical notes, treatment plan, and record date. Stable key: `record_id`. |
+| `DIGITAL_PRESCRIPTION` | Physician-issued pharmaceutical authorization linked to a medical record, with validity and lifecycle status. Stable key: `prescription_id`. |
+| `PRESCRIPTION_ITEM` | Prescription line linking a medicine to dosage, frequency, duration, quantity, and captured price. Stable key: `item_id`. |
+| `MEDICINE` | Approved pharmaceutical catalog and dispensary inventory with unit price, stock quantity, and reorder level. Stable key: `medicine_id`. |
+| `INVOICE` | Consolidated financial bill for consultation services and dispensed medicines. Stable key: `invoice_id`. |
+| `PAYMENT` | Logical-schema relation recording payment transactions associated with an invoice. Stable key: `payment_id`. |
+| `DOCTOR` | Common licensed-practitioner details, credentials, contact information, and employment status. |
+| `GENERAL_PRACTITIONER` | Physical outpatient doctor specialization with clinic room and consultation fee. |
+| `SPECIALIST` | Specialized-care and telemedicine doctor specialization with specialty and certification information. |
+| `DOCTOR_SCHEDULE` | Doctor duty interval with work date, start time, end time, and availability status. |
+| `PATIENT` | Registered patient identity, demographic details, contact information, and account status. |
+| `APPOINTMENT` | In-person or telemedicine booking with patient, doctor, date, time slot, reason, and status. |
+| `MEDICAL_RECORD` | Consultation encounter record containing diagnosis, clinical notes, treatment plan, and record date. |
+| `DIGITAL_PRESCRIPTION` | Physician-issued pharmaceutical authorization linked to a medical record, with validity and lifecycle status. |
+| `PRESCRIPTION_ITEM` | Prescription line linking a medicine to dosage, frequency, duration, quantity, and captured price. |
+| `MEDICINE` | Approved pharmaceutical catalog and dispensary inventory with unit price, stock quantity, and reorder level. |
+| `INVOICE` | Consolidated financial bill for consultation services and dispensed medicines. |
+| `PAYMENT` | Logical-schema relation recording payment transactions associated with an invoice. |
 
 ### In Scope
 
