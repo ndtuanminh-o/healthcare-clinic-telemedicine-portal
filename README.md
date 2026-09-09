@@ -9,7 +9,7 @@ Posts and Telecommunications Institute of Technology (PTIT).
 
 - **Topic:** #05 — Healthcare Clinic & Telemedicine Portal
 - **Team:** G5 — Pingo
-- **Documentation Language:** English
+
 
 ### Team Members
 
