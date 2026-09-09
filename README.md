@@ -46,12 +46,11 @@ model:
 
 The unified EER model covers:
 
-1. Patients, appointments, and telemedicine sessions
-2. Doctors, GP/Specialist specialization, schedules, leave, and specialties
-3. Medical history and GP referrals to specialties
-4. Prescriptions, prescription items, medicines, and inventory
-5. Invoices and payment transactions
-6. User accounts, roles, sessions, notifications, and audit logs
+* **Patients and appointments:** Patient demographic profiles, unified scheduling, and consultation channel management (in-person clinic visits and remote telemedicine sessions).
+* **Doctor specialization hierarchy and duty shifts:** General Practitioner (`GENERAL_PRACTITIONER`) and Specialist (`SPECIALIST`) disjoint specialization, clinical room allocations, specialty domains, and shift schedules (`DOCTOR_SCHEDULE`).
+* **Clinical encounters and documentation:** Diagnostic medical records (`MEDICAL_RECORD`) linked to attending doctors, clinical findings, and treatment plans.
+* **Digital pharmacy pipeline:** Digital prescriptions (`DIGITAL_PRESCRIPTION`), prescription line items (`PRESCRIPTION_ITEM`), and pharmaceutical catalog tracking with real-time stock levels (`MEDICINE`).
+* **Billing and settlement:** Consolidated consultation and medication invoices (`INVOICE`) and payment transaction tracking (`PAYMENT`).
 
 Important constraints include mandatory invoicing for completed appointments,
 exactly one telemedicine session for a telemedicine appointment, inventory
