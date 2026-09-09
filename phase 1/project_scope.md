@@ -1,7 +1,7 @@
 [project_scope.md](https://github.com/user-attachments/files/32013008/project_scope.md)
 ## Project Scope
 
-### 1. Project Overview
+## 1. Introduction & Project Scope
 
 The Healthcare Clinic and Telemedicine Portal is a relational database project for managing outpatient clinic consultations and remote telemedicine services through one integrated platform.
 
@@ -23,10 +23,6 @@ The project aims to:
 8. Preserve historical clinical and financial records through soft deletion and audit-friendly identifiers.
 9. Enforce data integrity through primary keys, foreign keys, unique constraints, checks, defaults, and database triggers.
 10. Protect data through role-based access control and least-privilege permissions.
-
-### Stable Key Definitions
-
-Each stable key is an immutable UUID-based surrogate identifier unless explicitly described as an inherited identity key. Mutable business attributes, such as phone numbers, license numbers, medicine names, and appointment dates, are not used as primary identity keys.
 
 ### Core Data Model
 
