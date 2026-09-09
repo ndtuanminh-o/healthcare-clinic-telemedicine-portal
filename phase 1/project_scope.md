@@ -28,19 +28,8 @@ The project aims to:
 
 Each stable key is an immutable UUID-based surrogate identifier unless explicitly described as an inherited identity key. Mutable business attributes, such as phone numbers, license numbers, medicine names, and appointment dates, are not used as primary identity keys.
 
+Table | Description |
 |---|---|
-| `DOCTOR` | Common licensed-practitioner details, credentials, contact information, and employment status. Stable key: `doctor_id`. |
-| `GENERAL_PRACTITIONER` | Physical outpatient doctor specialization with clinic room and consultation fee. Stable key: inherited `doctor_id` from `DOCTOR`. |
-| `SPECIALIST` | Specialized-care and telemedicine doctor specialization with specialty and certification information. Stable key: inherited `doctor_id` from `DOCTOR`. |
-| `DOCTOR_SCHEDULE` | Doctor duty interval with work date, start time, end time, and availability status. Stable key: `schedule_id`. |
-| `PATIENT` | Registered patient identity, demographic details, contact information, and account status. Stable key: `patient_id`. |
-| `APPOINTMENT` | In-person or telemedicine booking with patient, doctor, date, time slot, reason, and status. Stable key: `appointment_id`. |
-| `MEDICAL_RECORD` | Consultation encounter record containing diagnosis, clinical notes, treatment plan, and record date. Stable key: `record_id`. |
-| `DIGITAL_PRESCRIPTION` | Physician-issued pharmaceutical authorization linked to a medical record, with validity and lifecycle status. Stable key: `prescription_id`. |
-| `PRESCRIPTION_ITEM` | Prescription line linking a medicine to dosage, frequency, duration, quantity, and captured price. Stable key: `item_id`. |
-| `MEDICINE` | Approved pharmaceutical catalog and dispensary inventory with unit price, stock quantity, and reorder level. Stable key: `medicine_id`. |
-| `INVOICE` | Consolidated financial bill for consultation services and dispensed medicines. Stable key: `invoice_id`. |
-| `PAYMENT` | Logical-schema relation recording payment transactions associated with an invoice. Stable key: `payment_id`. |
 | `DOCTOR` | Common licensed-practitioner details, credentials, contact information, and employment status. |
 | `GENERAL_PRACTITIONER` | Physical outpatient doctor specialization with clinic room and consultation fee. |
 | `SPECIALIST` | Specialized-care and telemedicine doctor specialization with specialty and certification information. |
@@ -52,7 +41,7 @@ Each stable key is an immutable UUID-based surrogate identifier unless explicitl
 | `PRESCRIPTION_ITEM` | Prescription line linking a medicine to dosage, frequency, duration, quantity, and captured price. |
 | `MEDICINE` | Approved pharmaceutical catalog and dispensary inventory with unit price, stock quantity, and reorder level. |
 | `INVOICE` | Consolidated financial bill for consultation services and dispensed medicines. |
-| `PAYMENT` | Logical-schema relation recording payment transactions associated with an invoice. |
+| `PAYMENT` | Logical-schema relation recording payment transactions associated with an invoice.
 
 ### In Scope
 
