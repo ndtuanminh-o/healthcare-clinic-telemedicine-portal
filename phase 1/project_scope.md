@@ -1,13 +1,4 @@
 [project_scope.md](https://github.com/user-attachments/files/32013008/project_scope.md)
-## A. Project Identity
-
-- **Team Name:** [Pingo]
-- **Team Members:**
-  1. **Ho Thi Truc Linh** (n25dcat086@student.ptithcm.edu.vn),
-  2. **Huynh Mai Tri Loc** (n25dcat087@student.ptithcm.edu.vn),
-  3. **Nguyen Dang Tuan Minh** (n25dcat089@student.ptithcm.edu.vn)
-- **Project Title:** [5. Healthcare Clinic & Telemedicine Portal]
-
 ## Project Scope
 
 ### 1. Project Overview
@@ -52,9 +43,9 @@ Each stable key is an immutable UUID-based surrogate identifier unless explicitl
 | `INVOICE` | `invoice_id` | Immutable UUID surrogate primary key for one financial invoice. `appointment_id` is a unique alternate relationship key enforcing one consolidated invoice per appointment. |
 | `PAYMENT` | `payment_id` | UUID-based primary key for one payment transaction linked to an invoice. It remains independent of mutable payment amount, method, date, and settlement status. |
 
-### 2. In Scope
+### In Scope
 
-#### 2.1 Appointment and Scheduling Management
+#### Appointment and Scheduling Management
 
 - Register doctors, patients, and doctor duty schedules.
 - Support in-person and telemedicine appointment types.
@@ -65,7 +56,7 @@ Each stable key is an immutable UUID-based surrogate identifier unless explicitl
   - `Scheduled` → `In-Progress` → `Completed`
   - `Scheduled` → `Cancelled`
 
-#### 2.2 Doctor Management
+#### Doctor Management
 
 - Maintain a common `DOCTOR` superclass for licensed medical practitioners.
 - Support two disjoint and total doctor subclasses:
@@ -73,21 +64,21 @@ Each stable key is an immutable UUID-based surrogate identifier unless explicitl
   - `SPECIALIST` for specialized care and telemedicine consultations.
 - Store license, contact, employment status, consultation fee, clinic room, specialty, and board certification information.
 
-#### 2.3 Patient Management
+#### Patient Management
 
 - Store patient identity and demographic information.
 - Maintain contact details, gender, address, and account status.
 - Use an immutable UUID-based patient identifier.
 - Preserve records through soft deletion instead of physical deletion.
 
-#### 2.4 Clinical Record Management
+#### Clinical Record Management
 
 - Create at most one medical record for a completed appointment.
 - Store diagnosis, clinical notes, treatment plan, attending specialist, and record date.
 - Require an active patient, consulting physician, and mandatory diagnosis.
 - Link medical records to appointments and patients through foreign keys.
 
-#### 2.5 Digital Prescription Management
+#### Digital Prescription Management
 
 - Create at most one digital prescription for a medical record.
 - Store issue date, validity period, instructions, and prescription status.
@@ -95,7 +86,7 @@ Each stable key is an immutable UUID-based surrogate identifier unless explicitl
 - Prevent modification or deletion after a prescription is marked `Issued`.
 - Support one or more prescription items per prescription.
 
-#### 2.6 Medicine and Inventory Management
+#### Medicine and Inventory Management
 
 - Maintain a medicine catalog with unique medicine names.
 - Store active ingredients, dispensing units, prices, current stock, and reorder levels.
@@ -104,7 +95,7 @@ Each stable key is an immutable UUID-based surrogate identifier unless explicitl
 - Decrease stock atomically when a prescription changes to `Issued`.
 - Prevent dispensing quantities greater than available stock.
 
-#### 2.7 Billing and Payment Management
+#### Billing and Payment Management
 
 - Generate exactly one consolidated invoice for each appointment.
 - Calculate the invoice from the consultation fee and dispensed medicine costs.
@@ -112,7 +103,7 @@ Each stable key is an immutable UUID-based surrogate identifier unless explicitl
 - Support cash, credit card, insurance, and bank transfer payment methods.
 - Prevent payments from exceeding the outstanding invoice balance.
 
-#### 2.8 Security and Access Control
+#### Security and Access Control
 
 The system will define the following business roles:
 
@@ -124,7 +115,7 @@ The system will define the following business roles:
 
 Each role will receive only the permissions required for its operational responsibilities. Read and write privileges will be separated by entity and business function.
 
-### 3. Core Data Model
+### Core Data Model
 
 The logical database model contains the following primary entities and relationships. The stable-key definitions are specified in the separate table above. The logical mapping also includes `PAYMENT` as a dependent financial relation.
 
