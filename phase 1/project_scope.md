@@ -1,0 +1,158 @@
+[project_scope.md](https://github.com/user-attachments/files/32013008/project_scope.md)
+## A. Project Identity
+
+- **Team Name:** [Pingo]
+- **Team Members:**
+  1. **Ho Thi Truc Linh** (n25dcat086@student.ptithcm.edu.vn),
+  2. **Huynh Mai Tri Loc** (n25dcat087@student.ptithcm.edu.vn),
+  3. **Nguyen Dang Tuan Minh** (n25dcat089@student.ptithcm.edu.vn)
+- **Project Title:** [5. Healthcare Clinic & Telemedicine Portal]
+
+## Project Scope
+
+### 1. Project Overview
+
+The Healthcare Clinic and Telemedicine Portal is a relational database project for managing outpatient clinic consultations and remote telemedicine services through one integrated platform.
+
+The system combines appointment coordination, doctor scheduling, patient management, clinical documentation, digital prescriptions, medicine inventory, invoicing, payments, verification, and role-based access control.
+
+The project is designed as a high-integrity relational database system that supports both in-person and virtual consultations while preserving clinical and financial auditability.
+
+### 1.1 System Objective
+
+The project aims to:
+
+1. Provide a unified appointment workflow for in-person and telemedicine consultations.
+2. Prevent overlapping appointments for doctors and patients.
+3. Model doctor specialization using an Enhanced Entity-Relationship hierarchy.
+4. Connect completed consultations with medical records and digital prescriptions.
+5. Track medicine stock and prevent invalid or excessive dispensing.
+6. Generate one consolidated invoice for each appointment.
+7. Maintain accurate payment and settlement status.
+8. Preserve historical clinical and financial records through soft deletion and audit-friendly identifiers.
+9. Enforce data integrity through primary keys, foreign keys, unique constraints, checks, defaults, and database triggers.
+10. Protect data through role-based access control and least-privilege permissions.
+
+### Stable Key Definitions
+
+The following stable-key table is derived from the `Database_Project_Report_Topic05` data dictionary and its stable-key definitions. Each stable key is an immutable UUID-based surrogate identifier unless explicitly described as an inherited identity key. Mutable business attributes, such as phone numbers, license numbers, medicine names, and appointment dates, are not used as primary identity keys.
+
+| Entity | Stable Key | Stable Key Definition |
+|---|---|---|
+| `DOCTOR` | `doctor_id` | Immutable UUID surrogate primary key for a licensed practitioner. `license_no` is a unique business identifier, but it is not the primary key because it is externally assigned and may require correction. |
+| `GENERAL_PRACTITIONER` | `doctor_id` inherited from `DOCTOR` | Primary key and foreign key to `DOCTOR.doctor_id`. The subclass inherits the doctor's immutable identity and does not create a second identifier. |
+| `SPECIALIST` | `doctor_id` inherited from `DOCTOR` | Primary key and foreign key to `DOCTOR.doctor_id`. The subclass inherits the doctor's immutable identity while specialty data remains descriptive. |
+| `DOCTOR_SCHEDULE` | `schedule_id` | Immutable UUID surrogate primary key for one doctor duty interval. It identifies the schedule slot independently of doctor, date, time, and availability status. |
+| `PATIENT` | `patient_id` | Immutable UUID surrogate primary key for a registered patient. `phone_number` is a unique contact value, not the stable identity key, because contact details can change. |
+| `APPOINTMENT` | `appointment_id` | Immutable UUID surrogate primary key for one consultation booking. It remains constant when the date, time, consultation channel, or appointment status changes. |
+| `MEDICAL_RECORD` | `record_id` | Immutable UUID surrogate primary key for one clinical record. `appointment_id` is a unique alternate relationship key enforcing one record per appointment. |
+| `DIGITAL_PRESCRIPTION` | `prescription_id` | Immutable UUID surrogate primary key for one prescription authorization. `record_id` is a unique alternate relationship key enforcing one prescription per medical record. |
+| `PRESCRIPTION_ITEM` | `item_id` | Immutable UUID surrogate primary key for one prescription line item. It preserves the line item's identity when dosage, duration, quantity, or captured price is reviewed before issuance. |
+| `MEDICINE` | `medicine_id` | Immutable UUID surrogate primary key for one medicine catalog record. `medicine_name` is unique but is not the stable key because catalog naming may be revised. |
+| `INVOICE` | `invoice_id` | Immutable UUID surrogate primary key for one financial invoice. `appointment_id` is a unique alternate relationship key enforcing one consolidated invoice per appointment. |
+| `PAYMENT` | `payment_id` | UUID-based primary key for one payment transaction linked to an invoice. It remains independent of mutable payment amount, method, date, and settlement status. |
+
+### 2. In Scope
+
+#### 2.1 Appointment and Scheduling Management
+
+- Register doctors, patients, and doctor duty schedules.
+- Support in-person and telemedicine appointment types.
+- Record booking time, consultation date, start time, end time, reason for visit, and appointment status.
+- Validate that an appointment falls within an active doctor schedule.
+- Prevent overlapping active appointments for the same doctor or patient.
+- Support the following appointment lifecycle:
+  - `Scheduled` → `In-Progress` → `Completed`
+  - `Scheduled` → `Cancelled`
+
+#### 2.2 Doctor Management
+
+- Maintain a common `DOCTOR` superclass for licensed medical practitioners.
+- Support two disjoint and total doctor subclasses:
+  - `GENERAL_PRACTITIONER` for physical clinic consultations.
+  - `SPECIALIST` for specialized care and telemedicine consultations.
+- Store license, contact, employment status, consultation fee, clinic room, specialty, and board certification information.
+
+#### 2.3 Patient Management
+
+- Store patient identity and demographic information.
+- Maintain contact details, gender, address, and account status.
+- Use an immutable UUID-based patient identifier.
+- Preserve records through soft deletion instead of physical deletion.
+
+#### 2.4 Clinical Record Management
+
+- Create at most one medical record for a completed appointment.
+- Store diagnosis, clinical notes, treatment plan, attending specialist, and record date.
+- Require an active patient, consulting physician, and mandatory diagnosis.
+- Link medical records to appointments and patients through foreign keys.
+
+#### 2.5 Digital Prescription Management
+
+- Create at most one digital prescription for a medical record.
+- Store issue date, validity period, instructions, and prescription status.
+- Support prescription states including `Draft`, `Issued`, `Dispensed`, and `Cancelled`.
+- Prevent modification or deletion after a prescription is marked `Issued`.
+- Support one or more prescription items per prescription.
+
+#### 2.6 Medicine and Inventory Management
+
+- Maintain a medicine catalog with unique medicine names.
+- Store active ingredients, dispensing units, prices, current stock, and reorder levels.
+- Require positive prescription quantities and durations.
+- Block prescriptions for expired medicines.
+- Decrease stock atomically when a prescription changes to `Issued`.
+- Prevent dispensing quantities greater than available stock.
+
+#### 2.7 Billing and Payment Management
+
+- Generate exactly one consolidated invoice for each appointment.
+- Calculate the invoice from the consultation fee and dispensed medicine costs.
+- Track invoice status as `Unpaid`, `Paid`, or `Refunded`.
+- Support cash, credit card, insurance, and bank transfer payment methods.
+- Prevent payments from exceeding the outstanding invoice balance.
+
+#### 2.8 Security and Access Control
+
+The system will define the following business roles:
+
+- `role_receptionist`
+- `role_physician`
+- `role_pharmacist`
+- `role_billing_officer`
+- `role_system_auditor`
+
+Each role will receive only the permissions required for its operational responsibilities. Read and write privileges will be separated by entity and business function.
+
+### 3. Out of Scope
+
+The following capabilities are outside the scope of this database project:
+
+- Full patient-facing web or mobile user interface implementation.
+- Real-time video calling infrastructure.
+- Payment gateway integration with external banks or card processors.
+- Electronic health record exchange with external hospitals or government systems.
+- Insurance claim submission and insurance-provider reconciliation.
+- Advanced medical decision support or automated diagnosis.
+- Pharmacy logistics, delivery routing, or warehouse management beyond inventory quantities.
+- Production deployment, cloud infrastructure, and operational monitoring.
+- Real-world patient data collection or storage.
+
+### 4. Core Data Model
+
+The logical database model contains the following primary entities and relationships. The stable-key definitions are specified in the separate table above. The logical mapping also includes `PAYMENT` as a dependent financial relation.
+
+| Entity | Responsibility |
+|---|---|
+| `DOCTOR` | Common identity and credentials for licensed practitioners |
+| `GENERAL_PRACTITIONER` | Physical outpatient doctor specialization |
+| `SPECIALIST` | Specialized and telemedicine doctor specialization |
+| `DOCTOR_SCHEDULE` | Doctor working intervals and availability |
+| `PATIENT` | Registered patient identity and demographics |
+| `APPOINTMENT` | In-person or telemedicine booking |
+| `MEDICAL_RECORD` | Clinical diagnosis and consultation documentation |
+| `DIGITAL_PRESCRIPTION` | Prescription authorization and status |
+| `PRESCRIPTION_ITEM` | Medicine, dosage, duration, and quantity line |
+| `MEDICINE` | Pharmaceutical catalog and stock |
+| `INVOICE` | Consolidated clinical and medicine billing |
+| `PAYMENT` | Payment transactions associated with invoices |
