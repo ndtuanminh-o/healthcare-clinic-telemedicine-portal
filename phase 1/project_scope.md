@@ -35,7 +35,7 @@ The project aims to:
 
 ### Stable Key Definitions
 
-The following stable-key table is derived from the `Database_Project_Report_Topic05` data dictionary and its stable-key definitions. Each stable key is an immutable UUID-based surrogate identifier unless explicitly described as an inherited identity key. Mutable business attributes, such as phone numbers, license numbers, medicine names, and appointment dates, are not used as primary identity keys.
+Each stable key is an immutable UUID-based surrogate identifier unless explicitly described as an inherited identity key. Mutable business attributes, such as phone numbers, license numbers, medicine names, and appointment dates, are not used as primary identity keys.
 
 | Entity | Stable Key | Stable Key Definition |
 |---|---|---|
