@@ -7,8 +7,6 @@ Year 2026-2027.
 
 - **Project:** #5 — Healthcare Clinic & Telemedicine Portal
 - **Team:** G5 — Pingo
-- **Phase:** Phase 1 — Problem Statement and Conceptual Design
-- **Modeling notation:** Chen Enhanced Entity-Relationship (EER)
 - **Documentation language:** English
 
 ## Team
