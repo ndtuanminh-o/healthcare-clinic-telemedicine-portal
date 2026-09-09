@@ -1,5 +1,5 @@
-[EER_Diagram_EN.md](https://github.com/user-attachments/files/32011642/EER_Diagram_EN.md)
-[EER_Diagram_EN.md](https://github.com/user-attachments/files/32011640/EER_Diagram_EN.md)# Enhanced Entity-Relationship (EER) Conceptual Model Documentation
+[EER_Diagram_EN.md](https://github.com/user-attachments/files/32011717/EER_Diagram_EN.md)
+# Enhanced Entity-Relationship (EER) Conceptual Model Documentation
 ## Dedicated Analysis of: `er_diagram_cropped.png`
 ### Topic 05: Healthcare Clinic & Telemedicine Portal | Database Systems (INT1313) - PTIT
 
@@ -117,10 +117,10 @@ The conceptual schema contains 9 principal entity boxes and 2 specialization sub
   - `phone_number`: Primary telephone number
   - `email`: Professional email address
 - **Specialization Circle `(d)` (Disjoint Constraint)**:
-  - $\text{GENERAL\_PRACTITIONER} \cap \text{SPECIALIST} = \emptyset$.
+  - `GENERAL_PRACTITIONER` ∩ `SPECIALIST` = ∅.
   - A doctor cannot simultaneously practice as both a General Practitioner and a Specialist within the same system scope.
 - **Double-Line Connection `===` (Total Specialization)**:
-  - $\text{DOCTOR} = \text{GENERAL\_PRACTITIONER} \cup \text{SPECIALIST}$.
+  - `DOCTOR` = `GENERAL_PRACTITIONER` ∪ `SPECIALIST`.
   - Every registered doctor must belong to either `GENERAL_PRACTITIONER` or `SPECIALIST`.
 - **`GENERAL_PRACTITIONER` (Subclass)**:
   - `doctor_id` (FK): Inherited from `DOCTOR`
@@ -209,17 +209,17 @@ Every relationship shown in `er_diagram_cropped.png` is documented below with it
 
 | # | Diamond Name | Connected Entities | Cardinality in Image | Semantics & Business Meaning |
 | :-: | :--- | :--- | :-: | :--- |
-| **1** | **`Schedules`** | `DOCTOR` --- `DOCTOR_SCHEDULE` | $1 : N$ | 1 Doctor registers $N$ working shifts. |
-| **2** | **`Conducts`** | `DOCTOR` --- `APPOINTMENT` | $1 : N$ | 1 Doctor conducts $N$ clinical appointments. |
-| **3** | **`Books`** | `PATIENT` --- `APPOINTMENT` | $1 : N$ | 1 Patient books $N$ scheduled appointments. |
-| **4** | **`Documents`** | `APPOINTMENT` --- `MEDICAL_RECORD` | $1 : 0..1$ | 1 Appointment generates at most $0..1$ diagnostic medical record. |
-| **5** | **`Manages`** | `SPECIALIST` --- `MEDICAL_RECORD` | $1 : N$ | 1 Specialist manages / oversees $N$ medical records. |
-| **6** | **`Generates`** | `MEDICAL_RECORD` --- `DIGITAL_PRESCRIPTION` | $1 : 0..1$ | 1 Medical record authorizes at most $0..1$ digital prescription. |
-| **7** | **`Contains`** | `DIGITAL_PRESCRIPTION` --- `PRESCRIPTION_ITEM` | $1 : 1..N$ | 1 Digital prescription contains at least $1..N$ line items. |
-| **8** | **`Specifies`** | `MEDICINE` --- `PRESCRIPTION_ITEM` | $1 : N$ | 1 Medicine catalog item is specified across $N$ prescription lines. |
-| **9** | **`Bills`** | `APPOINTMENT` --- `INVOICE` | $1 : 1$ | 1 Appointment generates exactly $1$ consolidated invoice. |
-| **10**| **`Pays`** | `PATIENT` --- `INVOICE` | $1 : N$ | 1 Patient pays $N$ clinic invoices. |
-| **11**| **`Owns`** | `PATIENT` --- `INVOICE` | $1 : N$ | 1 Patient is the legal account owner of $N$ invoices. |
+| **1** | **`Schedules`** | `DOCTOR` --- `DOCTOR_SCHEDULE` | 1 : N | 1 Doctor registers N working shifts. |
+| **2** | **`Conducts`** | `DOCTOR` --- `APPOINTMENT` | 1 : N | 1 Doctor conducts N clinical appointments. |
+| **3** | **`Books`** | `PATIENT` --- `APPOINTMENT` | 1 : N | 1 Patient books N scheduled appointments. |
+| **4** | **`Documents`** | `APPOINTMENT` --- `MEDICAL_RECORD` | 1 : 0..1 | 1 Appointment generates at most 100..1 diagnostic medical record. |
+| **5** | **`Manages`** | `SPECIALIST` --- `MEDICAL_RECORD` | 1 : N | 1 Specialist manages / oversees N medical records. |
+| **6** | **`Generates`** | `MEDICAL_RECORD` --- `DIGITAL_PRESCRIPTION` | 1 : 0..1 | 1 Medical record authorizes at most 100..1 digital prescription. |
+| **7** | **`Contains`** | `DIGITAL_PRESCRIPTION` --- `PRESCRIPTION_ITEM` | 1 : 1..N | 1 Digital prescription contains at least 111..N line items. |
+| **8** | **`Specifies`** | `MEDICINE` --- `PRESCRIPTION_ITEM` | 1 : N | 1 Medicine catalog item is specified across N prescription lines. |
+| **9** | **`Bills`** | `APPOINTMENT` --- `INVOICE` | 1 : 1 | 1 Appointment generates exactly 111 consolidated invoice. |
+| **10**| **`Pays`** | `PATIENT` --- `INVOICE` | 1 : N | 1 Patient pays N clinic invoices. |
+| **11**| **`Owns`** | `PATIENT` --- `INVOICE` | 1 : N | 1 Patient is the legal account owner of N invoices. |
 
 ---
 
