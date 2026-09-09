@@ -1,5 +1,5 @@
-[1.2_Business_Rules_and_Constraints_EN.md](https://github.com/user-attachments/files/32011254/1.2_Business_Rules_and_Constraints_EN.md)
-# 1.2 Business Rules & Constraints
+[_Business_Rules_and_Constraints_EN.md](https://github.com/user-attachments/files/32011254/1.2_Business_Rules_and_Constraints_EN.md)
+# Business Rules & Constraints
 
 To maintain database consistency and eliminate erroneous data states, the system enforces twelve declarative and procedural business rules (BR-01 through BR-12) classified by structural integrity level:
 
