@@ -1,324 +1,258 @@
-[physical_schema_diagram_EN.md](https://github.com/user-attachments/files/32012850/physical_schema_diagram_EN.md)
-
-# Physical Relational Schema Specification Document
-## Detailed Analysis of Architectural Diagram: `schema.png` (IE Crow's Foot Notation - ISO/IEC 19505)
-### Topic 05: Healthcare Clinic & Telemedicine Management System | INT1313 Database Systems - PTIT
-**Project:** Clinic Management System Integrated with Telemedicine Portal | **Team:** Pingo
-
----
-
-## 1. Physical Schema Visualization
-
-This engineering document provides an exhaustive, 100% complete specification of all tables, fields, data types, primary keys, foreign keys, unique constraints, and relational cardinalities illustrated in the industrial physical database schema below:
-
-![Physical Relational Schema Diagram](schema.png)
-*Figure: Industrial Relational Physical Schema (IE Crow's Foot Notation - ISO/IEC 19505) - Topic 05*
+[physical_schema_diagram_EN.md](https://github.com/user-attachments/files/32013021/physical_schema_diagram_EN.md)
+[physical_schema_diagram_EN.md](https://github.com/user-attachments/files/32013020/physical_schema_diagram_EN.md)# Physical Schema Diagram Documentation
+## Analysis of Diagram: `schema.png` (IE Crow's Foot Notation)
+### Topic 05: Healthcare Clinic & Telemedicine Management System | PTIT
+**Project:** Clinic Management & Telemedicine Portal | **Team:** Pingo
 
 ---
 
-## 2. Mermaid Relational Schema Source Code
+## 1. Schema Visualization
 
-The following executable Mermaid `erDiagram` faithfully reconstructs the physical architecture illustrated in `schema.png`, ready for rendering on GitHub, VS Code, Notion, Obsidian, and Mermaid Live Editor:
+This document explains the physical relational database schema shown in `schema.png`:
+
+![Physical Schema Diagram](schema.png)
+*Figure: Industrial Relational Physical Schema (IE Crow's Foot Notation) - Topic 05*
+
+---
+
+## 2. Mermaid ER Diagram
 
 ```mermaid
 erDiagram
-    %% --- Specialization Hierarchy (Option 8.4a) ---
-    DOCTOR ||--|| GENERAL_PRACTITIONER : "is_a (1:1 PK=FK)"
-    DOCTOR ||--|| SPECIALIST : "is_a (1:1 PK=FK)"
-
-    %% --- Doctor Scheduling & Appointments ---
-    DOCTOR ||--o{ DOCTOR_SCHEDULE : "has_shifts (1:N)"
+    DOCTOR ||--|| GENERAL_PRACTITIONER : "is_a (1:1)"
+    DOCTOR ||--|| SPECIALIST : "is_a (1:1)"
+    DOCTOR ||--o{ DOCTOR_SCHEDULE : "has (1:N)"
     DOCTOR ||--o{ APPOINTMENT : "conducts (1:N)"
-
-    %% --- Patient Consultations & History ---
-    PATIENT ||--o{ MEDICAL_HISTORY : "records (1:N)"
+    PATIENT ||--o{ MEDICAL_HISTORY : "has (1:N)"
     MEDICAL_HISTORY ||--o{ APPOINTMENT : "references (1:N)"
-
-    %% --- Clinical Encounter to Prescription & Invoice ---
     APPOINTMENT ||--o| DIGITAL_PRESCRIPTION : "generates (1:0..1)"
     APPOINTMENT ||--o| INVOICE : "bills (1:0..1)"
-
-    %% --- Digital Pharmacy Pipeline ---
     DIGITAL_PRESCRIPTION ||--|{ PRESCRIPTION_ITEM : "contains (1:N)"
     MEDICINE ||--o{ PRESCRIPTION_ITEM : "dispenses (1:N)"
-
-    %% --- Fiscal Payment Settlement ---
     INVOICE ||--o{ PAYMENT : "settles (1:N)"
 
-    %% ================= ENTITY DEFINITIONS =================
-
     PATIENT {
-        uuid patient_id PK "Primary Key: Patient unique ID"
-        varchar full_name "Patient full legal name"
-        date dob "Date of birth (dob <= CURRENT_DATE)"
+        uuid patient_id PK "Primary Key"
+        varchar full_name "Full name"
+        date dob "Date of birth"
         enum gender "'M', 'F', 'O'"
-        varchar phone "Official contact phone number (UQ)"
+        varchar phone "Contact phone number (Unique)"
         enum status "'Active', 'Inactive'"
-        datetime deleted_at "Soft-delete audit timestamp"
+        datetime deleted_at "Soft-delete timestamp"
     }
 
     MEDICAL_HISTORY {
-        uuid record_id PK "Primary Key: Medical record ID"
-        uuid patient_id FK "Foreign Key -> PATIENT.patient_id"
-        uuid doctor_id FK "Foreign Key -> DOCTOR.doctor_id (Nullable)"
-        text diagnosis "Clinical diagnostic summary"
-        date date_recorded "Record entry date"
+        uuid record_id PK "Primary Key"
+        uuid patient_id FK "FK -> PATIENT"
+        uuid doctor_id FK "FK -> DOCTOR (Nullable)"
+        text diagnosis "Clinical diagnosis"
+        date date_recorded "Entry date"
     }
 
     DOCTOR {
-        uuid doctor_id PK "Primary Key: Doctor ID (Superclass)"
-        varchar full_name "Doctor full legal name"
-        varchar license_number "Medical practice license number (UQ)"
+        uuid doctor_id PK "Primary Key (Superclass)"
+        varchar full_name "Doctor full name"
+        varchar license_number UK "Medical license number (Unique)"
         enum doctor_type "'GP', 'SPEC'"
         varchar phone "Contact phone number"
         enum status "'Active', 'Inactive'"
-        datetime deleted_at "Soft-delete audit timestamp"
+        datetime deleted_at "Soft-delete timestamp"
     }
 
     GENERAL_PRACTITIONER {
-        uuid doctor_id PK,FK "Inherits DOCTOR.doctor_id (1:1)"
-        varchar clinic_room "Assigned in-person consultation room"
-        decimal consultation_fee "Standard consultation tariff (> 0)"
+        uuid doctor_id PK, FK "PK & FK -> DOCTOR (1:1)"
+        varchar clinic_room "Clinic room designation"
+        decimal consultation_fee "Standard examination fee (> 0)"
     }
 
     SPECIALIST {
-        uuid doctor_id PK,FK "Inherits DOCTOR.doctor_id (1:1)"
-        varchar specialty_area "Medical specialization area"
-        decimal telemedicine_fee "Specialist / Teleconsultation fee (> 0)"
+        uuid doctor_id PK, FK "PK & FK -> DOCTOR (1:1)"
+        varchar specialty_area "Medical specialty domain"
+        decimal telemedicine_fee "Telemedicine consultation fee (> 0)"
     }
 
     DOCTOR_SCHEDULE {
-        uuid schedule_id PK "Primary Key: Shift schedule ID"
-        uuid doctor_id FK "Foreign Key -> DOCTOR.doctor_id"
-        enum day_of_week "Day of week (1..7: Sun..Sat)"
+        uuid schedule_id PK "Primary Key"
+        uuid doctor_id FK "FK -> DOCTOR"
+        enum day_of_week "Day of week (1..7)"
         time start_time "Shift start time"
-        time end_time "Shift end time (end_time > start_time)"
+        time end_time "Shift end time"
     }
 
     APPOINTMENT {
-        uuid appt_id PK "Primary Key: Appointment encounter ID"
-        uuid patient_id FK "Foreign Key -> PATIENT.patient_id"
-        uuid doctor_id FK "Foreign Key -> DOCTOR.doctor_id (Superclass)"
-        datetime start_date_time "Appointment scheduled start"
-        datetime end_date_time "Appointment scheduled end"
+        uuid appt_id PK "Primary Key"
+        uuid patient_id FK "FK -> PATIENT"
+        uuid doctor_id FK "FK -> DOCTOR (Superclass)"
+        datetime start_date_time "Appointment start time"
+        datetime end_date_time "Appointment end time"
         enum appt_type "'In-Person', 'Tele'"
-        text telemedicine_video_link "Secure encrypted consultation URL"
+        text telemedicine_video_link "Video consultation room URL"
         enum status "'Sched', 'Done', 'Cancel'"
     }
 
     DIGITAL_PRESCRIPTION {
-        uuid prescription_id PK "Primary Key: Digital prescription ID"
-        uuid appt_id FK,UQ "Unique Foreign Key -> APPOINTMENT.appt_id"
-        datetime issued_date "Prescription issue timestamp"
+        uuid prescription_id PK "Primary Key"
+        uuid appt_id FK, UK "Unique FK -> APPOINTMENT (1:0..1)"
+        datetime issued_date "Issue timestamp"
         enum status "'Draft', 'Issued'"
-        text instructions "Clinical administration directions"
+        text instructions "Directions and notes"
     }
 
     PRESCRIPTION_ITEM {
-        uuid item_id PK "Primary Key: Prescription line item ID"
-        uuid prescription_id FK "Foreign Key -> DIGITAL_PRESCRIPTION"
-        uuid med_id FK "Foreign Key -> MEDICINE"
-        int quantity "Dispensed quantity (quantity > 0)"
-        string dosage "Dosage, route, and frequency guidelines"
+        uuid item_id PK "Primary Key"
+        uuid prescription_id FK "FK -> DIGITAL_PRESCRIPTION"
+        uuid med_id FK "FK -> MEDICINE"
+        int quantity "Dispensed quantity (> 0)"
+        string dosage "Dosage and frequency"
     }
 
     MEDICINE {
-        uuid med_id PK "Primary Key: Medication catalog ID"
-        varchar med_name "Pharmaceutical / Trade name (UQ)"
+        uuid med_id PK "Primary Key"
+        varchar med_name "Pharmaceutical name"
         date expiry_date "Batch expiry date"
-        int stock_quantity "Available real-time physical stock (>= 0)"
-        int reorder_level "Automated replenishment threshold"
+        int stock_quantity "Available inventory stock"
+        int reorder_level "Reorder alert threshold"
     }
 
     INVOICE {
-        uuid invoice_id PK "Primary Key: Encounter bill ID"
-        uuid appt_id FK,UQ "Unique Foreign Key -> APPOINTMENT.appt_id"
-        decimal total_amount "Consolidated encounter total (>= 0)"
-        datetime issue_date "Invoice generation timestamp"
+        uuid invoice_id PK "Primary Key"
+        uuid appt_id FK, UK "Unique FK -> APPOINTMENT (1:0..1)"
+        decimal total_amount "Total fee (>= 0)"
+        datetime issue_date "Billing timestamp"
         enum status "'Unpaid', 'Paid'"
     }
 
     PAYMENT {
-        uuid payment_id PK "Primary Key: Payment transaction ID"
-        uuid invoice_id FK "Foreign Key -> INVOICE.invoice_id"
-        decimal amount_paid "Disbursed transaction amount (> 0)"
-        enum payment_method "'Cash', 'Credit Card', 'Bank Transfer', 'Insurance'"
+        uuid payment_id PK "Primary Key"
+        uuid invoice_id FK "FK -> INVOICE"
+        decimal amount_paid "Paid amount (> 0)"
+        enum payment_method "Payment channel"
     }
 ```
 
 ---
 
-## 3. Physical Tables Detailed Specification
+## 3. Physical Tables Specification
 
-The physical relational model depicted in `schema.png` comprises **12 relational tables** structured into 5 foundational enterprise healthcare subsystems:
+The schema contains **12 relational tables** corresponding directly to the entities in `schema.png`:
 
-### 3.1. Patient Management & Medical History (`PATIENT`, `MEDICAL_HISTORY`)
+### 1. `PATIENT` (Patient Profile)
+- `patient_id` (UUID, PK): Unique patient identifier.
+- `full_name` (VARCHAR(100)): Full name of the patient.
+- `dob` (DATE): Date of birth (`dob <= CURRENT_DATE`).
+- `gender` (ENUM('M', 'F', 'O')): Biological sex.
+- `phone` (VARCHAR(15), UNIQUE): Contact telephone number.
+- `status` (ENUM('Active', 'Inactive')): Patient record status.
+- `deleted_at` (DATETIME, Nullable): Timestamp for soft-delete.
 
-#### Table: `PATIENT`
-Stores legal identification, demographic, and administrative records for both walk-in physical clinic patients and online telemedicine users:
-- `patient_id` (UUID, PK): Surrogate primary key uniquely identifying the patient across all healthcare encounters.
-- `full_name` (VARCHAR(100), NOT NULL): Full legal name of the patient.
-- `dob` (DATE, NOT NULL): Date of birth (Enforced integrity constraint: `dob <= CURRENT_DATE`).
-- `gender` (ENUM('M', 'F', 'O'), NOT NULL): Standardized medical biological sex / gender (`'M'`: Male, `'F'`: Female, `'O'`: Other).
-- `phone` (VARCHAR(15), NOT NULL, UNIQUE): Verified contact phone number, serving as an alternate search key and destination for automated SMS/portal reminders.
-- `status` (ENUM('Active', 'Inactive'), DEFAULT 'Active'): Operational lifecycle status of the patient profile.
-- `deleted_at` (DATETIME, Nullable): Timestamp designated for the **Soft-Delete** pattern, ensuring strict regulatory compliance by archiving records without physical row removal.
+### 2. `MEDICAL_HISTORY` (Clinical Records)
+- `record_id` (UUID, PK): Medical history entry ID.
+- `patient_id` (UUID, FK): References `PATIENT(patient_id)`.
+- `doctor_id` (UUID, FK, Nullable): References `DOCTOR(doctor_id)` who diagnosed.
+- `diagnosis` (TEXT): Clinical diagnosis details.
+- `date_recorded` (DATE): Recording date.
 
-#### Table: `MEDICAL_HISTORY`
-Chronicles pre-existing conditions, past diagnoses, surgical interventions, and ongoing chronic therapies:
-- `record_id` (UUID, PK): Surrogate primary key for the medical history entry.
-- `patient_id` (UUID, FK, NOT NULL): Mandatory foreign key referencing `PATIENT(patient_id)`.
-- `doctor_id` (UUID, FK, Nullable): Foreign key referencing `DOCTOR(doctor_id)` who diagnosed or recorded the condition (nullable if documented from historical external clinic documentation).
-- `diagnosis` (TEXT, NOT NULL): Comprehensive clinical diagnosis, anamnesis, and diagnostic impressions.
-- `date_recorded` (DATE, NOT NULL): Date the clinical record was officially logged in the system.
+### 3. `DOCTOR (Superclass)` (Physician Master)
+- `doctor_id` (UUID, PK): Superclass primary key for physicians.
+- `full_name` (VARCHAR(100)): Full name of the doctor.
+- `license_number` (VARCHAR(30), UNIQUE): Medical practice license number.
+- `doctor_type` (ENUM('GP', 'SPEC')): Physician role discriminator (`'GP'` or `'SPEC'`).
+- `phone` (VARCHAR(15)): Official contact phone.
+- `status` (ENUM('Active', 'Inactive')): Employment status.
+- `deleted_at` (DATETIME, Nullable): Timestamp for soft-delete.
 
----
+### 4. `GENERAL_PRACTITIONER` (Subclass)
+- `doctor_id` (UUID, PK, FK): Inherits `DOCTOR(doctor_id)` via 1:1 identity mapping.
+- `clinic_room` (VARCHAR(20)): Assigned in-person examination room.
+- `consultation_fee` (DECIMAL): Standard clinic consultation fee (`> 0`).
 
-### 3.2. Doctor Specialization Hierarchy & Scheduling (`DOCTOR`, `GENERAL_PRACTITIONER`, `SPECIALIST`, `DOCTOR_SCHEDULE`)
+### 5. `SPECIALIST` (Subclass)
+- `doctor_id` (UUID, PK, FK): Inherits `DOCTOR(doctor_id)` via 1:1 identity mapping.
+- `specialty_area` (VARCHAR(50)): Specialty field (Cardiology, Dermatology, etc.).
+- `telemedicine_fee` (DECIMAL): Remote teleconsultation fee (`> 0`).
 
-The architecture models specialization using **Option 8.4a (Multiple Relations with 1:1 Identity Inheritance)** as defined in relational database theory (Elmasri & Navathe). The superclass stores shared attributes, while disjoint subclasses preserve role-specific properties linked by a unified primary key (`PK = FK`):
+### 6. `DOCTOR_SCHEDULE` (Shift Rostering)
+- `schedule_id` (UUID, PK): Schedule entry ID.
+- `doctor_id` (UUID, FK): References `DOCTOR(doctor_id)`.
+- `day_of_week` (ENUM(1..7)): Day of the week (`1` = Sunday, `2` = Monday, ..., `7` = Saturday).
+- `start_time` (TIME): Shift starting time.
+- `end_time` (TIME): Shift ending time (`end_time > start_time`).
 
-```
-                      ┌────────────────────────────┐
-                      │    DOCTOR (Superclass)     │
-                      │    PK: doctor_id           │
-                      └─────────────┬──────────────┘
-                                    │
-               ┌────────────────────┴────────────────────┐
-               ▼ (1:1 PK=FK)                             ▼ (1:1 PK=FK)
-┌──────────────────────────────┐          ┌──────────────────────────────┐
-│     GENERAL_PRACTITIONER     │          │          SPECIALIST          │
-│ PK,FK: doctor_id             │          │ PK,FK: doctor_id             │
-│ clinic_room : VARCHAR(20)    │          │ specialty_area : VARCHAR(50) │
-│ consultation_fee : DECIMAL   │          │ telemedicine_fee : DECIMAL   │
-└──────────────────────────────┘          └──────────────────────────────┘
-```
+### 7. `APPOINTMENT` (Consultation Encounters)
+- `appt_id` (UUID, PK): Appointment encounter ID.
+- `patient_id` (UUID, FK): References `PATIENT(patient_id)`.
+- `doctor_id` (UUID, FK): References `DOCTOR(doctor_id)` superclass directly, supporting both GP and Specialist appointments.
+- `start_date_time` (DATETIME): Scheduled start datetime.
+- `end_date_time` (DATETIME): Scheduled end datetime.
+- `appt_type` (ENUM('In-Person', 'Tele')): Consultation modality.
+- `telemedicine_video_link` (TEXT, Nullable): Video meeting room URL (required when `appt_type = 'Tele'`).
+- `status` (ENUM('Sched', 'Done', 'Cancel')): Appointment state.
 
-#### Table: `DOCTOR` (Superclass)
-- `doctor_id` (UUID, PK): Surrogate primary key for physician identity.
-- `full_name` (VARCHAR(100), NOT NULL): Doctor full legal name.
-- `license_number` (VARCHAR(30), NOT NULL, UNIQUE): Official medical practitioner license number issued by the Ministry of Health.
-- `doctor_type` (ENUM('GP', 'SPEC'), NOT NULL): Disjoint discriminator flag (`'GP'`: General Practitioner, `'SPEC'`: Medical Specialist).
-- `phone` (VARCHAR(15), NOT NULL): Internal contact / emergency on-call telephone number.
-- `status` (ENUM('Active', 'Inactive'), DEFAULT 'Active'): Physician employment / duty status.
-- `deleted_at` (DATETIME, Nullable): Soft-delete audit timestamp upon contract termination or retirement.
+### 8. `DIGITAL_PRESCRIPTION` (Prescription Header)
+- `prescription_id` (UUID, PK): Prescription identifier.
+- `appt_id` (UUID, FK, UNIQUE): Unique reference to `APPOINTMENT(appt_id)` ensuring a 1 : 0..1 relationship (maximum 1 prescription per appointment).
+- `issued_date` (DATETIME): Issue timestamp.
+- `status` (ENUM('Draft', 'Issued')): Prescription lifecycle status.
+- `instructions` (TEXT, Nullable): Physician administration instructions.
 
-#### Table: `GENERAL_PRACTITIONER` (Subclass)
-- `doctor_id` (UUID, PK, FK): Simultaneously serves as the table Primary Key and Foreign Key referencing `DOCTOR(doctor_id)` with an exact 1:1 cardinality.
-- `clinic_room` (VARCHAR(20), NOT NULL): Physical examination room designation within the outpatient clinic (e.g., *"Room 102"*, *"Suite B"*).
-- `consultation_fee` (DECIMAL(10,2), NOT NULL): Standard in-person examination charge (Check constraint: `consultation_fee > 0`).
+### 9. `PRESCRIPTION_ITEM` (Prescription Details)
+- `item_id` (UUID, PK): Line item identifier.
+- `prescription_id` (UUID, FK): References `DIGITAL_PRESCRIPTION(prescription_id)`.
+- `med_id` (UUID, FK): References `MEDICINE(med_id)`.
+- `quantity` (INT): Prescribed quantity (`quantity > 0`).
+- `dosage` (VARCHAR/STRING): Prescribed dosage instructions.
 
-#### Table: `SPECIALIST` (Subclass)
-- `doctor_id` (UUID, PK, FK): Simultaneously serves as the table Primary Key and Foreign Key referencing `DOCTOR(doctor_id)` with an exact 1:1 cardinality.
-- `specialty_area` (VARCHAR(50), NOT NULL): Medical discipline domain (e.g., Cardiology, Dermatology, Neurology, Pediatrics).
-- `telemedicine_fee` (DECIMAL(10,2), NOT NULL): Dedicated video teleconsultation / specialty assessment rate (Check constraint: `telemedicine_fee > 0`).
+### 10. `MEDICINE (Thuốc & Kho)` (Catalog & Inventory)
+- `med_id` (UUID, PK): Medicine identifier.
+- `med_name` (VARCHAR): Pharmaceutical product name.
+- `expiry_date` (DATE): Lot expiration date.
+- `stock_quantity` (INT): Current inventory stock on hand (`>= 0`).
+- `reorder_level` (INT): Minimum stock threshold for replenishment warning.
 
-#### Table: `DOCTOR_SCHEDULE` (Shift Rostering)
-- `schedule_id` (UUID, PK): Surrogate primary key for a roster shift.
-- `doctor_id` (UUID, FK, NOT NULL): Foreign key referencing the physician `DOCTOR(doctor_id)`.
-- `day_of_week` (ENUM(1..7), NOT NULL): Day of weekly recurrence (`1`: Sunday, `2`: Monday, ..., `7`: Saturday).
-- `start_time` (TIME, NOT NULL): Shift commencement time.
-- `end_time` (TIME, NOT NULL): Shift conclusion time (Check constraint: `end_time > start_time`).
+### 11. `INVOICE (Toàn ca khám)` (Billing Header)
+- `invoice_id` (UUID, PK): Invoice identifier.
+- `appt_id` (UUID, FK, UNIQUE): Unique reference to `APPOINTMENT(appt_id)` ensuring a 1 : 0..1 relationship (maximum 1 invoice per appointment).
+- `total_amount` (DECIMAL): Consolidated bill amount (doctor fee + medication cost).
+- `issue_date` (DATETIME): Billing timestamp.
+- `status` (ENUM('Unpaid', 'Paid')): Payment settlement status.
 
----
-
-### 3.3. Clinical Encounter Orchestration (`APPOINTMENT`)
-
-The central coordination entity orchestrating patient-physician clinical workflows:
-
-#### Table: `APPOINTMENT`
-- `appt_id` (UUID, PK): Primary key uniquely identifying the clinical encounter.
-- `patient_id` (UUID, FK, NOT NULL): Foreign key referencing `PATIENT(patient_id)`.
-- `doctor_id` (UUID, FK, NOT NULL): Foreign key referencing the superclass `DOCTOR(doctor_id)` (explicitly highlighted as *"Points to DOCTOR superclass"* in `schema.png`), allowing both General Practitioners and Specialists to be booked seamlessly without polymorphic schema fragmentation.
-- `start_date_time` (DATETIME, NOT NULL): Appointment scheduled commencement timestamp.
-- `end_date_time` (DATETIME, NOT NULL): Appointment scheduled conclusion timestamp (Check constraint: `end_date_time > start_date_time`).
-- `appt_type` (ENUM('In-Person', 'Tele'), NOT NULL): Modality of care delivery:
-  - `'In-Person'`: Physical examination conducted within the clinic facility.
-  - `'Tele'`: Synchronous video consultation via the telemedicine portal.
-- `telemedicine_video_link` (TEXT, Nullable): Secure, end-to-end encrypted video consultation room URL (Mandatory when `appt_type = 'Tele'`).
-- `status` (ENUM('Sched', 'Done', 'Cancel'), DEFAULT 'Sched'): Encounter finite state machine:
-  - `'Sched'`: Confirmed future booking.
-  - `'Done'`: Consultation completed and ready for billing/prescription release.
-  - `'Cancel'`: Booking cancelled by patient or administrative staff.
+### 12. `PAYMENT` (Payment Settlements)
+- `payment_id` (UUID, PK): Payment transaction ID.
+- `invoice_id` (UUID, FK): References `INVOICE(invoice_id)`.
+- `amount_paid` (DECIMAL): Payment amount (`amount_paid > 0`).
+- `payment_method` (ENUM(...)): Payment method (Cash, Card, Transfer, etc.).
 
 ---
 
-### 3.4. Digital Pharmacy Pipeline & Inventory Management (`DIGITAL_PRESCRIPTION`, `PRESCRIPTION_ITEM`, `MEDICINE`)
+## 4. Relationship & Constraints Matrix
 
-#### Table: `DIGITAL_PRESCRIPTION` (Prescription Header)
-- `prescription_id` (UUID, PK): Primary key for the digital prescription.
-- `appt_id` (UUID, FK, UNIQUE, NOT NULL): Foreign key referencing `APPOINTMENT(appt_id)`. The `UNIQUE` constraint strictly enforces the business integrity rule: **Each clinical encounter can generate at most one digital prescription (1 : 0..1 cardinality)**.
-- `issued_date` (DATETIME, NOT NULL): Date and time of clinical sign-off.
-- `status` (ENUM('Draft', 'Issued'), DEFAULT 'Draft'):
-  - `'Draft'`: Prescription under physician revision; line items can be added, updated, or removed.
-  - `'Issued'`: Officially authorized and signed; the record becomes **immutable (Read-Only)** and triggers automated warehouse stock deduction.
-- `instructions` (TEXT, Nullable): Comprehensive patient advice, dietary precautions, and clinical notes.
+The table below summarizes all 11 relationships displayed in `schema.png`:
 
-#### Table: `PRESCRIPTION_ITEM` (Prescription Line Items)
-Associative entity resolving the Many-to-Many (M:N) relationship between `DIGITAL_PRESCRIPTION` and pharmaceutical inventory `MEDICINE`:
-- `item_id` (UUID, PK): Primary key identifying the individual prescription line item.
-- `prescription_id` (UUID, FK, NOT NULL): Foreign key referencing `DIGITAL_PRESCRIPTION(prescription_id)`.
-- `med_id` (UUID, FK, NOT NULL): Foreign key referencing the pharmaceutical item in `MEDICINE(med_id)`.
-- `quantity` (INT, NOT NULL): Quantity prescribed for fulfillment (Integrity check constraint: `quantity > 0`).
-- `dosage` (VARCHAR(255), NOT NULL): Exact clinical dosage, frequency, and duration regimen (e.g., *"500mg, twice daily after meals for 7 days"*).
-
-#### Table: `MEDICINE (Medication & Inventory)`
-- `med_id` (UUID, PK): Primary key uniquely identifying the pharmaceutical item.
-- `med_name` (VARCHAR(150), NOT NULL, UNIQUE): Standard generic pharmaceutical / trade brand name.
-- `expiry_date` (DATE, NOT NULL): Lot batch expiration date (Enforced constraint: Dispensing expired medication where `expiry_date < CURRENT_DATE` is rejected).
-- `stock_quantity` (INT, NOT NULL, DEFAULT 0): Real-time physical inventory available in the clinic dispensary (highlighted in cyan on `schema.png`). Check constraint: `stock_quantity >= 0`.
-- `reorder_level` (INT, NOT NULL, DEFAULT 10): Minimum safety threshold triggering automated procurement notifications.
-
----
-
-### 3.5. Fiscal Billing & Payment Settlements (`INVOICE`, `PAYMENT`)
-
-#### Table: `INVOICE (Consolidated Encounter Bill)`
-- `invoice_id` (UUID, PK): Primary key identifying the consolidated medical invoice.
-- `appt_id` (UUID, FK, UNIQUE, NOT NULL): Foreign key referencing `APPOINTMENT(appt_id)`. The `UNIQUE` constraint enforces that **exactly one invoice is generated per clinical encounter (1 : 0..1 cardinality)**.
-- `total_amount` (DECIMAL(12,2), NOT NULL): Total financial fee = Clinical consultation fee (`consultation_fee` or `telemedicine_fee`) + Cumulative cost of all dispensed medications from `PRESCRIPTION_ITEM`. Check constraint: `total_amount >= 0`.
-- `issue_date` (DATETIME, NOT NULL): Timestamp when billing was finalized.
-- `status` (ENUM('Unpaid', 'Paid'), DEFAULT 'Unpaid'): Fiscal settlement status.
-
-#### Table: `PAYMENT` (Payment Transactions)
-- `payment_id` (UUID, PK): Primary key identifying an individual fiscal transaction.
-- `invoice_id` (UUID, FK, NOT NULL): Foreign key referencing `INVOICE(invoice_id)`. An invoice supports multiple installment transactions or split payment methods (`1 : N`).
-- `amount_paid` (DECIMAL(12,2), NOT NULL): Disbursed transaction amount in this tranche (Check constraint: `amount_paid > 0`).
-- `payment_method` (ENUM('Cash', 'Credit Card', 'Bank Transfer', 'Insurance'), NOT NULL): Authorized payment gateway / payment channel.
-
----
-
-## 4. Relationship & Foreign Key Constraints Matrix
-
-The table below synthesizes all relationships, foreign key mappings, and structural cardinalities portrayed in `schema.png`:
-
-| Parent Table (1) | Child Table (N) | Foreign Key Column | Cardinality | Crow's Foot Notation | Business Logic & Integrity Constraints |
+| Parent Table (1) | Child Table (N / 0..1) | Foreign Key | Diagram Cardinality | Crow's Foot Symbol | Meaning |
 | :--- | :--- | :--- | :---: | :---: | :--- |
-| `DOCTOR` | `GENERAL_PRACTITIONER` | `doctor_id` | 1 : 1 | `|| (1) — || (1)` | 1:1 Disjoint specialization inheritance (Option 8.4a). `doctor_id` is both PK and FK. |
-| `DOCTOR` | `SPECIALIST` | `doctor_id` | 1 : 1 | `|| (1) — || (1)` | 1:1 Disjoint specialization inheritance (Option 8.4a). `doctor_id` is both PK and FK. |
-| `DOCTOR` | `DOCTOR_SCHEDULE` | `doctor_id` | 1 : N | `|| (1) — o{ (N)` | 1 Doctor configures multiple recurring weekly shift schedules. |
-| `DOCTOR` | `APPOINTMENT` | `doctor_id` *(Points to DOCTOR)* | 1 : N | `|| (1) — o{ (N)` | 1 Doctor handles multiple scheduled clinical consultations. |
-| `PATIENT` | `MEDICAL_HISTORY` | `patient_id` | 1 : N | `|| (1) — o{ (N)` | 1 Patient owns multiple historical medical and clinical condition records. |
-| `MEDICAL_HISTORY` | `APPOINTMENT` | `patient_id` / Cross-ref | 1 : N | `|| (1) — o{ (N)` | Patient historical records provide diagnostic context across multiple appointments. |
-| `APPOINTMENT` | `DIGITAL_PRESCRIPTION` | `appt_id` *(FK, UQ)* | 1 : 0..1 | `|| (1) — o| (0..1)` | 1 Finished clinical encounter produces at most 1 unique digital prescription. |
-| `APPOINTMENT` | `INVOICE` | `appt_id` *(FK, UQ)* | 1 : 0..1 | `|| (1) — o| (0..1)` | 1 Finished clinical encounter produces at most 1 consolidated financial invoice. |
-| `DIGITAL_PRESCRIPTION`| `PRESCRIPTION_ITEM` | `prescription_id` | 1 : N | `|| (1) — |{ (N)` | 1 Digital prescription contains one or more prescribed medication line items. |
-| `MEDICINE` | `PRESCRIPTION_ITEM` | `med_id` | 1 : N | `|| (1) — o{ (N)` | 1 Medication catalog entry can be dispensed across multiple prescription line items. |
-| `INVOICE` | `PAYMENT` | `invoice_id` | 1 : N | `|| (1) — o{ (N)` | 1 Medical invoice may be settled through one or more partial payment transactions. |
+| `DOCTOR` | `GENERAL_PRACTITIONER` | `doctor_id` | 1 : 1 | `|| (1) — || (1)` | 1:1 Specialization inheritance (`PK = FK`). |
+| `DOCTOR` | `SPECIALIST` | `doctor_id` | 1 : 1 | `|| (1) — || (1)` | 1:1 Specialization inheritance (`PK = FK`). |
+| `DOCTOR` | `DOCTOR_SCHEDULE` | `doctor_id` | 1 : N | `|| (1) — >< (N)` | 1 Doctor has multiple weekly shift schedules. |
+| `DOCTOR` | `APPOINTMENT` | `doctor_id` *(Points to DOCTOR)* | 1 : N | `|| (1) — >< (N)` | 1 Doctor conducts multiple appointments. |
+| `PATIENT` | `MEDICAL_HISTORY` | `patient_id` | 1 : N | `|| (1) — >< (N)` | 1 Patient has multiple medical history records. |
+| `MEDICAL_HISTORY` | `APPOINTMENT` | `patient_id` / Cross-ref | 1 : N | `|| (1) — >< (N)` | Medical history informs multiple appointments. |
+| `APPOINTMENT` | `DIGITAL_PRESCRIPTION` | `appt_id` *(FK, UQ)* | 1 : 0..1 | `|| (1) — 0..1` | 1 Appointment generates at most 1 prescription. |
+| `APPOINTMENT` | `INVOICE` | `appt_id` *(FK, UQ)* | 1 : 0..1 | `|| (1) — 0..1` | 1 Appointment generates at most 1 invoice. |
+| `DIGITAL_PRESCRIPTION` | `PRESCRIPTION_ITEM` | `prescription_id` | 1 : N | `|| (1) — >< (N)` | 1 Prescription contains multiple medication items. |
+| `MEDICINE` | `PRESCRIPTION_ITEM` | `med_id` | 1 : N | `|| (1) — (N)` | 1 Medicine is dispensed across multiple prescriptions. |
+| `INVOICE` | `PAYMENT` | `invoice_id` | 1 : N | `|| (1) — >< (N)` | 1 Invoice can be settled across multiple payments. |
 
 ---
 
-## 5. Architectural Engineering Highlights
+## 5. Key Architecture Notes from Diagram
 
-1. **Planar Zero-Crossing Visual Layout**:
-   - The entity-relationship graph in `schema.png` is topologically optimized with zero intersecting lines. Clinical workflows flow logically from top to bottom and left to right, minimizing visual clutter for engineering and clinical audit reviews.
-2. **Polymorphic Doctor Foreign Key Association (`APPOINTMENT.doctor_id -> DOCTOR`)**:
-   - Instead of bifurcating foreign keys into `gp_id` and `specialist_id`, the `APPOINTMENT` table points directly to the `DOCTOR` superclass. This cleanly eliminates NULL pointer anomalies and polymorphic table joins while supporting both physical GP consultations and Telemedicine Specialist sessions.
-3. **Strict 1:0..1 Relationship via Unique Foreign Keys (`FK, UQ`)**:
-   - Both `DIGITAL_PRESCRIPTION.appt_id` and `INVOICE.appt_id` are declared as `UNIQUE` foreign keys. This architectural safeguard prevents duplicate billing and duplicate medication orders for any single clinical encounter at the database engine level.
-4. **Real-time Inventory Depletion & Stock Integrity**:
-   - The dispensary model integrates automated consistency checks: When `DIGITAL_PRESCRIPTION.status` transitions from `'Draft'` to `'Issued'`, an atomic database transaction verifies that `stock_quantity >= quantity` before decrementing stock, eliminating race conditions during high-volume dispensary operations.
-5. **Regulatory Soft-Delete Implementation (`deleted_at`)**:
-   - Tables `PATIENT` and `DOCTOR` incorporate nullable `deleted_at` timestamps. In compliance with medical record retention regulations (HIPAA and Ministry of Health standards), user deactivation never executes physical `DELETE` statements, preserving all historical audit trails.
-6. **Full Third Normal Form (3NF) Compliance**:
-   - Every non-key attribute is strictly non-transitively dependent on the primary key. Transitive dependencies (e.g., storing physician room numbers or specialty fees inside the `APPOINTMENT` record) are systematically decoupled into their respective specialized entities.
+1. **Specialization Inheritance (Option 8.4a)**:
+   - `DOCTOR` is the superclass. `GENERAL_PRACTITIONER` and `SPECIALIST` share the same primary key (`PK, FK doctor_id : UUID`), enforcing a 1:1 relationship with zero NULL attribute waste.
+2. **Unified Doctor Foreign Key**:
+   - `APPOINTMENT.doctor_id` points directly to `DOCTOR(doctor_id)` superclass (not separate tables), allowing both GP and Specialist appointments in a unified table.
+3. **1 : 0..1 Constraint via Unique Foreign Key**:
+   - `DIGITAL_PRESCRIPTION(appt_id)` and `INVOICE(appt_id)` are marked `FK, UQ` (or `FK, UK`), preventing multiple prescriptions or duplicate invoices per appointment.
+4. **Inventory Management**:
+   - `MEDICINE` tracks `stock_quantity` and `reorder_level` (highlighted green in diagram) for inventory control and reorder alerts.
+5. **Regulatory Soft Delete**:
+   - `PATIENT` and `DOCTOR` contain `deleted_at : DATETIME` to retain audit trails and medical history without physical row deletion.
