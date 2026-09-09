@@ -28,20 +28,24 @@ The project aims to:
 
 Each stable key is an immutable UUID-based surrogate identifier unless explicitly described as an inherited identity key. Mutable business attributes, such as phone numbers, license numbers, medicine names, and appointment dates, are not used as primary identity keys.
 
-Table | Description |
+### Core Data Model
+
+The logical database model contains the following primary entities and relationships. The stable-key definitions are specified in the separate table above. The logical mapping also includes `PAYMENT` as a dependent financial relation.
+
+| Entity | Responsibility |
 |---|---|
-| `DOCTOR` | Common licensed-practitioner details, credentials, contact information, and employment status. |
-| `GENERAL_PRACTITIONER` | Physical outpatient doctor specialization with clinic room and consultation fee. |
-| `SPECIALIST` | Specialized-care and telemedicine doctor specialization with specialty and certification information. |
-| `DOCTOR_SCHEDULE` | Doctor duty interval with work date, start time, end time, and availability status. |
-| `PATIENT` | Registered patient identity, demographic details, contact information, and account status. |
-| `APPOINTMENT` | In-person or telemedicine booking with patient, doctor, date, time slot, reason, and status. |
-| `MEDICAL_RECORD` | Consultation encounter record containing diagnosis, clinical notes, treatment plan, and record date. |
-| `DIGITAL_PRESCRIPTION` | Physician-issued pharmaceutical authorization linked to a medical record, with validity and lifecycle status. |
-| `PRESCRIPTION_ITEM` | Prescription line linking a medicine to dosage, frequency, duration, quantity, and captured price. |
-| `MEDICINE` | Approved pharmaceutical catalog and dispensary inventory with unit price, stock quantity, and reorder level. |
-| `INVOICE` | Consolidated financial bill for consultation services and dispensed medicines. |
-| `PAYMENT` | Logical-schema relation recording payment transactions associated with an invoice.
+| `DOCTOR` | Common identity and credentials for licensed practitioners |
+| `GENERAL_PRACTITIONER` | Physical outpatient doctor specialization |
+| `SPECIALIST` | Specialized and telemedicine doctor specialization |
+| `DOCTOR_SCHEDULE` | Doctor working intervals and availability |
+| `PATIENT` | Registered patient identity and demographics |
+| `APPOINTMENT` | In-person or telemedicine booking |
+| `MEDICAL_RECORD` | Clinical diagnosis and consultation documentation |
+| `DIGITAL_PRESCRIPTION` | Prescription authorization and status |
+| `PRESCRIPTION_ITEM` | Medicine, dosage, duration, and quantity line |
+| `MEDICINE` | Pharmaceutical catalog and stock |
+| `INVOICE` | Consolidated clinical and medicine billing |
+| `PAYMENT` | Payment transactions associated with invoices |
 
 ### In Scope
 
@@ -115,21 +119,4 @@ The system will define the following business roles:
 
 Each role will receive only the permissions required for its operational responsibilities. Read and write privileges will be separated by entity and business function.
 
-### Core Data Model
 
-The logical database model contains the following primary entities and relationships. The stable-key definitions are specified in the separate table above. The logical mapping also includes `PAYMENT` as a dependent financial relation.
-
-| Entity | Responsibility |
-|---|---|
-| `DOCTOR` | Common identity and credentials for licensed practitioners |
-| `GENERAL_PRACTITIONER` | Physical outpatient doctor specialization |
-| `SPECIALIST` | Specialized and telemedicine doctor specialization |
-| `DOCTOR_SCHEDULE` | Doctor working intervals and availability |
-| `PATIENT` | Registered patient identity and demographics |
-| `APPOINTMENT` | In-person or telemedicine booking |
-| `MEDICAL_RECORD` | Clinical diagnosis and consultation documentation |
-| `DIGITAL_PRESCRIPTION` | Prescription authorization and status |
-| `PRESCRIPTION_ITEM` | Medicine, dosage, duration, and quantity line |
-| `MEDICINE` | Pharmaceutical catalog and stock |
-| `INVOICE` | Consolidated clinical and medicine billing |
-| `PAYMENT` | Payment transactions associated with invoices |
