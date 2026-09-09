@@ -13,11 +13,12 @@ Year 2026-2027.
 
 ## Team
 
-| Student ID | Member | Responsibility |
+| Student ID | Member | Github nickname |
 |---|---|---|
-| N25DCAT086 | Ho Thi Truc Linh | Problem statement and project scope |
-| N25DCAT087 | Huynh Mai Tri Loc | Business rules |
-| N25DCAT089 | Nguyen Dang Tuan Minh | Git management and EER diagram |
+| N25DCAT086 | Ho Thi Truc Linh | linh-h-annanie |
+| N25DCAT087 | Huynh Mai Tri Loc | halo16-04 |
+| N25DCAT089 | Nguyen Dang Tuan Minh | ndtuanminh-o
+ |
 
 ## Project Overview
 
