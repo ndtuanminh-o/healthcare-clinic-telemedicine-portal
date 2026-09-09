@@ -124,21 +124,7 @@ The system will define the following business roles:
 
 Each role will receive only the permissions required for its operational responsibilities. Read and write privileges will be separated by entity and business function.
 
-### 3. Out of Scope
-
-The following capabilities are outside the scope of this database project:
-
-- Full patient-facing web or mobile user interface implementation.
-- Real-time video calling infrastructure.
-- Payment gateway integration with external banks or card processors.
-- Electronic health record exchange with external hospitals or government systems.
-- Insurance claim submission and insurance-provider reconciliation.
-- Advanced medical decision support or automated diagnosis.
-- Pharmacy logistics, delivery routing, or warehouse management beyond inventory quantities.
-- Production deployment, cloud infrastructure, and operational monitoring.
-- Real-world patient data collection or storage.
-
-### 4. Core Data Model
+### 3. Core Data Model
 
 The logical database model contains the following primary entities and relationships. The stable-key definitions are specified in the separate table above. The logical mapping also includes `PAYMENT` as a dependent financial relation.
 
