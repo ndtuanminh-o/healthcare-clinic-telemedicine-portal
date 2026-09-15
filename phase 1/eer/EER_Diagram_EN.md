@@ -207,7 +207,7 @@ The conceptual schema contains 9 principal entity boxes and 2 specialization sub
 
 Every relationship shown in `er_diagram_cropped.png` is documented below with its exact cardinality ratio:
 
-| # | Diamond Name | Connected Entities | Cardinality in Image | Semantics & Business Meaning |
+| # | Relationship | Connected Entities | Cardinality | Semantics & Business Meaning |
 | :-: | :--- | :--- | :-: | :--- |
 | **1** | **`Schedules`** | `DOCTOR` --- `DOCTOR_SCHEDULE` | 1 : N | 1 Doctor registers N working shifts. |
 | **2** | **`Conducts`** | `DOCTOR` --- `APPOINTMENT` | 1 : N | 1 Doctor conducts N clinical appointments. |
