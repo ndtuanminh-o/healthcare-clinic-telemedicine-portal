@@ -1,9 +1,3 @@
-<p align="right">
-  <strong>🌐 Language / Ngôn ngữ:</strong>
-  <a href="EER_Diagram_EN.md"><b>🇬🇧 English</b></a> |
-  <a href="EER_Diagram_VI.md"><b>🇻🇳 Tiếng Việt</b></a>
-</p>
-
 # Enhanced Entity-Relationship (EER) Conceptual Model Documentation
 ## Topic 05: Healthcare Clinic & Telemedicine Portal
 **Course:** Database Systems (INT1313) - Semester 1, 2026-2027 | PTIT  

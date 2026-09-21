@@ -10,10 +10,6 @@
 
 <br/>
 
-**[ English ](README.md)** &nbsp;|&nbsp; **[ Tiếng Việt ](README.vi.md)**
-
-<br/>
-
 An industrial-grade relational database management system coordinating on-premise outpatient clinic consultations and remote telemedicine appointments.
 
 </div>
@@ -33,7 +29,7 @@ An industrial-grade relational database management system coordinating on-premis
 
 | Student ID | Full Name | Role | GitHub | Contact Email |
 | :--- | :--- | :--- | :--- | :--- |
-| **N25DCAT089** | Nguyễn Đăng Tuấn Minh | EER Lead & Database Modeling | [@ndtuanminh-o](https://github.com/ndtuanminh-o) | `nd.tuanminh.work@gmail.com` |
+| **N25DCAT089** | Nguyễn Đăng Tuấn Minh | EER Lead & Database Modeling | [@ndtuanminh-o](https://github.com/ndtuanminh-o) | `n25dcat089@student.ptithcm.edu.vn` |
 | **N25DCAT086** | Hồ Thị Trúc Linh | Requirements Analysis & Scope | [@linh-h-annanie](https://github.com/linh-h-annanie) | `n25dcat086@student.ptithcm.edu.vn` |
 | **N25DCAT087** | Huỳnh Mai Trí Lộc | Relational Mapping & Schema | [@halo16-04](https://github.com/halo16-04) | `n25dcat087@student.ptithcm.edu.vn` |
 
@@ -43,7 +39,7 @@ An industrial-grade relational database management system coordinating on-premis
 
 | Milestone | Focus & Methodology | Status | Deliverables |
 | :---: | :--- | :---: | :--- |
-| **Phase 1** | **Conceptual Design (EER)**<br/>ISO/IEC/IEEE 29148 Requirements & Elmasri EER Modeling | **Done** | • [Project Scope](phase%201/project_scope.md)<br/>• [Business Rules (BR-01 to BR-12)](phase%201/business_rules.md)<br/>• [EER Documentation (EN)](phase%201/eer/EER_Diagram_EN.md)<br/>• [EER Documentation (VI)](phase%201/eer/EER_Diagram_VI.md) |
+| **Phase 1** | **Conceptual Design (EER)**<br/>ISO/IEC/IEEE 29148 Requirements & Elmasri EER Modeling | **Done** | • [Project Scope](phase%201/project_scope.md)<br/>• [Business Rules (BR-01 to BR-12)](phase%201/business_rules.md)<br/>• [EER Documentation](phase%201/eer/EER_Diagram_EN.md) |
 | **Phase 2** | **Logical & Physical Design**<br/>ISO/IEC 11179 Data Dictionary & IE Crow's Foot Schema | **Done** | • [Physical Schema Mapping](phase%202/relational_schema_mapping/physical_schema_diagram.md)<br/>• [Data Dictionary](phase%202/data_dictionary.md)<br/>• [Normalization Proofs (1NF-BCNF)](phase%202/normalization_verification.md) |
 | **Phase 3** | **Implementation & SQL Rigor** | **No plan yet** | TBD |
 | **Phase 4** | **Integration & Defense** | **No plan yet** | TBD |
@@ -55,12 +51,10 @@ An industrial-grade relational database management system coordinating on-premis
 ```text
 .
 ├── docs/
-│   ├── project-identity.md
-│   └── mcp-plan.md
+│   └── project-identity.md
 ├── phase 1/
 │   ├── eer/
-│   │   ├── EER_Diagram_EN.md
-│   │   └── EER_Diagram_VI.md
+│   │   └── EER_Diagram_EN.md
 │   ├── business_rules.md
 │   └── project_scope.md
 ├── phase 2/
@@ -69,6 +63,5 @@ An industrial-grade relational database management system coordinating on-premis
 │   ├── data_dictionary.md
 │   └── normalization_verification.md
 ├── .gitignore
-├── README.md
-└── README.vi.md
+└── README.md
 ```
