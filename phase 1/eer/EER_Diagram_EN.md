@@ -6,35 +6,7 @@
 
 ---
 
-## 1. Revision Overview & Quality Improvements
-
-This revision directly addresses the critical feedback points regarding conceptual modeling rigor, notation consistency, and cross-phase alignment:
-
-1. **Diamond Name => Relationship Semantics**:
-   - In EER / Chen notation, every diamond strictly represents a **Relationship Type**.
-   - **Fix redundant relationships:** Removed the duplicated `Owns` diamond between `PATIENT` and `INVOICE`. In healthcare billing workflows, an invoice is issued for an appointment (`Bills` 1:1) and settled by the patient (`Pays` 1:N). Having two parallel relationships (`Pays` and `Owns`) between the same entity pair was structurally redundant.
-   - All 10 remaining diamonds now represent distinct, semantically unambiguous clinical and administrative relationships.
-
-2. **Cardinality in Diagram => Standardized Notation**:
-   - Eliminated the mix of Chen cardinality ratios (`1`, `N`) and UML/min..max intervals (`0..1`, `1..N`) on diagram edges.
-   - The visual model strictly uses **Elmasri-Navathe Cardinality Ratios** (`1:1`, `1:N`) on relationship lines, coupled with single/double lines for participation.
-   - Section 4 provides the full **Structural Constraints Matrix `(min, max)`** specifying exact lower and upper bounds for every participating entity.
-
-3. **Cross-Phase Synchronization Anchors**:
-   - **`DOCTOR_SCHEDULE`**: Explicitly preserves `work_date` (specific duty date) and `slot_status` (`Available`, `Booked`, `Blocked`). Phase 2 physical schema must retain these fields rather than reducing to recurring weekly day-of-week slots.
-   - **`APPOINTMENT`**: Explicitly preserves `booking_time` (reservation timestamp) distinct from scheduled execution interval `[start_time, end_time]`.
-   - **Clinical Encounter Chain**: Formalizes the clinical dependency `APPOINTMENT` (1:1) → `MEDICAL_RECORD` (1:1) → `DIGITAL_PRESCRIPTION` (1:N) → `PRESCRIPTION_ITEM`. A prescription is legally and clinically authorized through a diagnostic record, not bypassed directly from an appointment header.
-   - **Physician Specialization**: Maintains the `DOCTOR` superclass with Total Specialization (`===`) and Disjoint Constraint (`(d)`), specializing into `GENERAL_PRACTITIONER` and `SPECIALIST` (retaining `board_certified_year`, `specialty`, and `consultation_fee`).
-
-4. **Consultation Type & Telemedicine Support**:
-   - Standardized attribute: `consultation_type` (`ENUM('In-Person', 'Telemedicine')`).
-   - Integrated `telemedicine_video_link` (Nullable; mandatory when `consultation_type = 'Telemedicine'` upon moving to `In-Progress` per BR-05).
-
----
-
-## 2. Mermaid Source Code (Conceptual EER Diagram)
-
-The Mermaid diagram below defines the conceptual model adhering to the revised specifications:
+## 1. Conceptual EER Diagram (Mermaid Specification)
 
 ```mermaid
 flowchart LR
@@ -120,7 +92,7 @@ flowchart LR
 
 ---
 
-## 3. Entity & Subclass Specifications
+## 2. Entity & Subclass Specifications
 
 ### 3.1. Physician Specialization Hierarchy
 - **`DOCTOR` (Superclass Entity)**:
@@ -221,7 +193,7 @@ flowchart LR
 
 ---
 
-## 4. Formal Relationship & Structural Constraints Matrix (10 Diamonds)
+## 3. Formal Relationship & Structural Constraints Matrix
 
 This matrix formalizes both the **Cardinality Ratio** and the **Structural Constraints `(min, max)`** per Elmasri-Navathe conventions:
 
@@ -238,21 +210,3 @@ This matrix formalizes both the **Cardinality Ratio** and the **Structural Const
 | **9** | **`Bills`** | `APPOINTMENT` | `INVOICE` | 1 : 1 | `(1, 1)` | `(1, 1)` | Total / Total | Each completed appointment generates exactly one invoice; an invoice strictly references one encounter. |
 | **10**| **`Pays`** | `PATIENT` | `INVOICE` | 1 : N | `(0, N)` | `(1, 1)` | Partial / Total | A patient pays multiple clinic invoices; each invoice is billed to and settled by one patient. |
 
-*(Note: Duplicate `Owns` relationship has been permanently removed).*
-
----
-
-## 5. Directives for Phase 2 Synchronization (Handover Guide for Team)
-
-To ensure 100% architectural consistency across the repository, the Phase 2 Physical Relational Schema team must map strictly from this EER specification:
-
-1. **Retain Shift Scheduling Fields**:
-   - `DOCTOR_SCHEDULE` in Phase 2 **must** include `work_date` (DATE) and `slot_status` (ENUM), enabling real-time appointment conflict checking (BR-01, BR-02). Do not replace with static recurring `day_of_week`.
-2. **Retain Reservation Timestamp**:
-   - `APPOINTMENT` **must** include `booking_time` (DATETIME) to preserve audit trails of when bookings were submitted.
-3. **Preserve Clinical Diagnosis Chain**:
-   - Do not bypass `MEDICAL_RECORD`. In physical mapping, `DIGITAL_PRESCRIPTION` references `MEDICAL_RECORD(record_id)` with a `UNIQUE` foreign key (enforcing 1:0..1).
-4. **Physician Subclass Attributes**:
-   - `SPECIALIST` must retain `board_certified_year` (INT) and use standardized attribute `consultation_fee`.
-5. **Medicine Formulary Integrity**:
-   - Ensure `MEDICINE` preserves `active_ingredient`, `unit`, and `unit_price` in addition to warehouse stock tracking attributes (`stock_quantity`, `reorder_level`).
