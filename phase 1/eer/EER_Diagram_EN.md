@@ -1,7 +1,5 @@
 # Enhanced Entity-Relationship (EER) Conceptual Model Documentation
-## Topic 05: Healthcare Clinic & Telemedicine Portal
-**Course:** Database Systems (INT1313) - Semester 1, 2026-2027 | PTIT  
-**Author (EER Design):** Nguyen Dang Tuan Minh (N25DCAT089 / @ndtuanminh-o)  
+## Topic 05: Healthcare Clinic & Telemedicine Portal | PTIT  
 **Team:** G5 - Pingo  
 
 ---
@@ -197,7 +195,7 @@ flowchart LR
 
 This matrix formalizes both the **Cardinality Ratio** and the **Structural Constraints `(min, max)`** per Elmasri-Navathe conventions:
 
-| # | Relationship Name | Entity 1 | Entity 2 | Cardinality Ratio | Structural Constraint Entity 1 | Structural Constraint Entity 2 | Participation Entity 1 / Entity 2 | Semantics & Business Meaning |
+| # | Relationship | Entity 1 | Entity 2 | Cardinality Ratio | Structural Constraint Entity 1 | Structural Constraint Entity 2 | Participation Entity 1 / Entity 2 | Semantics & Business Meaning |
 | :-: | :--- | :--- | :--- | :-: | :-: | :-: | :-: | :--- |
 | **1** | **`Schedules`** | `DOCTOR` | `DOCTOR_SCHEDULE` | 1 : N | `(0, N)` | `(1, 1)` | Partial / Total | A doctor may register zero or many working shifts; each shift belongs strictly to one doctor. |
 | **2** | **`Conducts`** | `DOCTOR` | `APPOINTMENT` | 1 : N | `(0, N)` | `(1, 1)` | Partial / Total | A doctor may conduct multiple appointments; each appointment is assigned to exactly one doctor. |
