@@ -265,14 +265,3 @@ The schema contains **11 relational tables** mapped 1-to-1 from the conceptual E
 
 ---
 
-## 4. Key Architectural Alignment Notes
-
-1. **Exact 1-to-1 Parity with Phase 1 EER**:
-   - Zero attribute name mismatches between EER and Physical Schema.
-   - `slot_status` and `work_date` preserved in `DOCTOR_SCHEDULE`.
-   - `booking_time` and `consultation_type` preserved in `APPOINTMENT`.
-   - Clinical diagnosis workflow maintained: `APPOINTMENT` → `MEDICAL_RECORD` → `DIGITAL_PRESCRIPTION` → `PRESCRIPTION_ITEM`.
-2. **Specialization Mapping (Elmasri Step 8.4a)**:
-   - Separate tables for `GENERAL_PRACTITIONER` and `SPECIALIST` sharing `doctor_id` as both PK and FK referencing `DOCTOR(doctor_id)`. Guarantees 100% normalization with zero NULL storage waste.
-3. **Card-1:0..1 Constraints Enforced via Unique Foreign Keys**:
-   - `MEDICAL_RECORD(appointment_id)`, `DIGITAL_PRESCRIPTION(record_id)`, and `INVOICE(appointment_id)` are declared with `UNIQUE` foreign keys, guaranteeing strict single-instance constraints.
