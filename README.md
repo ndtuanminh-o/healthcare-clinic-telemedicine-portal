@@ -1,52 +1,53 @@
-<div align="center">
-
 # Healthcare Clinic & Telemedicine Portal
-### Relational Database Engineering & System Design
 
-[![Course](https://img.shields.io/badge/Course-INT1313%20Database%20Systems-0052CC?style=for-the-badge&logo=postgresql&logoColor=white)](https://ptithcm.edu.vn)
-[![Institution](https://img.shields.io/badge/Institution-PTIT%20HCM-DC2626?style=for-the-badge)](https://ptithcm.edu.vn)
-[![Academic Year](https://img.shields.io/badge/Academic%20Year-2026--2027-10B981?style=for-the-badge)]()
-[![Status](https://img.shields.io/badge/Status-Phase%201%20%26%202%20Complete-8B5CF6?style=for-the-badge)]()
-
-<br/>
-
-An industrial-grade relational database management system coordinating on-premise outpatient clinic consultations and remote telemedicine appointments.
-
-</div>
+Database project for **INT1313 - Database Systems**, Semester 1, Academic Year 2026-2027.  
+Posts and Telecommunications Institute of Technology (PTIT).
 
 ---
 
-## 1. Project Information
+## Project Identity
 
-| Property | Specification |
-| :--- | :--- |
-| **Course** | INT1313 - Database Systems (Semester 1, Academic Year 2026-2027) |
-| **Institution** | Posts and Telecommunications Institute of Technology (PTIT HCM) |
-| **Topic ID** | Topic #05: Healthcare Clinic & Telemedicine Portal |
-| **Team Name** | G5 (Pingo) |
+- **Topic:** #05: Healthcare Clinic & Telemedicine Portal
+- **Team:** G5 (Pingo)
 
 ### Team Members
 
-| Student ID | Full Name | Role | GitHub | Contact Email |
-| :--- | :--- | :--- | :--- | :--- |
-| **N25DCAT089** | Nguyễn Đăng Tuấn Minh | EER Lead & Database Modeling | [@ndtuanminh-o](https://github.com/ndtuanminh-o) | `n25dcat089@student.ptithcm.edu.vn` |
-| **N25DCAT086** | Hồ Thị Trúc Linh | Requirements Analysis & Scope | [@linh-h-annanie](https://github.com/linh-h-annanie) | `n25dcat086@student.ptithcm.edu.vn` |
-| **N25DCAT087** | Huỳnh Mai Trí Lộc | Relational Mapping & Schema | [@halo16-04](https://github.com/halo16-04) | `n25dcat087@student.ptithcm.edu.vn` |
+| Student ID | Full Name | GitHub | Email |
+| :--- | :--- | :--- | :--- |
+| **N25DCAT089** | Nguyễn Đăng Tuấn Minh | [@ndtuanminh-o](https://github.com/ndtuanminh-o) | `n25dcat089@student.ptithcm.edu.vn` |
+| **N25DCAT086** | Hồ Thị Trúc Linh | [@linh-h-annanie](https://github.com/linh-h-annanie) | `n25dcat086@student.ptithcm.edu.vn` |
+| **N25DCAT087** | Huỳnh Mai Trí Lộc | [@halo16-04](https://github.com/halo16-04) | `n25dcat087@student.ptithcm.edu.vn` |
 
 ---
 
-## 2. Project Deliverables & Milestone Roadmap
+## Project Overview
 
-| Milestone | Focus & Methodology | Status | Deliverables |
-| :---: | :--- | :---: | :--- |
-| **Phase 1** | **Conceptual Design (EER)**<br/>ISO/IEC/IEEE 29148 Requirements & Elmasri EER Modeling | **Done** | • [Project Scope](phase%201/project_scope.md)<br/>• [Business Rules (BR-01 to BR-12)](phase%201/business_rules.md)<br/>• [EER Documentation](phase%201/eer/EER_Diagram_EN.md) |
-| **Phase 2** | **Logical & Physical Design**<br/>ISO/IEC 11179 Data Dictionary & IE Crow's Foot Schema | **Done** | • [Physical Schema Mapping](phase%202/relational_schema_mapping/physical_schema_diagram.md)<br/>• [Data Dictionary](phase%202/data_dictionary.md)<br/>• [Normalization Proofs (1NF-BCNF)](phase%202/normalization_verification.md) |
-| **Phase 3** | **Implementation & SQL Rigor** | **No plan yet** | TBD |
-| **Phase 4** | **Integration & Defense** | **No plan yet** | TBD |
+This project designs a relational database management system for a healthcare facility combining **in-person clinic consultations** and **remote telemedicine appointments**.
+
+### Key Clinical Domains
+- **Patients & Medical History:** Centralized demographics, diagnoses, and medical histories with soft-delete audit trails.
+- **Doctor Specialization:** `DOCTOR` superclass specialized into `GENERAL_PRACTITIONER` (clinic rooms, in-person examination) and `SPECIALIST` (specialty fields, video telemedicine consultations).
+- **Appointments & Rostering:** Shift scheduling (`DOCTOR_SCHEDULE`) and dual-mode appointment routing (`In-Person` vs. `Tele`).
+- **Digital Pharmacy & Inventory:** Electronic prescriptions, line-item dosages, and real-time stock tracking with reorder thresholds.
+- **Billing & Payments:** Consolidated invoice per appointment combining consultation fee and prescribed medication costs, settled via multi-channel payments.
 
 ---
 
-## 3. Repository Structure
+## Project Deliverables
+
+### Phase 1: Conceptual Design (EER)
+- [Project Scope](phase%201/project_scope.md): System boundaries and functional specifications.
+- [Business Rules](phase%201/business_rules.md): 12 business rules (BR-01 through BR-12).
+- [EER Documentation](phase%201/eer/EER_Diagram_EN.md): Conceptual entity-relationship specifications and standardized Mermaid model.
+
+### Phase 2: Logical & Physical Relational Design
+- [Physical Schema Documentation](phase%202/relational_schema_mapping/physical_schema_diagram.md): Physical relational schema specification and Mermaid IE Crow's Foot ER diagram.
+- [Data Dictionary](phase%202/data_dictionary.md): ISO/IEC 11179 standardized metadata catalog.
+- [Normalization Verification](phase%202/normalization_verification.md): Functional dependency analysis and formal 1NF-BCNF proofs.
+
+---
+
+## Repository Structure
 
 ```text
 .
