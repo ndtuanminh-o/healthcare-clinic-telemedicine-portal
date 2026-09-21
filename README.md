@@ -14,9 +14,9 @@ Posts and Telecommunications Institute of Technology (PTIT).
 
 | Student ID | Full Name | GitHub | Email |
 | :--- | :--- | :--- | :--- |
-| **N25DCAT089** | Nguyễn Đăng Tuấn Minh | [@ndtuanminh-o](https://github.com/ndtuanminh-o) | `n25dcat089@student.ptithcm.edu.vn` |
 | **N25DCAT086** | Hồ Thị Trúc Linh | [@linh-h-annanie](https://github.com/linh-h-annanie) | `n25dcat086@student.ptithcm.edu.vn` |
 | **N25DCAT087** | Huỳnh Mai Trí Lộc | [@halo16-04](https://github.com/halo16-04) | `n25dcat087@student.ptithcm.edu.vn` |
+| **N25DCAT089** | Nguyễn Đăng Tuấn Minh | [@ndtuanminh-o](https://github.com/ndtuanminh-o) | `n25dcat089@student.ptithcm.edu.vn` |
 
 ---
 
@@ -36,14 +36,14 @@ This project designs a relational database management system for a healthcare fa
 ## Project Deliverables
 
 ### Phase 1: Conceptual Design (EER)
-- [Project Scope](phase%201/project_scope.md): System boundaries and functional specifications.
-- [Business Rules](phase%201/business_rules.md): 12 business rules (BR-01 through BR-12).
-- [EER Documentation](phase%201/eer/EER_Diagram_EN.md): Conceptual entity-relationship specifications and standardized Mermaid model.
+- [Project Scope](phase%201/project_scope.md)
+- [Business Rules](phase%201/business_rules.md)
+- [EER Documentation](phase%201/eer/EER_Diagram_EN.md)
 
 ### Phase 2: Logical & Physical Relational Design
-- [Physical Schema Documentation](phase%202/relational_schema_mapping/physical_schema_diagram.md): Physical relational schema specification and Mermaid IE Crow's Foot ER diagram.
-- [Data Dictionary](phase%202/data_dictionary.md): ISO/IEC 11179 standardized metadata catalog.
-- [Normalization Verification](phase%202/normalization_verification.md): Functional dependency analysis and formal 1NF-BCNF proofs.
+- [Physical Schema Documentation](phase%202/relational_schema_mapping/physical_schema_diagram.md)
+- [Data Dictionary](phase%202/data_dictionary.md)
+- [Normalization Verification](phase%202/normalization_verification.md)
 
 ---
 
