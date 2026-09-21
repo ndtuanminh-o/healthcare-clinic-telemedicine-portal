@@ -1,66 +1,75 @@
-<p align="right">
-  <strong>🌐 Language / Ngôn ngữ:</strong>
-  <a href="README.md"><b>🇬🇧 English</b></a> |
-  <a href="README.vi.md"><b>🇻🇳 Tiếng Việt</b></a>
-</p>
+<div align="center">
 
 # Phòng khám Y tế & Cổng thông tin Khám bệnh từ xa
-*(Healthcare Clinic & Telemedicine Portal)*
+### Kỹ thuật Cơ sở Dữ liệu Quan hệ & Thiết kế Hệ thống
 
-Đồ án môn học **INT1313 - Hệ cơ sở dữ liệu**, Học kỳ 1, Năm học 2026–2027.  
-Học viện Công nghệ Bưu chính Viễn thông (PTIT).
+[![Môn học](https://img.shields.io/badge/Môn_học-INT1313%20Hệ%20Cơ%20Sở%20Dữ%20Liệu-0052CC?style=for-the-badge&logo=postgresql&logoColor=white)](https://ptithcm.edu.vn)
+[![Học viện](https://img.shields.io/badge/Học_viện-PTIT%20HCM-DC2626?style=for-the-badge)](https://ptithcm.edu.vn)
+[![Năm học](https://img.shields.io/badge/Năm_học-2026--2027-10B981?style=for-the-badge)]()
+[![Tiến độ](https://img.shields.io/badge/Tiến_độ-Hoàn_thành_Phase_1_%26_2-8B5CF6?style=for-the-badge)]()
 
----
+<br/>
 
-## Thông tin đề tài
+**[ English ](README.md)** &nbsp;|&nbsp; **[ Tiếng Việt ](README.vi.md)**
 
-- **Chủ đề:** #05 — Phòng khám Y tế & Cổng thông tin Khám bệnh từ xa (Healthcare Clinic & Telemedicine Portal)
-- **Nhóm:** G5 — Pingo
+<br/>
 
-### Danh sách thành viên
+Hệ thống quản lý cơ sở dữ liệu quan hệ cho cơ sở y tế tích hợp giữa khám trực tiếp tại phòng khám và khám chữa bệnh từ xa qua video mã hóa.
 
-| Mã sinh viên | Họ và tên | GitHub | Email |
-| :--- | :--- | :--- | :--- |
-| **N25DCAT086** | Hồ Thị Trúc Linh | [@linh-h-annanie](https://github.com/linh-h-annanie) | `n25dcat086@student.ptithcm.edu.vn` |
-| **N25DCAT087** | Huỳnh Mai Trí Lộc | [@halo16-04](https://github.com/halo16-04) | `n25dcat087@student.ptithcm.edu.vn` |
-| **N25DCAT089** | Nguyễn Đăng Tuấn Minh | [@ndtuanminh-o](https://github.com/ndtuanminh-o) | `n25dcat089@student.ptithcm.edu.vn` |
+</div>
 
 ---
 
-## Tổng quan dự án
+## 1. Thông tin Đồ án
 
-Dự án thiết kế hệ thống quản lý cơ sở dữ liệu quan hệ cho cơ sở y tế tích hợp giữa **khám trực tiếp tại phòng khám (In-Person)** và **khám bệnh từ xa qua video (Telemedicine)**.
+| Thông tin | Chi tiết đặc tả |
+| :--- | :--- |
+| **Môn học** | INT1313 - Hệ cơ sở dữ liệu (Học kỳ 1, Năm học 2026-2027) |
+| **Đơn vị đào tạo** | Học viện Công nghệ Bưu chính Viễn thông (PTIT HCM) |
+| **Mã đề tài** | Đề tài #05: Healthcare Clinic & Telemedicine Portal |
+| **Tên nhóm** | G5 (Pingo) |
 
-### Các phân hệ nghiệp vụ chính
-- **Bệnh nhân & Hồ sơ bệnh án:** Quản lý tập trung nhân khẩu học, chẩn đoán y khoa và lịch sử khám bệnh với cơ chế soft-delete lưu vết kiểm toán.
-- **Phân cấp Bác sĩ:** Lớp cha `DOCTOR` chuyên biệt hóa thành `GENERAL_PRACTITIONER` (Bác sĩ đa khoa - phòng khám trực tiếp) và `SPECIALIST` (Bác sĩ chuyên khoa - tư vấn khám từ xa).
-- **Lịch hẹn & Ca trực:** Quản lý ca làm việc (`DOCTOR_SCHEDULE`) và định tuyến lịch hẹn theo 2 chế độ (`In-Person` vs `Telemedicine`).
-- **Nhà thuốc số & Kho dược:** Đơn thuốc điện tử, liều lượng chi tiết và quản lý tồn kho thời gian thực với ngưỡng cảnh báo đặt hàng.
-- **Hóa đơn & Thanh toán:** Hóa đơn tổng hợp duy nhất cho mỗi cuộc hẹn (kết hợp phí khám bệnh và tiền thuốc), thanh toán đa kênh.
+### Danh sách Thành viên
 
----
-
-## Các sản phẩm bàn giao (Project Deliverables)
-
-### Phase 1: Thiết kế quan niệm (Conceptual Design - EER)
-- [Phạm vi dự án](phase%201/project_scope.md): Ranh giới hệ thống và đặc tả yêu cầu chức năng (ISO/IEC/IEEE 29148).
-- [Quy tắc nghiệp vụ](phase%201/business_rules.md): 12 quy tắc nghiệp vụ toàn vẹn dữ liệu (BR-01 đến BR-12).
-- [Tài liệu thiết kế EER (English)](phase%201/eer/EER_Diagram_EN.md): Đặc tả thực thể, mối kết hợp và sơ đồ Mermaid EER chuẩn hóa.
-- [Tài liệu thiết kế EER (Tiếng Việt)](phase%201/eer/EER_Diagram_VI.md): Bản tiếng Việt hoàn chỉnh cho mô hình EER.
-
-### Phase 2: Thiết kế logic & vật lý (Logical & Physical Design)
-- [Lược đồ quan hệ vật lý](phase%202/relational_schema_mapping/physical_schema_diagram.md): Đặc tả cấu trúc bảng quan hệ vật lý và sơ đồ Mermaid IE Crow's Foot.
-- [Từ điển dữ liệu](phase%202/data_dictionary.md): Danh mục siêu dữ liệu chuẩn hóa quốc tế ISO/IEC 11179.
-- [Chứng minh chuẩn hóa](phase%202/normalization_verification.md): Phân tích phụ thuộc hàm và chứng minh toán học đạt 1NF → 2NF → 3NF → BCNF.
+| Mã sinh viên | Họ và tên | Vai trò phụ trách | GitHub | Email liên hệ |
+| :--- | :--- | :--- | :--- | :--- |
+| **N25DCAT089** | Nguyễn Đăng Tuấn Minh | Trưởng nhóm EER & Mô hình hóa | [@ndtuanminh-o](https://github.com/ndtuanminh-o) | `nd.tuanminh.work@gmail.com` |
+| **N25DCAT086** | Hồ Thị Trúc Linh | Phân tích Yêu cầu & Phạm vi | [@linh-h-annanie](https://github.com/linh-h-annanie) | `n25dcat086@student.ptithcm.edu.vn` |
+| **N25DCAT087** | Huỳnh Mai Trí Lộc | Ánh xạ Lược đồ Quan hệ | [@halo16-04](https://github.com/halo16-04) | `n25dcat087@student.ptithcm.edu.vn` |
 
 ---
 
-## Cấu trúc thư mục (Repository Structure)
+## 2. Kiến trúc Hệ thống & Các Phân hệ Lâm sàng Cốt lõi
+
+| Phân hệ Nghiệp vụ | Thiết kế Kiến trúc & Ranh giới Hệ thống |
+| :--- | :--- |
+| **Phân cấp Chuyên môn Bác sĩ** | Lớp cha `DOCTOR` với ràng buộc Toàn phần (`===`) và Rời nhau (`d`), phân chia thành `GENERAL_PRACTITIONER` (khám tại buồng bệnh) và `SPECIALIST` (tư vấn từ xa và điều trị chuyên khoa). |
+| **Phân ca Trực & Lịch làm việc** | Bảng `DOCTOR_SCHEDULE` theo dõi ngày trực cụ thể (`work_date`), khoảng thời gian ca trực (`[start_time, end_time]`) và trạng thái ô đặt lịch (`slot_status`). |
+| **Lịch hẹn Hai chế độ** | Bảng `APPOINTMENT` phân luồng khám trực tiếp (`In-Person`) hoặc khám từ xa (`Telemedicine`) có liên kết phòng khám video mã hóa (`BR-05`). |
+| **Hồ sơ Bệnh án Lâm sàng** | Cuộc hẹn (1:1) ghi nhận chẩn đoán vào `MEDICAL_RECORD`, bảo toàn chẩn đoán y khoa bắt buộc, bác sĩ chuyên khoa giám định và lịch sử bệnh lý. |
+| **Đơn thuốc Điện tử & Kho Dược** | Đơn thuốc (`DIGITAL_PRESCRIPTION`) quản lý các dòng chi tiết (`PRESCRIPTION_ITEM`) với cơ chế kích hoạt trừ kho tự động (`BR-09`). |
+| **Hóa đơn Viện phí Tập trung** | Mỗi cuộc hẹn xuất đúng 1 hóa đơn tổng hợp (`INVOICE`) gồm tiền khám và tiền thuốc, quyết toán qua tiền mặt, thẻ, bảo hiểm hoặc chuyển khoản. |
+
+---
+
+## 3. Các Sản phẩm Bàn giao & Lộ trình Dự án
+
+| Giai đoạn | Trọng tâm & Phương pháp luận | Trạng thái | Liên kết Tài liệu |
+| :---: | :--- | :---: | :--- |
+| **Phase 1** | **Thiết kế Quan niệm (EER)**<br/>Chuẩn SRS ISO/IEC/IEEE 29148 & Mô hình hóa EER Elmasri | **Hoàn thành** | • [Phạm vi Dự án](phase%201/project_scope.md)<br/>• [12 Quy tắc Nghiệp vụ (BR-01 đến BR-12)](phase%201/business_rules.md)<br/>• [Tài liệu Thiết kế EER (English)](phase%201/eer/EER_Diagram_EN.md)<br/>• [Tài liệu Thiết kế EER (Tiếng Việt)](phase%201/eer/EER_Diagram_VI.md) |
+| **Phase 2** | **Thiết kế Logic & Vật lý**<br/>Từ điển Dữ liệu ISO/IEC 11179 & Sơ đồ IE Crow's Foot | **Hoàn thành** | • [Đặc tả Lược đồ Vật lý](phase%202/relational_schema_mapping/physical_schema_diagram.md)<br/>• [Từ điển Dữ liệu Siêu dữ liệu](phase%202/data_dictionary.md)<br/>• [Chứng minh Chuẩn hóa (1NF-BCNF)](phase%202/normalization_verification.md) |
+| **Phase 3** | **Cài đặt Hệ thống & Kỹ thuật SQL**<br/>Kịch bản DDL, Trigger, View & 10+ Truy vấn Phức tạp | **Kế hoạch** | • Kịch bản SQL DDL (Tạo bảng, Ràng buộc, Chỉ mục)<br/>• Nạp Dữ liệu Mẫu Mock DML<br/>• 10+ Câu Truy vấn Phân tích Phức tạp |
+| **Phase 4** | **Tích hợp & Bảo vệ Đồ án**<br/>Ứng dụng Minh họa & Vấn đáp Trực tiếp | **Kế hoạch** | • Tích hợp Ứng dụng Giao diện / API Backend (Python/Flask hoặc Node.js)<br/>• Báo cáo Tổng kết Hoàn chỉnh<br/>• Vấn đáp SQL Cá nhân Trực tiếp |
+
+---
+
+## 4. Cấu trúc Thư mục
 
 ```text
 .
 ├── docs/
-│   └── project-identity.md
+│   ├── project-identity.md
+│   └── mcp-plan.md
 ├── phase 1/
 │   ├── eer/
 │   │   ├── EER_Diagram_EN.md

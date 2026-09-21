@@ -6,9 +6,9 @@
 
 # Tài liệu Thiết kế Mô hình Quan niệm Thực thể Mở rộng (EER)
 ## Đề tài 05: Phòng khám Y tế & Cổng thông tin Khám bệnh từ xa
-**Môn học:** Hệ cơ sở dữ liệu (INT1313) — Học kỳ 1, 2026–2027 | Học viện Công nghệ Bưu chính Viễn thông (PTIT)  
+**Môn học:** Hệ cơ sở dữ liệu (INT1313) - Học kỳ 1, 2026-2027 | Học viện Công nghệ Bưu chính Viễn thông (PTIT)  
 **Tác giả thiết kế EER:** Nguyễn Đăng Tuấn Minh (N25DCAT089 / @ndtuanminh-o)  
-**Nhóm:** G5 — Pingo  
+**Nhóm:** G5 - Pingo  
 
 ---
 

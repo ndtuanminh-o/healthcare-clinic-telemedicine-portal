@@ -1,8 +1,8 @@
 # Normalization Verification & Functional Dependency Analysis
 ## Formal Proofs for 1NF, 2NF, 3NF, and BCNF
 ### Topic 05: Healthcare Clinic & Telemedicine Management System | PTIT
-**Course:** Database Systems (INT1313) — Semester 1, 2026–2027  
-**Team:** G5 — Pingo  
+**Course:** Database Systems (INT1313) - Semester 1, 2026-2027  
+**Team:** G5 - Pingo  
 
 ---
 

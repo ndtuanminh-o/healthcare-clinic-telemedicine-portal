@@ -1,7 +1,7 @@
 # Physical Schema Diagram Documentation
 ## Relational Schema Mapping (IE Crow's Foot Notation)
 ### Topic 05: Healthcare Clinic & Telemedicine Management System | PTIT
-**Project:** Clinic Management & Telemedicine Portal | **Team:** G5 — Pingo  
+**Project:** Clinic Management & Telemedicine Portal | **Team:** G5 - Pingo  
 
 ---
 
@@ -249,19 +249,19 @@ The schema contains **11 relational tables** mapped 1-to-1 from the conceptual E
 
 | Parent Relation (1) | Child Relation (N / 1) | Foreign Key Attribute | Cardinality | Crow's Foot Symbol | Integrity Action (`ON DELETE`) |
 | :--- | :--- | :--- | :---: | :---: | :--- |
-| `DOCTOR` | `GENERAL_PRACTITIONER` | `doctor_id` | 1 : 1 | `|| (1) — || (1)` | `RESTRICT` (Mandatory inheritance) |
-| `DOCTOR` | `SPECIALIST` | `doctor_id` | 1 : 1 | `|| (1) — || (1)` | `RESTRICT` (Mandatory inheritance) |
-| `DOCTOR` | `DOCTOR_SCHEDULE` | `doctor_id` | 1 : N | `|| (1) — o{ (N)` | `CASCADE` (Duty shifts belong to doctor) |
-| `DOCTOR` | `APPOINTMENT` | `doctor_id` | 1 : N | `|| (1) — o{ (N)` | `RESTRICT` (Audit protection) |
-| `PATIENT` | `APPOINTMENT` | `patient_id` | 1 : N | `|| (1) — o{ (N)` | `RESTRICT` (Audit protection) |
-| `APPOINTMENT` | `MEDICAL_RECORD` | `appointment_id` *(UQ)* | 1 : 0..1 | `|| (1) — o| (0..1)` | `RESTRICT` (Clinical records immutable) |
-| `PATIENT` | `MEDICAL_RECORD` | `patient_id` | 1 : N | `|| (1) — o{ (N)` | `RESTRICT` (Clinical history preservation) |
-| `SPECIALIST` | `MEDICAL_RECORD` | `specialist_id` | 1 : N | `o| (0..1) — o{ (N)`| `SET NULL` (Attending specialist optional) |
-| `MEDICAL_RECORD` | `DIGITAL_PRESCRIPTION` | `record_id` *(UQ)* | 1 : 0..1 | `|| (1) — o| (0..1)` | `RESTRICT` (Prescription authorization bound to diagnosis) |
-| `DIGITAL_PRESCRIPTION`| `PRESCRIPTION_ITEM` | `prescription_id` | 1 : N | `|| (1) — |{ (1..N)` | `CASCADE` (Line items belong to prescription) |
-| `MEDICINE` | `PRESCRIPTION_ITEM` | `medicine_id` | 1 : N | `|| (1) — o{ (N)` | `RESTRICT` (Cannot delete dispensed medicines) |
-| `APPOINTMENT` | `INVOICE` | `appointment_id` *(UQ)* | 1 : 1 | `|| (1) — || (1)` | `RESTRICT` (Fiscal audit protection) |
-| `PATIENT` | `INVOICE` | `patient_id` | 1 : N | `|| (1) — o{ (N)` | `RESTRICT` (Financial ledger preservation) |
+| `DOCTOR` | `GENERAL_PRACTITIONER` | `doctor_id` | 1 : 1 | `|| (1) - || (1)` | `RESTRICT` (Mandatory inheritance) |
+| `DOCTOR` | `SPECIALIST` | `doctor_id` | 1 : 1 | `|| (1) - || (1)` | `RESTRICT` (Mandatory inheritance) |
+| `DOCTOR` | `DOCTOR_SCHEDULE` | `doctor_id` | 1 : N | `|| (1) - o{ (N)` | `CASCADE` (Duty shifts belong to doctor) |
+| `DOCTOR` | `APPOINTMENT` | `doctor_id` | 1 : N | `|| (1) - o{ (N)` | `RESTRICT` (Audit protection) |
+| `PATIENT` | `APPOINTMENT` | `patient_id` | 1 : N | `|| (1) - o{ (N)` | `RESTRICT` (Audit protection) |
+| `APPOINTMENT` | `MEDICAL_RECORD` | `appointment_id` *(UQ)* | 1 : 0..1 | `|| (1) - o| (0..1)` | `RESTRICT` (Clinical records immutable) |
+| `PATIENT` | `MEDICAL_RECORD` | `patient_id` | 1 : N | `|| (1) - o{ (N)` | `RESTRICT` (Clinical history preservation) |
+| `SPECIALIST` | `MEDICAL_RECORD` | `specialist_id` | 1 : N | `o| (0..1) - o{ (N)`| `SET NULL` (Attending specialist optional) |
+| `MEDICAL_RECORD` | `DIGITAL_PRESCRIPTION` | `record_id` *(UQ)* | 1 : 0..1 | `|| (1) - o| (0..1)` | `RESTRICT` (Prescription authorization bound to diagnosis) |
+| `DIGITAL_PRESCRIPTION`| `PRESCRIPTION_ITEM` | `prescription_id` | 1 : N | `|| (1) - |{ (1..N)` | `CASCADE` (Line items belong to prescription) |
+| `MEDICINE` | `PRESCRIPTION_ITEM` | `medicine_id` | 1 : N | `|| (1) - o{ (N)` | `RESTRICT` (Cannot delete dispensed medicines) |
+| `APPOINTMENT` | `INVOICE` | `appointment_id` *(UQ)* | 1 : 1 | `|| (1) - || (1)` | `RESTRICT` (Fiscal audit protection) |
+| `PATIENT` | `INVOICE` | `patient_id` | 1 : N | `|| (1) - o{ (N)` | `RESTRICT` (Financial ledger preservation) |
 
 ---
 

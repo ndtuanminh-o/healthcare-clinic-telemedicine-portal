@@ -6,9 +6,9 @@
 
 # Enhanced Entity-Relationship (EER) Conceptual Model Documentation
 ## Topic 05: Healthcare Clinic & Telemedicine Portal
-**Course:** Database Systems (INT1313) — Semester 1, 2026–2027 | PTIT  
+**Course:** Database Systems (INT1313) - Semester 1, 2026-2027 | PTIT  
 **Author (EER Design):** Nguyen Dang Tuan Minh (N25DCAT089 / @ndtuanminh-o)  
-**Team:** G5 — Pingo  
+**Team:** G5 - Pingo  
 
 ---
 
