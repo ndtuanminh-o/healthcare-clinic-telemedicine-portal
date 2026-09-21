@@ -1,7 +1,4 @@
-[project_scope.md](https://github.com/user-attachments/files/32013008/project_scope.md)
-## Project Scope
-
-## 1. Introduction & Project Scope
+# 1. Introduction & Project Scope
 
 The Healthcare Clinic and Telemedicine Portal is a relational database project for managing outpatient clinic consultations and remote telemedicine services through one integrated platform.
 

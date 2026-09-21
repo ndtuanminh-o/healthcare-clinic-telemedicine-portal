@@ -39,14 +39,12 @@ This project designs a relational database management system for a healthcare fa
 ### Phase 1: Conceptual Design (EER)
 - [Project Scope](phase%201/project_scope.md): System boundaries and functional specifications.
 - [Business Rules](phase%201/business_rules.md): 12 business rules (BR-01 through BR-12).
-- [EER Documentation](phase%201/eer/EER_Diagram_EN.md): Conceptual entity-relationship specifications and Mermaid model.
-- [EER Visual Diagram](phase%201/eer/er_diagram_cropped.png): High-resolution conceptual diagram.
+- [EER Documentation](phase%201/eer/EER_Diagram_EN.md): Conceptual entity-relationship specifications and standardized Mermaid model.
 
-### Phase 2: Logical & Physical Relational Design (In Progress)
-- [Physical Schema Documentation](phase%202/relational_schema_mapping/physical_schema_diagram.md): Physical relational schema specification and Mermaid ER diagram.
-- [Physical Schema Diagram](phase%202/relational_schema_mapping/schema.png): Industrial relational schema (IE Crow's Foot notation).
+### Phase 2: Logical & Physical Relational Design
+- [Physical Schema Documentation](phase%202/relational_schema_mapping/physical_schema_diagram.md): Physical relational schema specification and Mermaid IE Crow's Foot ER diagram.
 - [Data Dictionary](phase%202/data_dictionary.md): ISO/IEC 11179 standardized metadata catalog.
-- [Normalization Verification](phase%202/normalization_verification.md): Functional dependency analysis and normalization verification.
+- [Normalization Verification](phase%202/normalization_verification.md): Functional dependency analysis and formal 1NF–BCNF proofs.
 
 ---
 
@@ -58,14 +56,12 @@ This project designs a relational database management system for a healthcare fa
 │   └── project-identity.md
 ├── phase 1/
 │   ├── eer/
-│   │   ├── EER_Diagram_EN.md
-│   │   └── er_diagram_cropped.png
+│   │   └── EER_Diagram_EN.md
 │   ├── business_rules.md
 │   └── project_scope.md
 ├── phase 2/
 │   ├── relational_schema_mapping/
-│   │   ├── physical_schema_diagram.md
-│   │   └── schema.png
+│   │   └── physical_schema_diagram.md
 │   ├── data_dictionary.md
 │   └── normalization_verification.md
 ├── .gitignore

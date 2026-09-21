@@ -130,10 +130,10 @@ flowchart LR
   - `phone_number` (VARCHAR(15)): Official contact telephone number.
   - `email` (VARCHAR(100)): Professional clinic email.
 - **Specialization Constraint `(d)` (Disjoint)**:
-  - $\text{GENERAL\_PRACTITIONER} \cap \text{SPECIALIST} = \emptyset$.
+  - `GENERAL_PRACTITIONER` ∩ `SPECIALIST` = ∅.
   - A doctor cannot concurrently practice as both a General Practitioner and a Specialist in the system scope.
 - **Total Specialization Constraint (`===`)**:
-  - $\text{DOCTOR} = \text{GENERAL\_PRACTITIONER} \cup \text{SPECIALIST}$.
+  - `DOCTOR` = `GENERAL_PRACTITIONER` ∪ `SPECIALIST`.
   - Every registered doctor must specialize as either a GP or a Specialist.
 - **`GENERAL_PRACTITIONER` (Subclass)**:
   - `doctor_id` (UUID, PK/FK): References `DOCTOR(doctor_id)`.

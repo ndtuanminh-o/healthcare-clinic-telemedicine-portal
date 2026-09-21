@@ -1,5 +1,3 @@
-[3_Data_Dictionary.md](https://github.com/user-attachments/files/32012127/3_Data_Dictionary_ISO11179_EN.md)
-
 # Data Dictionary (Adapted from ISO/IEC 11179)
 
 The Data Dictionary provides comprehensive metadata specifications for all eleven (11) entities and relations designed in Phase 1 (Conceptual and Logical Relational Schema), adhering to the international metadata standard **ISO/IEC 11179**. 
@@ -30,7 +28,7 @@ Base entity storing identity credentials, licensing information, and operational
 
 ---
 
-## 3.2 Entity: GENERAL_PRACTITIONER (Subclass)
+## 3.2 Entity: `GENERAL_PRACTITIONER` (Subclass)
 Subclass inheriting from `DOCTOR`, managing physical on-premise consultations and outpatient clinic rooms.
 
 | Attribute Name | Data Type | Key Type | Nullable | Default Value | Integrity & Business Rules |
@@ -53,7 +51,7 @@ Subclass inheriting from `DOCTOR`, managing specialized clinical departments and
 
 ---
 
-## 3.4 Entity: DOCTOR_SCHEDULE
+## 3.4 Entity: `DOCTOR_SCHEDULE`
 Manages scheduled duty shifts, on-call slots, and calendar availability for clinical staff.
 
 | Attribute Name | Data Type | Key Type | Nullable | Default Value | Integrity & Business Rules |
@@ -103,7 +101,7 @@ Central coordinator for both in-person physical clinical consultations and virtu
 
 ---
 
-## 3.7 Entity: MEDICAL_RECORD
+## 3.7 Entity: `MEDICAL_RECORD`
 Official diagnostic ledger, physical exam notes, and clinical documentation created during consultation encounters.
 
 | Attribute Name | Data Type | Key Type | Nullable | Default Value | Integrity & Business Rules |
@@ -120,7 +118,7 @@ Official diagnostic ledger, physical exam notes, and clinical documentation crea
 
 ---
 
-## 3.8 Entity: DIGITAL_PRESCRIPTION
+## 3.8 Entity: `DIGITAL_PRESCRIPTION`
 Pharmaceutical prescription authorization issued by attending medical staff upon conclusion of diagnostic encounters.
 
 | Attribute Name | Data Type | Key Type | Nullable | Default Value | Integrity & Business Rules |
@@ -135,7 +133,7 @@ Pharmaceutical prescription authorization issued by attending medical staff upon
 
 ---
 
-## 3.9 Entity: PRESCRIPTION_ITEM
+## 3.9 Entity: `PRESCRIPTION_ITEM`
 Associative relation linking prescriptions with specific pharmaceuticals, administration dosages, and dispensed quantities.
 
 | Attribute Name | Data Type | Key Type | Nullable | Default Value | Integrity & Business Rules |
@@ -175,6 +173,6 @@ Fiscal invoice accounting for clinical services rendered and dispensed pharmaceu
 | `appointment_id` | UUID / CHAR(36) | FK, UQ | No | None | Foreign key referencing `APPOINTMENT(appointment_id)`. `UNIQUE` guarantees single billing statement per visit (BR-11). |
 | `patient_id` | UUID / CHAR(36) | FK | No | None | Foreign key referencing billed `PATIENT(patient_id)`. |
 | `issue_date` | DATETIME | - | No | `CURRENT_TIMESTAMP` | Official billing and generation timestamp. |
-| `total_amount` | DECIMAL(12,2) | - | No | 0.00 | Final gross billing charge: $Fee_{Consultation} + \sum (Item_{Quantity} \times Item_{Price})$. Constraint: `CHECK (total_amount >= 0)`. |
+| `total_amount` | DECIMAL(12,2) | - | No | 0.00 | Final gross billing charge: `Fee_Consultation + SUM(Item_Quantity * Item_Price)`. Constraint: `CHECK (total_amount >= 0)`. |
 | `payment_status` | ENUM('Unpaid', 'Paid', 'Refunded') | - | No | 'Unpaid' | Financial settlement workflow state machine (BR-12). |
 | `payment_method` | ENUM('Cash', 'Credit Card', 'Insurance', 'Bank Transfer') | - | No | 'Cash' | Channel utilized for payment settlement. |
