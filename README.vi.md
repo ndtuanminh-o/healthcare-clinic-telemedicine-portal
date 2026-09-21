@@ -39,31 +39,18 @@ Hệ thống quản lý cơ sở dữ liệu quan hệ cho cơ sở y tế tích
 
 ---
 
-## 2. Kiến trúc Hệ thống & Các Phân hệ Lâm sàng Cốt lõi
+## 2. Các Sản phẩm Bàn giao & Lộ trình Dự án
 
-| Phân hệ Nghiệp vụ | Thiết kế Kiến trúc & Ranh giới Hệ thống |
-| :--- | :--- |
-| **Phân cấp Chuyên môn Bác sĩ** | Lớp cha `DOCTOR` với ràng buộc Toàn phần (`===`) và Rời nhau (`d`), phân chia thành `GENERAL_PRACTITIONER` (khám tại buồng bệnh) và `SPECIALIST` (tư vấn từ xa và điều trị chuyên khoa). |
-| **Phân ca Trực & Lịch làm việc** | Bảng `DOCTOR_SCHEDULE` theo dõi ngày trực cụ thể (`work_date`), khoảng thời gian ca trực (`[start_time, end_time]`) và trạng thái ô đặt lịch (`slot_status`). |
-| **Lịch hẹn Hai chế độ** | Bảng `APPOINTMENT` phân luồng khám trực tiếp (`In-Person`) hoặc khám từ xa (`Telemedicine`) có liên kết phòng khám video mã hóa (`BR-05`). |
-| **Hồ sơ Bệnh án Lâm sàng** | Cuộc hẹn (1:1) ghi nhận chẩn đoán vào `MEDICAL_RECORD`, bảo toàn chẩn đoán y khoa bắt buộc, bác sĩ chuyên khoa giám định và lịch sử bệnh lý. |
-| **Đơn thuốc Điện tử & Kho Dược** | Đơn thuốc (`DIGITAL_PRESCRIPTION`) quản lý các dòng chi tiết (`PRESCRIPTION_ITEM`) với cơ chế kích hoạt trừ kho tự động (`BR-09`). |
-| **Hóa đơn Viện phí Tập trung** | Mỗi cuộc hẹn xuất đúng 1 hóa đơn tổng hợp (`INVOICE`) gồm tiền khám và tiền thuốc, quyết toán qua tiền mặt, thẻ, bảo hiểm hoặc chuyển khoản. |
-
----
-
-## 3. Các Sản phẩm Bàn giao & Lộ trình Dự án
-
-| Giai đoạn | Trọng tâm & Phương pháp luận | Trạng thái | Liên kết Tài liệu |
+| Giai đoạn | Trọng tâm & Phương pháp luận | Trạng thái | Sản phẩm bàn giao |
 | :---: | :--- | :---: | :--- |
 | **Phase 1** | **Thiết kế Quan niệm (EER)**<br/>Chuẩn SRS ISO/IEC/IEEE 29148 & Mô hình hóa EER Elmasri | **Hoàn thành** | • [Phạm vi Dự án](phase%201/project_scope.md)<br/>• [12 Quy tắc Nghiệp vụ (BR-01 đến BR-12)](phase%201/business_rules.md)<br/>• [Tài liệu Thiết kế EER (English)](phase%201/eer/EER_Diagram_EN.md)<br/>• [Tài liệu Thiết kế EER (Tiếng Việt)](phase%201/eer/EER_Diagram_VI.md) |
 | **Phase 2** | **Thiết kế Logic & Vật lý**<br/>Từ điển Dữ liệu ISO/IEC 11179 & Sơ đồ IE Crow's Foot | **Hoàn thành** | • [Đặc tả Lược đồ Vật lý](phase%202/relational_schema_mapping/physical_schema_diagram.md)<br/>• [Từ điển Dữ liệu Siêu dữ liệu](phase%202/data_dictionary.md)<br/>• [Chứng minh Chuẩn hóa (1NF-BCNF)](phase%202/normalization_verification.md) |
-| **Phase 3** | **Cài đặt Hệ thống & Kỹ thuật SQL**<br/>Kịch bản DDL, Trigger, View & 10+ Truy vấn Phức tạp | **Kế hoạch** | • Kịch bản SQL DDL (Tạo bảng, Ràng buộc, Chỉ mục)<br/>• Nạp Dữ liệu Mẫu Mock DML<br/>• 10+ Câu Truy vấn Phân tích Phức tạp |
-| **Phase 4** | **Tích hợp & Bảo vệ Đồ án**<br/>Ứng dụng Minh họa & Vấn đáp Trực tiếp | **Kế hoạch** | • Tích hợp Ứng dụng Giao diện / API Backend (Python/Flask hoặc Node.js)<br/>• Báo cáo Tổng kết Hoàn chỉnh<br/>• Vấn đáp SQL Cá nhân Trực tiếp |
+| **Phase 3** | **Cài đặt Hệ thống & Kỹ thuật SQL** | **Chưa có kế hoạch (No plan yet)** | TBD |
+| **Phase 4** | **Tích hợp & Bảo vệ Đồ án** | **Chưa có kế hoạch (No plan yet)** | TBD |
 
 ---
 
-## 4. Cấu trúc Thư mục
+## 3. Cấu trúc Thư mục
 
 ```text
 .
