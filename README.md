@@ -1,3 +1,9 @@
+<p align="right">
+  <strong>🌐 Language / Ngôn ngữ:</strong>
+  <a href="README.md"><b>🇬🇧 English</b></a> |
+  <a href="README.vi.md"><b>🇻🇳 Tiếng Việt</b></a>
+</p>
+
 # Healthcare Clinic & Telemedicine Portal
 
 Database project for **INT1313 - Database Systems**, Semester 1, Academic Year 2026–2027.  
