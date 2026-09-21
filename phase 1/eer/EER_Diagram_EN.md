@@ -1,6 +1,6 @@
 # Enhanced Entity-Relationship (EER) Conceptual Model Documentation
 ## Topic 05: Healthcare Clinic & Telemedicine Portal | PTIT  
-**Team:** G5 - Pingo  
+**Project:** Clinic Management & Telemedicine Portal | **Team:** G5 - Pingo  
 
 ---
 
