@@ -1,4 +1,4 @@
-[2.3 Normalization Verification.cleaned.md](https://github.com/user-attachments/files/33016034/2.3.Normalization.Verification.cleaned.md)# Normalization Verification & Functional Dependency Analysis
+# Normalization Verification & Functional Dependency Analysis
 ## Formal Proofs for 1NF, 2NF, 3NF
 ### Topic 05: Healthcare Clinic & Telemedicine Management System | PTIT
 **Project:** Clinic Management & Telemedicine Portal | **Team:** G5 - Pingo  
