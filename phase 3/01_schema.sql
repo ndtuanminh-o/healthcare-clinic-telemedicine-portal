@@ -1,54 +1,44 @@
--- ============================================================================
--- TOPIC 05: HEALTHCARE CLINIC & TELEMEDICINE PORTAL | PTIT
--- INT1313 - DATABASE SYSTEMS | TEAM: G5 (PINGO)
--- SCRIPT: 01_schema.sql (CORE DDL, CONSTRAINTS, INDEXES & VIEWS)
--- AUTHOR: Nguyen Dang Tuan Minh (@ndtuanminh-o)
--- SPECIFICATION: Compliant with ISO/IEC 11179 Data Dictionary & 3NF Schema
--- TARGET RDBMS: PostgreSQL 14+ / ANSI SQL Compliant
--- ============================================================================
+SET FOREIGN_KEY_CHECKS = 0;
 
--- Enable UUID extension if not already enabled
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+-- Drop views if exists
+DROP VIEW IF EXISTS v_low_stock_medicines;
+DROP VIEW IF EXISTS v_appointment_billing_summary;
+DROP VIEW IF EXISTS v_doctor_daily_roster;
 
--- Clean teardown (Reverse dependency order)
-DROP VIEW IF EXISTS v_low_stock_medicines CASCADE;
-DROP VIEW IF EXISTS v_appointment_billing_summary CASCADE;
-DROP VIEW IF EXISTS v_doctor_daily_roster CASCADE;
+-- Drop tables if exists
+DROP TABLE IF EXISTS INVOICE;
+DROP TABLE IF EXISTS PRESCRIPTION_ITEM;
+DROP TABLE IF EXISTS MEDICINE;
+DROP TABLE IF EXISTS DIGITAL_PRESCRIPTION;
+DROP TABLE IF EXISTS MEDICAL_RECORD;
+DROP TABLE IF EXISTS APPOINTMENT;
+DROP TABLE IF EXISTS PATIENT;
+DROP TABLE IF EXISTS DOCTOR_SCHEDULE;
+DROP TABLE IF EXISTS SPECIALIST;
+DROP TABLE IF EXISTS GENERAL_PRACTITIONER;
+DROP TABLE IF EXISTS DOCTOR;
 
-DROP TABLE IF EXISTS INVOICE CASCADE;
-DROP TABLE IF EXISTS PRESCRIPTION_ITEM CASCADE;
-DROP TABLE IF EXISTS MEDICINE CASCADE;
-DROP TABLE IF EXISTS DIGITAL_PRESCRIPTION CASCADE;
-DROP TABLE IF EXISTS MEDICAL_RECORD CASCADE;
-DROP TABLE IF EXISTS APPOINTMENT CASCADE;
-DROP TABLE IF EXISTS PATIENT CASCADE;
-DROP TABLE IF EXISTS DOCTOR_SCHEDULE CASCADE;
-DROP TABLE IF EXISTS SPECIALIST CASCADE;
-DROP TABLE IF EXISTS GENERAL_PRACTITIONER CASCADE;
-DROP TABLE IF EXISTS DOCTOR CASCADE;
+SET FOREIGN_KEY_CHECKS = 1;
 
 -- ============================================================================
--- 1. CORE RELATIONAL TABLES & INTEGRITY CONSTRAINTS
+-- 1. TABLES & CONSTRAINTS
 -- ============================================================================
 
 -- 1.1 DOCTOR (Superclass)
 CREATE TABLE DOCTOR (
-    doctor_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    doctor_id       CHAR(36) PRIMARY KEY DEFAULT (UUID()),
     full_name       VARCHAR(100) NOT NULL,
     license_no      VARCHAR(30) NOT NULL UNIQUE,
     phone_number    VARCHAR(15) NOT NULL,
-    email           VARCHAR(100),
-    doctor_type     VARCHAR(20) NOT NULL,
-    status          VARCHAR(20) NOT NULL DEFAULT 'Active',
-    deleted_at      TIMESTAMP,
-    CONSTRAINT chk_doctor_type CHECK (doctor_type IN ('GP', 'Specialist')),
-    CONSTRAINT chk_doctor_status CHECK (status IN ('Active', 'Inactive'))
+    email           VARCHAR(100) NULL,
+    doctor_type     ENUM('GP', 'Specialist') NOT NULL,
+    status          ENUM('Active', 'Inactive') NOT NULL DEFAULT 'Active',
+    deleted_at      DATETIME NULL
 );
 
--- 1.2 GENERAL_PRACTITIONER (Subclass - Option 8.4a)
+-- 1.2 GENERAL_PRACTITIONER (Subclass)
 CREATE TABLE GENERAL_PRACTITIONER (
-    doctor_id           UUID PRIMARY KEY,
+    doctor_id           CHAR(36) PRIMARY KEY,
     clinic_room_no      VARCHAR(20) NOT NULL,
     consultation_fee    DECIMAL(10, 2) NOT NULL DEFAULT 150000.00,
     CONSTRAINT fk_gp_doctor FOREIGN KEY (doctor_id) 
@@ -56,81 +46,76 @@ CREATE TABLE GENERAL_PRACTITIONER (
     CONSTRAINT chk_gp_fee CHECK (consultation_fee > 0)
 );
 
--- 1.3 SPECIALIST (Subclass - Option 8.4a)
+-- 1.3 SPECIALIST (Subclass)
 CREATE TABLE SPECIALIST (
-    doctor_id               UUID PRIMARY KEY,
+    doctor_id               CHAR(36) PRIMARY KEY,
     specialty               VARCHAR(50) NOT NULL,
     consultation_fee        DECIMAL(10, 2) NOT NULL DEFAULT 300000.00,
     board_certified_year    INT NOT NULL,
     CONSTRAINT fk_specialist_doctor FOREIGN KEY (doctor_id) 
         REFERENCES DOCTOR(doctor_id) ON DELETE RESTRICT,
     CONSTRAINT chk_specialist_fee CHECK (consultation_fee > 0),
-    CONSTRAINT chk_specialist_year CHECK (board_certified_year <= EXTRACT(YEAR FROM CURRENT_DATE))
+    CONSTRAINT chk_specialist_year CHECK (board_certified_year <= YEAR(CURRENT_DATE))
 );
 
--- 1.4 DOCTOR_SCHEDULE (Duty shifts & On-call slots)
+-- 1.4 DOCTOR_SCHEDULE
 CREATE TABLE DOCTOR_SCHEDULE (
-    schedule_id     UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    doctor_id       UUID NOT NULL,
+    schedule_id     CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+    doctor_id       CHAR(36) NOT NULL,
     work_date       DATE NOT NULL,
     start_time      TIME NOT NULL,
     end_time        TIME NOT NULL,
-    slot_status     VARCHAR(20) NOT NULL DEFAULT 'Available',
+    slot_status     ENUM('Available', 'Booked', 'Blocked') NOT NULL DEFAULT 'Available',
     CONSTRAINT fk_schedule_doctor FOREIGN KEY (doctor_id) 
         REFERENCES DOCTOR(doctor_id) ON DELETE CASCADE,
-    CONSTRAINT chk_schedule_time CHECK (end_time > start_time),
-    CONSTRAINT chk_schedule_status CHECK (slot_status IN ('Available', 'Booked', 'Blocked'))
+    CONSTRAINT chk_schedule_time CHECK (end_time > start_time)
 );
 
--- 1.5 PATIENT (Demographics & Profiles)
+-- 1.5 PATIENT
 CREATE TABLE PATIENT (
-    patient_id      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    patient_id      CHAR(36) PRIMARY KEY DEFAULT (UUID()),
     full_name       VARCHAR(100) NOT NULL,
     date_of_birth   DATE NOT NULL,
-    gender          CHAR(1) DEFAULT 'O',
+    gender          ENUM('M', 'F', 'O') DEFAULT 'O',
     phone_number    VARCHAR(15) NOT NULL UNIQUE,
-    address         VARCHAR(255),
-    status          VARCHAR(20) NOT NULL DEFAULT 'Active',
-    deleted_at      TIMESTAMP,
-    CONSTRAINT chk_patient_dob CHECK (date_of_birth <= CURRENT_DATE),
-    CONSTRAINT chk_patient_gender CHECK (gender IN ('M', 'F', 'O')),
-    CONSTRAINT chk_patient_status CHECK (status IN ('Active', 'Inactive'))
+    address         VARCHAR(255) NULL,
+    status          ENUM('Active', 'Inactive') NOT NULL DEFAULT 'Active',
+    deleted_at      DATETIME NULL,
+    CONSTRAINT chk_patient_dob CHECK (date_of_birth <= CURRENT_DATE)
 );
 
--- 1.6 APPOINTMENT (Consultation Coordination & Telemedicine)
+-- 1.6 APPOINTMENT
 CREATE TABLE APPOINTMENT (
-    appointment_id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    patient_id              UUID NOT NULL,
-    doctor_id               UUID NOT NULL,
-    booking_time            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    appointment_id          CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+    patient_id              CHAR(36) NOT NULL,
+    doctor_id               CHAR(36) NOT NULL,
+    booking_time            DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     appointment_date        DATE NOT NULL,
     start_time              TIME NOT NULL,
     end_time                TIME NOT NULL,
-    consultation_type       VARCHAR(20) NOT NULL DEFAULT 'In-Person',
-    telemedicine_video_link TEXT,
-    status                  VARCHAR(20) NOT NULL DEFAULT 'Scheduled',
-    reason_for_visit        TEXT,
-    deleted_at              TIMESTAMP,
+    consultation_type       ENUM('In-Person', 'Telemedicine') NOT NULL DEFAULT 'In-Person',
+    telemedicine_video_link TEXT NULL,
+    status                  ENUM('Scheduled', 'In-Progress', 'Completed', 'Cancelled') NOT NULL DEFAULT 'Scheduled',
+    reason_for_visit        TEXT NULL,
+    deleted_at              DATETIME NULL,
     CONSTRAINT fk_appointment_patient FOREIGN KEY (patient_id) 
         REFERENCES PATIENT(patient_id) ON DELETE RESTRICT,
     CONSTRAINT fk_appointment_doctor FOREIGN KEY (doctor_id) 
         REFERENCES DOCTOR(doctor_id) ON DELETE RESTRICT,
-    CONSTRAINT chk_appointment_time CHECK (end_time > start_time),
-    CONSTRAINT chk_appointment_type CHECK (consultation_type IN ('In-Person', 'Telemedicine')),
-    CONSTRAINT chk_appointment_status CHECK (status IN ('Scheduled', 'In-Progress', 'Completed', 'Cancelled'))
+    CONSTRAINT chk_appointment_time CHECK (end_time > start_time)
 );
 
--- 1.7 MEDICAL_RECORD (Clinical Diagnosis & Examination Ledger)
+-- 1.7 MEDICAL_RECORD
 CREATE TABLE MEDICAL_RECORD (
-    record_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    appointment_id  UUID NOT NULL UNIQUE,
-    patient_id      UUID NOT NULL,
-    specialist_id   UUID,
+    record_id       CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+    appointment_id  CHAR(36) NOT NULL UNIQUE,
+    patient_id      CHAR(36) NOT NULL,
+    specialist_id   CHAR(36) NULL,
     diagnosis       TEXT NOT NULL,
-    clinical_notes  TEXT,
-    treatment_plan  TEXT,
-    record_date     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at      TIMESTAMP,
+    clinical_notes  TEXT NULL,
+    treatment_plan  TEXT NULL,
+    record_date     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at      DATETIME NULL,
     CONSTRAINT fk_record_appointment FOREIGN KEY (appointment_id) 
         REFERENCES APPOINTMENT(appointment_id) ON DELETE RESTRICT,
     CONSTRAINT fk_record_patient FOREIGN KEY (patient_id) 
@@ -139,26 +124,25 @@ CREATE TABLE MEDICAL_RECORD (
         REFERENCES SPECIALIST(doctor_id) ON DELETE SET NULL
 );
 
--- 1.8 DIGITAL_PRESCRIPTION (Prescription Orders)
+-- 1.8 DIGITAL_PRESCRIPTION
 CREATE TABLE DIGITAL_PRESCRIPTION (
-    prescription_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    record_id       UUID NOT NULL UNIQUE,
-    issue_date      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    prescription_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+    record_id       CHAR(36) NOT NULL UNIQUE,
+    issue_date      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     valid_until     DATE NOT NULL,
-    instructions    TEXT,
-    status          VARCHAR(20) NOT NULL DEFAULT 'Draft',
-    deleted_at      TIMESTAMP,
+    instructions    TEXT NULL,
+    status          ENUM('Draft', 'Issued', 'Dispensed', 'Cancelled') NOT NULL DEFAULT 'Draft',
+    deleted_at      DATETIME NULL,
     CONSTRAINT fk_prescription_record FOREIGN KEY (record_id) 
         REFERENCES MEDICAL_RECORD(record_id) ON DELETE RESTRICT,
-    CONSTRAINT chk_prescription_validity CHECK (valid_until >= issue_date::DATE),
-    CONSTRAINT chk_prescription_status CHECK (status IN ('Draft', 'Issued', 'Dispensed', 'Cancelled'))
+    CONSTRAINT chk_prescription_validity CHECK (valid_until >= DATE(issue_date))
 );
 
--- 1.9 MEDICINE (Dispensary Catalog & Stock Metrics)
+-- 1.9 MEDICINE
 CREATE TABLE MEDICINE (
-    medicine_id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    medicine_id         CHAR(36) PRIMARY KEY DEFAULT (UUID()),
     medicine_name       VARCHAR(100) NOT NULL UNIQUE,
-    active_ingredient   VARCHAR(100),
+    active_ingredient   VARCHAR(100) NULL,
     unit                VARCHAR(20) NOT NULL DEFAULT 'Viên',
     unit_price          DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
     stock_quantity      INT NOT NULL DEFAULT 0,
@@ -168,11 +152,11 @@ CREATE TABLE MEDICINE (
     CONSTRAINT chk_medicine_reorder CHECK (reorder_level >= 0)
 );
 
--- 1.10 PRESCRIPTION_ITEM (Prescription Line Items)
+-- 1.10 PRESCRIPTION_ITEM
 CREATE TABLE PRESCRIPTION_ITEM (
-    item_id                     UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    prescription_id             UUID NOT NULL,
-    medicine_id                 UUID NOT NULL,
+    item_id                     CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+    prescription_id             CHAR(36) NOT NULL,
+    medicine_id                 CHAR(36) NOT NULL,
     dosage                      VARCHAR(50) NOT NULL,
     frequency                   VARCHAR(50) NOT NULL,
     duration_days               INT NOT NULL,
@@ -187,68 +171,57 @@ CREATE TABLE PRESCRIPTION_ITEM (
     CONSTRAINT chk_item_price CHECK (unit_price_at_prescription >= 0)
 );
 
--- 1.11 INVOICE (Encounter Fiscal Billing)
+-- 1.11 INVOICE
 CREATE TABLE INVOICE (
-    invoice_id      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    appointment_id  UUID NOT NULL UNIQUE,
-    patient_id      UUID NOT NULL,
-    issue_date      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    invoice_id      CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+    appointment_id  CHAR(36) NOT NULL UNIQUE,
+    patient_id      CHAR(36) NOT NULL,
+    issue_date      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     total_amount    DECIMAL(12, 2) NOT NULL DEFAULT 0.00,
-    payment_status  VARCHAR(20) NOT NULL DEFAULT 'Unpaid',
-    payment_method  VARCHAR(20) NOT NULL DEFAULT 'Cash',
+    payment_status  ENUM('Unpaid', 'Paid', 'Refunded') NOT NULL DEFAULT 'Unpaid',
+    payment_method  ENUM('Cash', 'Credit Card', 'Insurance', 'Bank Transfer') NOT NULL DEFAULT 'Cash',
     CONSTRAINT fk_invoice_appointment FOREIGN KEY (appointment_id) 
         REFERENCES APPOINTMENT(appointment_id) ON DELETE RESTRICT,
     CONSTRAINT fk_invoice_patient FOREIGN KEY (patient_id) 
         REFERENCES PATIENT(patient_id) ON DELETE RESTRICT,
-    CONSTRAINT chk_invoice_total CHECK (total_amount >= 0),
-    CONSTRAINT chk_invoice_status CHECK (payment_status IN ('Unpaid', 'Paid', 'Refunded')),
-    CONSTRAINT chk_invoice_method CHECK (payment_method IN ('Cash', 'Credit Card', 'Insurance', 'Bank Transfer'))
+    CONSTRAINT chk_invoice_total CHECK (total_amount >= 0)
 );
 
 -- ============================================================================
--- 2. PERFORMANCE INDEXING STRATEGY (B-TREE INDEXES)
+-- 2. INDEXES
 -- ============================================================================
 
--- Doctor schedule & availability lookup
 CREATE INDEX idx_doctor_schedule_lookup 
     ON DOCTOR_SCHEDULE (doctor_id, work_date, start_time);
 
--- Appointment query by doctor and date (Conflict prevention & Roster lookup)
 CREATE INDEX idx_appointment_doctor_date 
     ON APPOINTMENT (doctor_id, appointment_date, start_time);
 
--- Patient appointment history lookup
 CREATE INDEX idx_appointment_patient 
     ON APPOINTMENT (patient_id, appointment_date);
 
--- Patient phone quick search
 CREATE INDEX idx_patient_phone 
     ON PATIENT (phone_number);
 
--- Clinical record lookup
 CREATE INDEX idx_medical_record_patient 
     ON MEDICAL_RECORD (patient_id, record_date);
 
--- Prescription items FK index for cascade operations & joins
 CREATE INDEX idx_pres_item_prescription 
     ON PRESCRIPTION_ITEM (prescription_id);
 
 CREATE INDEX idx_pres_item_medicine 
     ON PRESCRIPTION_ITEM (medicine_id);
 
--- Medicine inventory replenishment trigger/warning
 CREATE INDEX idx_medicine_stock_alert 
     ON MEDICINE (stock_quantity, reorder_level);
 
--- Financial invoice status & settlement audit
 CREATE INDEX idx_invoice_status_date 
     ON INVOICE (payment_status, issue_date);
 
 -- ============================================================================
--- 3. ANALYTICAL & REPORTING VIEWS
+-- 3. VIEWS
 -- ============================================================================
 
--- View 1: Doctor Daily Roster (Duty Schedule & Specialization)
 CREATE OR REPLACE VIEW v_doctor_daily_roster AS
 SELECT 
     ds.schedule_id,
@@ -267,7 +240,6 @@ LEFT JOIN GENERAL_PRACTITIONER gp ON d.doctor_id = gp.doctor_id
 LEFT JOIN SPECIALIST sp ON d.doctor_id = sp.doctor_id
 WHERE d.status = 'Active';
 
--- View 2: Appointment Billing Summary (Consultation Fee + Medicine Total)
 CREATE OR REPLACE VIEW v_appointment_billing_summary AS
 SELECT 
     i.invoice_id,
@@ -286,7 +258,6 @@ JOIN APPOINTMENT a ON i.appointment_id = a.appointment_id
 JOIN PATIENT p ON i.patient_id = p.patient_id
 JOIN DOCTOR d ON a.doctor_id = d.doctor_id;
 
--- View 3: Low Stock Medicines Alert (Inventory Procurement)
 CREATE OR REPLACE VIEW v_low_stock_medicines AS
 SELECT 
     medicine_id,
@@ -300,8 +271,3 @@ SELECT
 FROM MEDICINE
 WHERE stock_quantity <= reorder_level
 ORDER BY stock_quantity ASC;
-
--- ============================================================================
--- END OF SCRIPT: 01_schema.sql
--- Procedural Triggers (BR-01, BR-09, BR-10) are maintained in 03_triggers.sql
--- ============================================================================
