@@ -45,9 +45,6 @@ This project designs a relational database management system for a healthcare fa
 - [Data Dictionary](phase%202/data_dictionary.md)
 - [Normalization Verification](phase%202/normalization_verification.md)
 
-### Phase 3: Database Implementation & Advanced SQL
-- [Phase 3 Plan](phase%203/plan.md)
-
 ---
 
 ## Repository Structure
@@ -66,8 +63,6 @@ This project designs a relational database management system for a healthcare fa
 │   │   └── physical_schema_diagram.md
 │   ├── data_dictionary.md
 │   └── normalization_verification.md
-├── phase 3/
-│   └── plan.md
 ├── .gitignore
 └── README.md
 ```
