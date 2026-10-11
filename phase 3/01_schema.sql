@@ -1,11 +1,9 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
--- Drop views if exists
 DROP VIEW IF EXISTS v_low_stock_medicines;
 DROP VIEW IF EXISTS v_appointment_billing_summary;
 DROP VIEW IF EXISTS v_doctor_daily_roster;
 
--- Drop tables if exists
 DROP TABLE IF EXISTS INVOICE;
 DROP TABLE IF EXISTS PRESCRIPTION_ITEM;
 DROP TABLE IF EXISTS MEDICINE;
@@ -20,11 +18,6 @@ DROP TABLE IF EXISTS DOCTOR;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
--- ============================================================================
--- 1. TABLES & CONSTRAINTS
--- ============================================================================
-
--- 1.1 DOCTOR (Superclass)
 CREATE TABLE DOCTOR (
     doctor_id       CHAR(36) PRIMARY KEY DEFAULT (UUID()),
     full_name       VARCHAR(100) NOT NULL,
@@ -36,7 +29,6 @@ CREATE TABLE DOCTOR (
     deleted_at      DATETIME NULL
 );
 
--- 1.2 GENERAL_PRACTITIONER (Subclass)
 CREATE TABLE GENERAL_PRACTITIONER (
     doctor_id           CHAR(36) PRIMARY KEY,
     clinic_room_no      VARCHAR(20) NOT NULL,
@@ -46,7 +38,6 @@ CREATE TABLE GENERAL_PRACTITIONER (
     CONSTRAINT chk_gp_fee CHECK (consultation_fee > 0)
 );
 
--- 1.3 SPECIALIST (Subclass)
 CREATE TABLE SPECIALIST (
     doctor_id               CHAR(36) PRIMARY KEY,
     specialty               VARCHAR(50) NOT NULL,
@@ -58,7 +49,6 @@ CREATE TABLE SPECIALIST (
     CONSTRAINT chk_specialist_year CHECK (board_certified_year <= YEAR(CURRENT_DATE))
 );
 
--- 1.4 DOCTOR_SCHEDULE
 CREATE TABLE DOCTOR_SCHEDULE (
     schedule_id     CHAR(36) PRIMARY KEY DEFAULT (UUID()),
     doctor_id       CHAR(36) NOT NULL,
@@ -71,7 +61,6 @@ CREATE TABLE DOCTOR_SCHEDULE (
     CONSTRAINT chk_schedule_time CHECK (end_time > start_time)
 );
 
--- 1.5 PATIENT
 CREATE TABLE PATIENT (
     patient_id      CHAR(36) PRIMARY KEY DEFAULT (UUID()),
     full_name       VARCHAR(100) NOT NULL,
@@ -84,7 +73,6 @@ CREATE TABLE PATIENT (
     CONSTRAINT chk_patient_dob CHECK (date_of_birth <= CURRENT_DATE)
 );
 
--- 1.6 APPOINTMENT
 CREATE TABLE APPOINTMENT (
     appointment_id          CHAR(36) PRIMARY KEY DEFAULT (UUID()),
     patient_id              CHAR(36) NOT NULL,
@@ -105,7 +93,6 @@ CREATE TABLE APPOINTMENT (
     CONSTRAINT chk_appointment_time CHECK (end_time > start_time)
 );
 
--- 1.7 MEDICAL_RECORD
 CREATE TABLE MEDICAL_RECORD (
     record_id       CHAR(36) PRIMARY KEY DEFAULT (UUID()),
     appointment_id  CHAR(36) NOT NULL UNIQUE,
@@ -124,7 +111,6 @@ CREATE TABLE MEDICAL_RECORD (
         REFERENCES SPECIALIST(doctor_id) ON DELETE SET NULL
 );
 
--- 1.8 DIGITAL_PRESCRIPTION
 CREATE TABLE DIGITAL_PRESCRIPTION (
     prescription_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
     record_id       CHAR(36) NOT NULL UNIQUE,
@@ -138,7 +124,6 @@ CREATE TABLE DIGITAL_PRESCRIPTION (
     CONSTRAINT chk_prescription_validity CHECK (valid_until >= DATE(issue_date))
 );
 
--- 1.9 MEDICINE
 CREATE TABLE MEDICINE (
     medicine_id         CHAR(36) PRIMARY KEY DEFAULT (UUID()),
     medicine_name       VARCHAR(100) NOT NULL UNIQUE,
@@ -152,7 +137,6 @@ CREATE TABLE MEDICINE (
     CONSTRAINT chk_medicine_reorder CHECK (reorder_level >= 0)
 );
 
--- 1.10 PRESCRIPTION_ITEM
 CREATE TABLE PRESCRIPTION_ITEM (
     item_id                     CHAR(36) PRIMARY KEY DEFAULT (UUID()),
     prescription_id             CHAR(36) NOT NULL,
@@ -171,7 +155,6 @@ CREATE TABLE PRESCRIPTION_ITEM (
     CONSTRAINT chk_item_price CHECK (unit_price_at_prescription >= 0)
 );
 
--- 1.11 INVOICE
 CREATE TABLE INVOICE (
     invoice_id      CHAR(36) PRIMARY KEY DEFAULT (UUID()),
     appointment_id  CHAR(36) NOT NULL UNIQUE,
@@ -186,10 +169,6 @@ CREATE TABLE INVOICE (
         REFERENCES PATIENT(patient_id) ON DELETE RESTRICT,
     CONSTRAINT chk_invoice_total CHECK (total_amount >= 0)
 );
-
--- ============================================================================
--- 2. INDEXES
--- ============================================================================
 
 CREATE INDEX idx_doctor_schedule_lookup 
     ON DOCTOR_SCHEDULE (doctor_id, work_date, start_time);
@@ -217,10 +196,6 @@ CREATE INDEX idx_medicine_stock_alert
 
 CREATE INDEX idx_invoice_status_date 
     ON INVOICE (payment_status, issue_date);
-
--- ============================================================================
--- 3. VIEWS
--- ============================================================================
 
 CREATE OR REPLACE VIEW v_doctor_daily_roster AS
 SELECT 
