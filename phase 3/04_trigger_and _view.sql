@@ -1,4 +1,4 @@
--- 1. VIEW: các ca làm việc còn trống của bác sĩ
+-- 1. VIEW: available work slots of doctors
 CREATE OR REPLACE VIEW V_DOCTOR_AVAILABLE_SLOT AS
 SELECT
     ds.schedule_id,
@@ -13,7 +13,7 @@ JOIN DOCTOR d ON d.doctor_id = ds.doctor_id
 WHERE ds.slot_status = 'Available';
 
 
--- 2. TRIGGER: không cho đặt lịch trùng giờ của cùng một bác sĩ
+-- 2. TRIGGER: prevent overlapping appointments for the same doctor
 DROP TRIGGER IF EXISTS TRG_APPOINTMENT_BEFORE_INSERT;
 
 DELIMITER $$
