@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Doctor screen</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 0; background: #f4f6f8; color: #222; }
+  header { background: #0b6e4f; color: #fff; padding: 14px 24px; }
+  main { display: grid; grid-template-columns: 1fr 1.2fr; gap: 20px; padding: 20px 24px; }
+  section { background: #fff; border: 1px solid #d5dbe0; border-radius: 6px; padding: 16px; }
+  h2 { margin-top: 0; font-size: 17px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { border-bottom: 1px solid #e3e7ea; padding: 6px 8px; text-align: left; }
+  tr.row { cursor: pointer; }
+  tr.row:hover { background: #eef7f3; }
+  label { display: block; margin-top: 10px; font-size: 14px; }
+  input, textarea, select { width: 100%; box-sizing: border-box; padding: 6px; font: inherit; }
+  button { margin-top: 12px; padding: 8px 14px; background: #0b6e4f; color: #fff; border: 0; border-radius: 4px; cursor: pointer; }
+  button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid #0b6e4f; outline-offset: 2px; }
+  #msg { margin-top: 10px; font-size: 14px; min-height: 18px; }
+  @media (max-width: 800px) { main { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1 style="margin:0;font-size:20px">Doctor screen</h1>
+  <label style="color:#fff;max-width:200px">Doctor ID
+    <input id="doctorId" type="number" value="1">
+  </label>
+</header>
+
+<main>
+  <section>
+    <h2>Appointments</h2>
+    <button onclick="loadAppointments()">Load appointments</button>
+    <table>
+      <thead><tr><th>ID</th><th>Patient</th><th>Date</th><th>Status</th></tr></thead>
+      <tbody id="appointments"></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Medical record <span id="apptLabel"></span></h2>
+    <label>Diagnosis <input id="diagnosis"></label>
+    <label>Notes <textarea id="notes" rows="3"></textarea></label>
+    <button onclick="saveRecord()">Save medical record</button>
+
+    <h2 style="margin-top:24px">Prescription</h2>
+    <label>Medicine <select id="medicine"></select></label>
+    <label>Dosage <input id="dosage" placeholder="e.g. 1 tablet, twice a day"></label>
+    <label>Quantity <input id="quantity" type="number" min="1" value="1"></label>
+    <button onclick="addItem()">Add medicine</button>
+    <button onclick="savePrescription()">Save prescription</button>
+
+    <table>
+      <thead><tr><th>Medicine</th><th>Dosage</th><th>Qty</th></tr></thead>
+      <tbody id="items"></tbody>
+    </table>
+    <div id="msg" role="status"></div>
+  </section>
+</main>
+
+<script>
+  let currentAppointment = null;
+  let currentRecord = null;
+  let items = [];
+  let medicines = [];
+
+  function say(text) { document.getElementById("msg").textContent = text; }
+
+  async function loadAppointments() {
+    const id = document.getElementById("doctorId").value;
+    const res = await fetch("/api/doctor/" + id + "/appointments");
+    const rows = await res.json();
+    const tbody = document.getElementById("appointments");
+    tbody.innerHTML = "";
+    rows.forEach(function (r) {
+      const tr = document.createElement("tr");
+      tr.className = "row";
+      tr.innerHTML = "<td>" + r.appointment_id + "</td><td></td><td>" +
+        r.appointment_date + "</td><td>" + r.status + "</td>";
+      tr.children[1].textContent = r.patient_name;
+      tr.onclick = function () { selectAppointment(r.appointment_id); };
+      tbody.appendChild(tr);
+    });
+  }
+
+  async function selectAppointment(id) {
+    currentAppointment = id;
+    document.getElementById("apptLabel").textContent = "(appointment " + id + ")";
+    const res = await fetch("/api/medical-records/" + id);
+    const rec = await res.json();
+    currentRecord = rec.record_id || null;
+    document.getElementById("diagnosis").value = rec.diagnosis || "";
+    document.getElementById("notes").value = rec.notes || "";
+    items = [];
+    renderItems();
+  }
+
+  async function saveRecord() {
+    if (!currentAppointment) { say("Select an appointment first."); return; }
+    const res = await fetch("/api/medical-records", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        appointment_id: currentAppointment,
+        diagnosis: document.getElementById("diagnosis").value,
+        notes: document.getElementById("notes").value
+      })
+    });
+    const data = await res.json();
+    if (res.ok) { currentRecord = data.record_id; say(data.message); } else { say(data.error); }
+  }
+
+  async function loadMedicines() {
+    const res = await fetch("/api/medicines");
+    medicines = await res.json();
+    const sel = document.getElementById("medicine");
+    medicines.forEach(function (m) {
+      const o = document.createElement("option");
+      o.value = m.medicine_id;
+      o.textContent = m.medicine_name;
+      sel.appendChild(o);
+    });
+  }
+
+  function addItem() {
+    const sel = document.getElementById("medicine");
+    items.push({
+      medicine_id: Number(sel.value),
+      name: sel.options[sel.selectedIndex].textContent,
+      dosage: document.getElementById("dosage").value,
+      quantity: Number(document.getElementById("quantity").value)
+    });
+    renderItems();
+  }
+
+  function renderItems() {
+    const tbody = document.getElementById("items");
+    tbody.innerHTML = "";
+    items.forEach(function (it) {
+      const tr = document.createElement("tr");
+      ["name", "dosage", "quantity"].forEach(function (k) {
+        const td = document.createElement("td");
+        td.textContent = it[k];
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+  }
+
+  async function savePrescription() {
+    if (!currentRecord) { say("Save the medical record first."); return; }
+    const res = await fetch("/api/prescriptions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        record_id: currentRecord,
+        items: items.map(function (i) {
+          return { medicine_id: i.medicine_id, dosage: i.dosage, quantity: i.quantity };
+        })
+      })
+    });
+    const data = await res.json();
+    say(res.ok ? data.message : data.error);
+    if (res.ok) { items = []; renderItems(); }
+  }
+
+  loadMedicines();
+</script>
+</body>
+</html>
