@@ -1,61 +1,73 @@
+USE healthcare_clinic_v2;
 
+-- Latest month that has data (backward index scan, stops at the first live row)
 SET @report_month_start = DATE_FORMAT(
-    (SELECT MAX(appointment_date) FROM APPOINTMENT),
+    (SELECT appointment_date
+     FROM appointment
+     WHERE deleted_at IS NULL
+     ORDER BY appointment_date DESC
+     LIMIT 1),
     '%Y-%m-01'
 );
 SET @report_month_end = DATE_ADD(@report_month_start, INTERVAL 1 MONTH);
 
 /* ========================================================================
    Q01. Telemedicine ratio for every doctor in the latest data month
-   Techniques: JOIN, aggregation, correlated subquery in SELECT.
-   Cancelled appointments are excluded from the denominator.
+   Techniques: CTE, LEFT JOIN, conditional aggregation.
+   The month is aggregated first (date-range scan on the covering index), then
+   joined to doctor. The correlated subquery of the original is removed.
    ======================================================================== */
+WITH month_stats AS (
+    SELECT
+        a.doctor_id,
+        COUNT(*) AS total_appointments,
+        SUM(CASE WHEN a.consultation_type = 'Telemedicine' THEN 1 ELSE 0 END)
+            AS telemedicine_appointments
+    FROM appointment a
+    WHERE a.status <> 'Cancelled'
+      AND a.deleted_at IS NULL
+      AND a.appointment_date >= @report_month_start
+      AND a.appointment_date < @report_month_end
+    GROUP BY a.doctor_id
+)
 SELECT
     d.doctor_id,
     d.full_name AS doctor_name,
     d.doctor_type,
-    COUNT(a.appointment_id) AS total_non_cancelled_appointments,
-    SUM(CASE WHEN a.consultation_type = 'Telemedicine' THEN 1 ELSE 0 END)
-        AS telemedicine_appointments,
+    COALESCE(m.total_appointments, 0) AS total_non_cancelled_appointments,
+    COALESCE(m.telemedicine_appointments, 0) AS telemedicine_appointments,
     ROUND(
-        100.0 *
-        (
-            SELECT COUNT(*)
-            FROM APPOINTMENT a_tele
-            WHERE a_tele.doctor_id = d.doctor_id
-              AND a_tele.consultation_type = 'Telemedicine'
-              AND a_tele.status <> 'Cancelled'
-              AND a_tele.appointment_date >= @report_month_start
-              AND a_tele.appointment_date < @report_month_end
-        ) / NULLIF(COUNT(a.appointment_id), 0),
+        100.0 * m.telemedicine_appointments / NULLIF(m.total_appointments, 0),
         2
     ) AS telemedicine_percentage
-FROM DOCTOR d
-LEFT JOIN APPOINTMENT a
-    ON a.doctor_id = d.doctor_id
-   AND a.status <> 'Cancelled'
-   AND a.appointment_date >= @report_month_start
-   AND a.appointment_date < @report_month_end
-GROUP BY d.doctor_id, d.full_name, d.doctor_type
+FROM doctor d
+LEFT JOIN month_stats m ON m.doctor_id = d.doctor_id
+WHERE d.deleted_at IS NULL
 ORDER BY telemedicine_percentage DESC, total_non_cancelled_appointments DESC;
 
 /* ========================================================================
    Q02. Doctors whose workload is above the clinic-wide average
-   Techniques: JOIN, aggregation, CTE/subquery, HAVING-equivalent filter.
+   Techniques: JOIN, aggregation, CTE, subquery filter.
+   Average is taken over active, non-deleted doctors only.
    ======================================================================== */
 WITH doctor_workload AS (
     SELECT
         d.doctor_id,
         d.full_name AS doctor_name,
         d.doctor_type,
-        COUNT(a.appointment_id) AS appointment_count
-    FROM DOCTOR d
-    LEFT JOIN APPOINTMENT a
-        ON a.doctor_id = d.doctor_id
-       AND a.status <> 'Cancelled'
-       AND a.appointment_date >= @report_month_start
-       AND a.appointment_date < @report_month_end
-    GROUP BY d.doctor_id, d.full_name, d.doctor_type
+        COALESCE(m.appointment_count, 0) AS appointment_count
+    FROM doctor d
+    LEFT JOIN (
+        SELECT a.doctor_id, COUNT(*) AS appointment_count
+        FROM appointment a
+        WHERE a.status <> 'Cancelled'
+          AND a.deleted_at IS NULL
+          AND a.appointment_date >= @report_month_start
+          AND a.appointment_date < @report_month_end
+        GROUP BY a.doctor_id
+    ) m ON m.doctor_id = d.doctor_id
+    WHERE d.status = 'Active'
+      AND d.deleted_at IS NULL
 ), workload_average AS (
     SELECT AVG(appointment_count) AS average_appointments_per_doctor
     FROM doctor_workload
@@ -82,121 +94,132 @@ SELECT
     COUNT(a.appointment_id) AS non_cancelled_appointments,
     MIN(a.appointment_date) AS first_appointment_date,
     MAX(a.appointment_date) AS latest_appointment_date
-FROM PATIENT p
-JOIN APPOINTMENT a ON a.patient_id = p.patient_id
+FROM patient p
+JOIN appointment a ON a.patient_id = p.patient_id
 WHERE a.status <> 'Cancelled'
+  AND a.deleted_at IS NULL
+  AND p.deleted_at IS NULL
 GROUP BY p.patient_id, p.full_name
 HAVING COUNT(a.appointment_id) >= 2
    AND EXISTS (
        SELECT 1
-       FROM APPOINTMENT a_online
+       FROM appointment a_online
        WHERE a_online.patient_id = p.patient_id
          AND a_online.consultation_type = 'Telemedicine'
          AND a_online.status <> 'Cancelled'
+         AND a_online.deleted_at IS NULL
    )
    AND EXISTS (
        SELECT 1
-       FROM APPOINTMENT a_in_person
+       FROM appointment a_in_person
        WHERE a_in_person.patient_id = p.patient_id
          AND a_in_person.consultation_type = 'In-Person'
          AND a_in_person.status <> 'Cancelled'
+         AND a_in_person.deleted_at IS NULL
    )
 ORDER BY non_cancelled_appointments DESC, patient_name;
 
 /* ========================================================================
-   Q04. Specialties with an above-average cancellation rate
-   Techniques: JOIN, CASE aggregation, derived-table/subquery comparison.
+   Q04. Specialties with an above-average cancellation rate (all-time scope)
+   Techniques: JOIN, CASE aggregation, window totals.
+   The clinic-wide rate comes from window sums over the grouped result, so
+   appointment is scanned once instead of twice.
    ======================================================================== */
-WITH specialty_stats AS (
+WITH doctor_specialty AS (
     SELECT
+        d.doctor_id,
         CASE
             WHEN d.doctor_type = 'Specialist' THEN COALESCE(sp.specialty, 'Unknown')
             ELSE 'General Practice'
-        END AS specialty,
+        END AS specialty
+    FROM doctor d
+    LEFT JOIN specialist sp ON sp.doctor_id = d.doctor_id
+), specialty_stats AS (
+    SELECT
+        ds.specialty,
         COUNT(a.appointment_id) AS total_appointments,
         SUM(CASE WHEN a.status = 'Cancelled' THEN 1 ELSE 0 END)
             AS cancelled_appointments
-    FROM DOCTOR d
-    LEFT JOIN SPECIALIST sp ON sp.doctor_id = d.doctor_id
-    JOIN APPOINTMENT a ON a.doctor_id = d.doctor_id
-    GROUP BY
-        CASE
-            WHEN d.doctor_type = 'Specialist' THEN COALESCE(sp.specialty, 'Unknown')
-            ELSE 'General Practice'
-        END
-), overall_rate AS (
+    FROM doctor_specialty ds
+    JOIN appointment a ON a.doctor_id = ds.doctor_id
+    WHERE a.deleted_at IS NULL
+    GROUP BY ds.specialty
+), with_clinic_rate AS (
     SELECT
-        1.0 * SUM(CASE WHEN status = 'Cancelled' THEN 1 ELSE 0 END)
-        / NULLIF(COUNT(*), 0) AS clinic_cancellation_rate
-    FROM APPOINTMENT
+        s.*,
+        SUM(s.cancelled_appointments) OVER () * 1.0
+            / NULLIF(SUM(s.total_appointments) OVER (), 0) AS clinic_cancellation_rate
+    FROM specialty_stats s
 )
 SELECT
-    s.specialty,
-    s.total_appointments,
-    s.cancelled_appointments,
-    ROUND(100.0 * s.cancelled_appointments / NULLIF(s.total_appointments, 0), 2)
+    w.specialty,
+    w.total_appointments,
+    w.cancelled_appointments,
+    ROUND(100.0 * w.cancelled_appointments / NULLIF(w.total_appointments, 0), 2)
         AS cancellation_percentage,
-    ROUND(100.0 * o.clinic_cancellation_rate, 2)
+    ROUND(100.0 * w.clinic_cancellation_rate, 2)
         AS clinic_average_cancellation_percentage
-FROM specialty_stats s
-CROSS JOIN overall_rate o
-WHERE 1.0 * s.cancelled_appointments / NULLIF(s.total_appointments, 0)
-      > o.clinic_cancellation_rate
-ORDER BY cancellation_percentage DESC, s.specialty;
+FROM with_clinic_rate w
+WHERE 1.0 * w.cancelled_appointments / NULLIF(w.total_appointments, 0)
+      > w.clinic_cancellation_rate
+ORDER BY cancellation_percentage DESC, w.specialty;
 
 /* ========================================================================
    Q05. Stock-risk alert based on consumption during the latest 14 days
-   Techniques: JOIN, SUM in a subquery/CTE, comparison with current stock.
+   Techniques: JOIN, SUM in a CTE, comparison with current stock.
+   Alert when current stock covers fewer days than the 14-day window, i.e.
+   stock < quantity prescribed in the window. days_of_cover is added for
+   readability.
    ======================================================================== */
-WITH consumption_last_14_days AS (
+WITH latest AS (
+    SELECT MAX(issue_date) AS max_issue_date
+    FROM digital_prescription
+    WHERE deleted_at IS NULL
+), consumption_last_14_days AS (
     SELECT
         pi.medicine_id,
         SUM(pi.quantity) AS prescribed_quantity_last_14_days
-    FROM PRESCRIPTION_ITEM pi
-    JOIN DIGITAL_PRESCRIPTION dp
+    FROM prescription_item pi
+    JOIN digital_prescription dp
         ON dp.prescription_id = pi.prescription_id
+    CROSS JOIN latest l
     WHERE dp.status IN ('Issued', 'Dispensed')
-      AND dp.issue_date >= DATE_SUB(
-          (SELECT MAX(issue_date) FROM DIGITAL_PRESCRIPTION),
-          INTERVAL 14 DAY
-      )
-      AND dp.issue_date <= (SELECT MAX(issue_date) FROM DIGITAL_PRESCRIPTION)
+      AND dp.deleted_at IS NULL
+      AND dp.issue_date >= DATE_SUB(l.max_issue_date, INTERVAL 14 DAY)
+      AND dp.issue_date <= l.max_issue_date
     GROUP BY pi.medicine_id
 )
 SELECT
     m.medicine_id,
     m.medicine_name,
     m.stock_quantity AS current_stock,
-    COALESCE(c.prescribed_quantity_last_14_days, 0)
-        AS prescribed_quantity_last_14_days,
+    c.prescribed_quantity_last_14_days,
     m.reorder_level,
-    m.stock_quantity - COALESCE(c.prescribed_quantity_last_14_days, 0)
-        AS stock_minus_recent_consumption
-FROM MEDICINE m
+    m.stock_quantity - c.prescribed_quantity_last_14_days
+        AS stock_minus_recent_consumption,
+    ROUND(m.stock_quantity / (c.prescribed_quantity_last_14_days / 14.0), 1)
+        AS days_of_cover
+FROM medicine m
 JOIN consumption_last_14_days c ON c.medicine_id = m.medicine_id
 WHERE m.stock_quantity < c.prescribed_quantity_last_14_days
 ORDER BY stock_minus_recent_consumption ASC, m.medicine_name;
 
 /* ========================================================================
    Q06. Medicines with monthly revenue above the average medicine revenue
-   Techniques: JOIN, SUM, derived tables, AVG subquery.
-   Revenue is based on issued/dispensed prescription items.
+   Techniques: JOIN, SUM, CTE, AVG subquery.
+   unit_price_at_prescription is NOT NULL, so the old COALESCE is removed.
    ======================================================================== */
 WITH medicine_monthly_revenue AS (
     SELECT
         m.medicine_id,
         m.medicine_name,
-        SUM(
-            pi.quantity * COALESCE(
-                pi.unit_price_at_prescription,
-                m.unit_price
-            )
-        ) AS total_medicine_revenue
-    FROM MEDICINE m
-    JOIN PRESCRIPTION_ITEM pi ON pi.medicine_id = m.medicine_id
-    JOIN DIGITAL_PRESCRIPTION dp
+        SUM(pi.quantity * pi.unit_price_at_prescription) AS total_medicine_revenue
+    FROM medicine m
+    JOIN prescription_item pi ON pi.medicine_id = m.medicine_id
+    JOIN digital_prescription dp
         ON dp.prescription_id = pi.prescription_id
     WHERE dp.status IN ('Issued', 'Dispensed')
+      AND dp.deleted_at IS NULL
       AND dp.issue_date >= @report_month_start
       AND dp.issue_date < @report_month_end
     GROUP BY m.medicine_id, m.medicine_name
@@ -217,47 +240,44 @@ ORDER BY r.total_medicine_revenue DESC;
 
 /* ========================================================================
    Q07. Polypharmacy: prescriptions above the system average item count
-   Techniques: COUNT(DISTINCT), GROUP BY, correlated average subquery.
+   Techniques: COUNT(DISTINCT), GROUP BY, CTE average.
+   Items are aggregated first; patient and record are joined only for the
+   final result.
    ======================================================================== */
-WITH prescription_medicine_counts AS (
+WITH item_counts AS (
     SELECT
-        dp.prescription_id,
-        mr.patient_id,
-        p.full_name AS patient_name,
-        dp.issue_date,
+        pi.prescription_id,
         COUNT(DISTINCT pi.medicine_id) AS distinct_medicine_count
-    FROM DIGITAL_PRESCRIPTION dp
-    JOIN MEDICAL_RECORD mr ON mr.record_id = dp.record_id
-    JOIN PATIENT p ON p.patient_id = mr.patient_id
-    JOIN PRESCRIPTION_ITEM pi ON pi.prescription_id = dp.prescription_id
+    FROM prescription_item pi
+    JOIN digital_prescription dp ON dp.prescription_id = pi.prescription_id
     WHERE dp.status <> 'Cancelled'
-    GROUP BY
-        dp.prescription_id,
-        mr.patient_id,
-        p.full_name,
-        dp.issue_date
+      AND dp.deleted_at IS NULL
+    GROUP BY pi.prescription_id
 ), average_prescription_size AS (
     SELECT AVG(distinct_medicine_count) AS average_distinct_medicines
-    FROM prescription_medicine_counts
+    FROM item_counts
 )
 SELECT
-    c.prescription_id,
-    c.patient_id,
-    c.patient_name,
-    c.issue_date,
-    c.distinct_medicine_count,
+    ic.prescription_id,
+    mr.patient_id,
+    p.full_name AS patient_name,
+    dp.issue_date,
+    ic.distinct_medicine_count,
     ROUND(a.average_distinct_medicines, 2)
         AS clinic_average_distinct_medicines
-FROM prescription_medicine_counts c
+FROM item_counts ic
 CROSS JOIN average_prescription_size a
-WHERE c.distinct_medicine_count > a.average_distinct_medicines
-ORDER BY c.distinct_medicine_count DESC, c.issue_date DESC;
+JOIN digital_prescription dp ON dp.prescription_id = ic.prescription_id
+JOIN medical_record mr ON mr.record_id = dp.record_id
+JOIN patient p ON p.patient_id = mr.patient_id
+WHERE ic.distinct_medicine_count > a.average_distinct_medicines
+ORDER BY ic.distinct_medicine_count DESC, dp.issue_date DESC;
 
 /* ========================================================================
    Q08. Bad-debt risk by patient
-   Techniques: JOIN, SUM, subquery/CTE for average debt.
-   Limitation: the current schema has no PAYMENT table or paid_amount;
-   only invoices whose payment_status is Unpaid can be measured here.
+   Techniques: JOIN, SUM, CTE for average debt.
+   Debt of soft-deleted patients is deliberately kept: it is still owed.
+   For partial payments, subtract SUM(payment.amount) per invoice.
    ======================================================================== */
 WITH unpaid_debt_by_patient AS (
     SELECT
@@ -265,8 +285,8 @@ WITH unpaid_debt_by_patient AS (
         p.full_name AS patient_name,
         COUNT(i.invoice_id) AS unpaid_invoice_count,
         SUM(i.total_amount) AS total_unpaid_amount
-    FROM PATIENT p
-    JOIN INVOICE i ON i.patient_id = p.patient_id
+    FROM patient p
+    JOIN invoice i ON i.patient_id = p.patient_id
     WHERE i.payment_status = 'Unpaid'
     GROUP BY p.patient_id, p.full_name
 ), average_unpaid_debt AS (
@@ -285,9 +305,10 @@ WHERE d.total_unpaid_amount > a.average_unpaid_amount
 ORDER BY d.total_unpaid_amount DESC;
 
 /* ========================================================================
-   Q09. Months where Telemedicine exceeds 30% of total appointment revenue
-   Techniques: JOIN, conditional SUM, monthly GROUP BY, outer subquery filter.
-   Only Completed appointments are treated as realized revenue.
+   Q09. Months where Telemedicine exceeds 20% of realised appointment revenue
+   Techniques: JOIN, conditional SUM, monthly GROUP BY, CTE filter.
+   Realised revenue = Completed appointments with a Paid invoice (Unpaid and
+   Refunded invoices are no longer counted).
    ======================================================================== */
 WITH monthly_revenue AS (
     SELECT
@@ -301,9 +322,11 @@ WITH monthly_revenue AS (
                 ELSE 0
             END
         ) AS telemedicine_revenue
-    FROM APPOINTMENT a
-    JOIN INVOICE i ON i.appointment_id = a.appointment_id
+    FROM appointment a
+    JOIN invoice i ON i.appointment_id = a.appointment_id
     WHERE a.status = 'Completed'
+      AND a.deleted_at IS NULL
+      AND i.payment_status = 'Paid'
     GROUP BY YEAR(a.appointment_date), MONTH(a.appointment_date)
 )
 SELECT
@@ -314,73 +337,81 @@ SELECT
     ROUND(100.0 * telemedicine_revenue / NULLIF(total_monthly_revenue, 0), 2)
         AS telemedicine_revenue_percentage
 FROM monthly_revenue
-WHERE telemedicine_revenue / NULLIF(total_monthly_revenue, 0) > 0.30
+WHERE telemedicine_revenue / NULLIF(total_monthly_revenue, 0) > 0.20
 ORDER BY revenue_year, revenue_month;
 
 /* ========================================================================
    Q10. VIP patients above the 80th percentile of total medical spending
    Techniques: multi-stage aggregation, JOINs, ROW_NUMBER, PERCENT_RANK.
-   Spending = consultation fee + medicine cost for Completed appointments.
-   The primary doctor is the doctor with the most completed visits for the
-   patient; ties are resolved by the most recent appointment.
+   Spending = consultation fee + medicine cost, both for Completed visits.
+   appointment is scanned once (patient x doctor), then reused for the fee
+   total and for the primary doctor.
+   LIMITATION: the fee is the doctor's CURRENT fee because the schema does not
+   store the fee at visit time. Add a fee snapshot to invoice (see README).
    ======================================================================== */
-WITH consultation_spend AS (
+WITH doctor_fee AS (
+    SELECT
+        d.doctor_id,
+        d.full_name,
+        COALESCE(gp.consultation_fee, sp.consultation_fee, 0) AS fee
+    FROM doctor d
+    LEFT JOIN general_practitioner gp ON gp.doctor_id = d.doctor_id
+    LEFT JOIN specialist sp ON sp.doctor_id = d.doctor_id
+), patient_doctor AS (
     SELECT
         a.patient_id,
-        SUM(
-            CASE
-                WHEN d.doctor_type = 'GP' THEN gp.consultation_fee
-                WHEN d.doctor_type = 'Specialist' THEN sp.consultation_fee
-                ELSE 0
-            END
-        ) AS consultation_total
-    FROM APPOINTMENT a
-    JOIN DOCTOR d ON d.doctor_id = a.doctor_id
-    LEFT JOIN GENERAL_PRACTITIONER gp ON gp.doctor_id = d.doctor_id
-    LEFT JOIN SPECIALIST sp ON sp.doctor_id = d.doctor_id
+        a.doctor_id,
+        COUNT(*) AS visits,
+        MAX(a.appointment_date) AS last_visit
+    FROM appointment a
     WHERE a.status = 'Completed'
-    GROUP BY a.patient_id
+      AND a.deleted_at IS NULL
+    GROUP BY a.patient_id, a.doctor_id
+), consultation_spend AS (
+    SELECT
+        pd.patient_id,
+        SUM(pd.visits * df.fee) AS consultation_total
+    FROM patient_doctor pd
+    JOIN doctor_fee df ON df.doctor_id = pd.doctor_id
+    GROUP BY pd.patient_id
+), ranked_doctors AS (
+    SELECT
+        pd.patient_id,
+        df.full_name AS doctor_name,
+        ROW_NUMBER() OVER (
+            PARTITION BY pd.patient_id
+            ORDER BY pd.visits DESC, pd.last_visit DESC, df.full_name
+        ) AS doctor_rank
+    FROM patient_doctor pd
+    JOIN doctor_fee df ON df.doctor_id = pd.doctor_id
 ), medicine_spend AS (
     SELECT
         mr.patient_id,
-        SUM(
-            pi.quantity * COALESCE(
-                pi.unit_price_at_prescription,
-                m.unit_price
-            )
-        ) AS medicine_total
-    FROM MEDICAL_RECORD mr
-    JOIN DIGITAL_PRESCRIPTION dp ON dp.record_id = mr.record_id
-    JOIN PRESCRIPTION_ITEM pi ON pi.prescription_id = dp.prescription_id
-    JOIN MEDICINE m ON m.medicine_id = pi.medicine_id
+        SUM(pi.quantity * pi.unit_price_at_prescription) AS medicine_total
+    FROM medical_record mr
+    JOIN appointment a
+        ON a.appointment_id = mr.appointment_id
+       AND a.status = 'Completed'
+       AND a.deleted_at IS NULL
+    JOIN digital_prescription dp ON dp.record_id = mr.record_id
+    JOIN prescription_item pi ON pi.prescription_id = dp.prescription_id
     WHERE dp.status IN ('Issued', 'Dispensed')
+      AND dp.deleted_at IS NULL
+      AND mr.deleted_at IS NULL
     GROUP BY mr.patient_id
 ), patient_spending AS (
     SELECT
         p.patient_id,
         p.full_name AS patient_name,
-        COALESCE(cs.consultation_total, 0)
-            + COALESCE(ms.medicine_total, 0) AS total_medical_spending,
         COALESCE(cs.consultation_total, 0) AS consultation_total,
-        COALESCE(ms.medicine_total, 0) AS medicine_total
-    FROM PATIENT p
+        COALESCE(ms.medicine_total, 0) AS medicine_total,
+        COALESCE(cs.consultation_total, 0)
+            + COALESCE(ms.medicine_total, 0) AS total_medical_spending
+    FROM patient p
     LEFT JOIN consultation_spend cs ON cs.patient_id = p.patient_id
     LEFT JOIN medicine_spend ms ON ms.patient_id = p.patient_id
-    WHERE cs.patient_id IS NOT NULL OR ms.patient_id IS NOT NULL
-), ranked_doctors AS (
-    SELECT
-        a.patient_id,
-        d.full_name AS doctor_name,
-        COUNT(*) AS completed_visits,
-        MAX(a.appointment_date) AS latest_visit_date,
-        ROW_NUMBER() OVER (
-            PARTITION BY a.patient_id
-            ORDER BY COUNT(*) DESC, MAX(a.appointment_date) DESC, d.full_name
-        ) AS doctor_rank
-    FROM APPOINTMENT a
-    JOIN DOCTOR d ON d.doctor_id = a.doctor_id
-    WHERE a.status = 'Completed'
-    GROUP BY a.patient_id, d.doctor_id, d.full_name
+    WHERE p.deleted_at IS NULL
+      AND (cs.patient_id IS NOT NULL OR ms.patient_id IS NOT NULL)
 ), percentile_spending AS (
     SELECT
         s.*,
