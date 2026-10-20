@@ -28,11 +28,11 @@ def booking():
             reason_for_visit = request.form.get("reason_for_visit", "").strip() or None
 
             if not full_name or not phone_number or not date_of_birth or not doctor_id or not appointment_date or not start_time or not end_time:
-                flash("Vui lòng điền đầy đủ các trường bắt buộc.", "danger")
+                flash("Please fill in all required fields.", "danger")
                 return redirect(url_for("appointment.booking"))
 
             if end_time <= start_time:
-                flash("Lỗi ràng buộc: Giờ kết thúc phải sau giờ bắt đầu (end_time > start_time).", "danger")
+                flash("Constraint Error: End time must be after start time (end_time > start_time).", "danger")
                 return redirect(url_for("appointment.booking"))
 
             cursor.execute("SELECT patient_id FROM PATIENT WHERE phone_number = %s", (phone_number,))
@@ -65,7 +65,7 @@ def booking():
             )
             overlap_row = cursor.fetchone()
             if overlap_row and overlap_row["overlap_count"] > 0:
-                flash("Lỗi nghiệp vụ BR-01: Bác sĩ đã có lịch hẹn trùng khung giờ này.", "danger")
+                flash("Business Rule Violation BR-01: Doctor already has an overlapping appointment in this time slot.", "danger")
                 return redirect(url_for("appointment.booking"))
 
             appointment_id = str(uuid.uuid4())
@@ -85,7 +85,7 @@ def booking():
             )
 
             conn.commit()
-            flash("Đặt lịch khám thành công!", "success")
+            flash("Appointment booked successfully!", "success")
             return redirect(url_for("appointment.booking"))
 
         cursor.execute(
@@ -121,12 +121,12 @@ def booking():
     except mysql.connector.Error as err:
         if conn:
             conn.rollback()
-        flash(f"Lỗi Database: {err.msg}", "danger")
+        flash(f"Database Error: {err.msg}", "danger")
         return redirect(url_for("appointment.booking"))
     except Exception as e:
         if conn:
             conn.rollback()
-        flash(f"Lỗi hệ thống: {str(e)}", "danger")
+        flash(f"System Error: {str(e)}", "danger")
         return redirect(url_for("appointment.booking"))
     finally:
         if conn and conn.is_connected():

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Healthcare Clinic - Tiếp nhận & Đặt lịch khám</title>
+    <title>Healthcare Clinic - Reception & Appointment Booking</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background-color: #f8fafc; color: #1e293b; font-size: 14px; }
@@ -28,8 +28,8 @@
                 Healthcare Telemedicine Portal
             </a>
             <div class="navbar-nav ms-auto">
-                <a class="nav-link active px-3 fw-semibold text-white" href="/booking">Tiếp nhận & Đặt lịch</a>
-                <a class="nav-link px-3 text-white-50" href="/doctor">Bác sĩ khám bệnh</a>
+                <a class="nav-link active px-3 fw-semibold text-white" href="/booking">Reception & Booking</a>
+                <a class="nav-link px-3 text-white-50" href="/doctor">Doctor Consultation</a>
                 <a class="nav-link px-3 text-white-50" href="/dashboard">Admin Dashboard</a>
             </div>
         </div>
@@ -53,85 +53,85 @@
             <div class="col-xl-5 col-lg-6">
                 <div class="card shadow-sm">
                     <div class="card-header bg-white border-bottom text-dark">
-                        Phiếu Đăng Ký Lịch Hẹn (Màn hình 1 - Demo Bước 1)
+                        Appointment Registration (Screen 1 - Step 1 Demo)
                     </div>
                     <div class="card-body p-4">
                         <form method="POST" action="/booking">
-                            <div class="section-title">1. Thông tin bệnh nhân</div>
+                            <div class="section-title">1. Patient Information</div>
                             <div class="row g-2 mb-3">
                                 <div class="col-md-7">
-                                    <label class="form-label">Họ và tên bệnh nhân *</label>
-                                    <input type="text" name="full_name" class="form-control" placeholder="Nguyễn Văn A" required>
+                                    <label class="form-label">Full Name *</label>
+                                    <input type="text" name="full_name" class="form-control" placeholder="John Doe" required>
                                 </div>
                                 <div class="col-md-5">
-                                    <label class="form-label">Giới tính</label>
+                                    <label class="form-label">Gender</label>
                                     <select name="gender" class="form-select">
-                                        <option value="M">Nam</option>
-                                        <option value="F">Nữ</option>
-                                        <option value="O" selected>Khác</option>
+                                        <option value="M">Male</option>
+                                        <option value="F">Female</option>
+                                        <option value="O" selected>Other</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="row g-2 mb-3">
                                 <div class="col-md-6">
-                                    <label class="form-label">Số điện thoại *</label>
+                                    <label class="form-label">Phone Number *</label>
                                     <input type="text" name="phone_number" class="form-control" placeholder="0901234567" required>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">Ngày sinh *</label>
+                                    <label class="form-label">Date of Birth *</label>
                                     <input type="date" name="date_of_birth" class="form-control" required>
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Địa chỉ cư trú</label>
-                                <input type="text" name="address" class="form-control" placeholder="Quận 1, TP. Hồ Chí Minh">
+                                <label class="form-label">Residential Address</label>
+                                <input type="text" name="address" class="form-control" placeholder="123 Medical Center Blvd">
                             </div>
 
-                            <div class="section-title mt-4">2. Điều phối cuộc hẹn</div>
+                            <div class="section-title mt-4">2. Appointment Details</div>
                             <div class="mb-3">
-                                <label class="form-label">Bác sĩ phụ trách *</label>
+                                <label class="form-label">Attending Doctor *</label>
                                 <select name="doctor_id" class="form-select" required>
-                                    <option value="">-- Chọn bác sĩ khám --</option>
+                                    <option value="">-- Select Doctor --</option>
                                     {% for doc in doctors %}
                                         <option value="{{ doc.doctor_id }}">
-                                            BS. {{ doc.full_name }} [{{ doc.doctor_type }} - {{ doc.detail }}]
+                                            Dr. {{ doc.full_name }} [{{ doc.doctor_type }} - {{ doc.detail }}]
                                         </option>
                                     {% endfor %}
                                 </select>
                             </div>
                             <div class="row g-2 mb-3">
                                 <div class="col-md-5">
-                                    <label class="form-label">Ngày hẹn khám *</label>
+                                    <label class="form-label">Appointment Date *</label>
                                     <input type="date" name="appointment_date" class="form-control" required>
                                 </div>
                                 <div class="col-md-3">
-                                    <label class="form-label">Bắt đầu *</label>
+                                    <label class="form-label">Start Time *</label>
                                     <input type="time" name="start_time" class="form-control" required>
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label">Kết thúc *</label>
+                                    <label class="form-label">End Time *</label>
                                     <input type="time" name="end_time" class="form-control" required>
                                 </div>
                             </div>
                             <div class="row g-2 mb-3">
                                 <div class="col-md-6">
-                                    <label class="form-label">Hình thức khám</label>
+                                    <label class="form-label">Consultation Type</label>
                                     <select name="consultation_type" class="form-select">
-                                        <option value="In-Person">Khám trực tiếp tại phòng</option>
-                                        <option value="Telemedicine">Khám từ xa (Telemedicine)</option>
+                                        <option value="In-Person">In-Person Consultation</option>
+                                        <option value="Telemedicine">Telemedicine (Video Call)</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">Video call link (Telemedicine)</label>
+                                    <label class="form-label">Video Room Link (Telemedicine)</label>
                                     <input type="text" name="telemedicine_video_link" class="form-control" placeholder="https://meet.google.com/xyz">
                                 </div>
                             </div>
                             <div class="mb-4">
-                                <label class="form-label">Lý do khám / Triệu chứng ban đầu</label>
-                                <textarea name="reason_for_visit" class="form-control" rows="2" placeholder="Sốt nhẹ, ho kéo dài..."></textarea>
+                                <label class="form-label">Reason for Visit / Symptoms</label>
+                                <textarea name="reason_for_visit" class="form-control" rows="2" placeholder="Routine check-up, mild fever..."></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
-                                Xác Nhận Tạo Lịch Khám (INSERT)
+                                Confirm Appointment (INSERT)
                             </button>
                         </form>
                     </div>
@@ -141,7 +141,7 @@
             <div class="col-xl-7 col-lg-6">
                 <div class="card shadow-sm">
                     <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
-                        <span>Danh Sách Lịch Hẹn Đã Ghi Nhận (10 Ca Mới Nhất)</span>
+                        <span>Recent Appointment Records (10 Most Recent)</span>
                         <span class="badge bg-light text-dark border">Realtime DB View</span>
                     </div>
                     <div class="card-body p-0">
@@ -149,12 +149,12 @@
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light text-secondary" style="font-size: 12px;">
                                     <tr>
-                                        <th>BỆNH NHÂN</th>
-                                        <th>BÁC SĨ</th>
-                                        <th>NGÀY KHÁM</th>
-                                        <th>KHUNG GIỜ</th>
-                                        <th>HÌNH THỨC</th>
-                                        <th class="text-center">TRẠNG THÁI</th>
+                                        <th>PATIENT</th>
+                                        <th>DOCTOR</th>
+                                        <th>DATE</th>
+                                        <th>TIME SLOT</th>
+                                        <th>TYPE</th>
+                                        <th class="text-center">STATUS</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -174,7 +174,7 @@
                                                     {% if appt.consultation_type == 'Telemedicine' %}
                                                         <span class="badge badge-tele px-2 py-1">Telemedicine</span>
                                                     {% else %}
-                                                        <span class="badge badge-inperson px-2 py-1">Trực tiếp</span>
+                                                        <span class="badge badge-inperson px-2 py-1">In-Person</span>
                                                     {% endif %}
                                                 </td>
                                                 <td class="text-center">
@@ -185,7 +185,7 @@
                                     {% else %}
                                         <tr>
                                             <td colspan="6" class="text-center py-5 text-muted">
-                                                Chưa có dữ liệu lịch hẹn trong cơ sở dữ liệu.
+                                                No appointment records found in database.
                                             </td>
                                         </tr>
                                     {% endif %}
