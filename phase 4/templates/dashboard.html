@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Healthcare Dashboard</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body>
+    <main class="container">
+        <h1>Admin Dashboard</h1>
+
+        <section class="cards">
+            <div class="card">
+                <h3>Telemedicine Ratio</h3>
+                <p id="telemedicine-summary">Loading...</p>
+            </div>
+
+            <div class="card">
+                <h3>Revenue</h3>
+                <p id="revenue-summary">Loading...</p>
+            </div>
+
+            <div class="card">
+                <h3>VIP Patients</h3>
+                <p id="vip-summary">Loading...</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>Telemedicine by Doctor</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Doctor</th>
+                        <th>Total Appointments</th>
+                        <th>Telemedicine</th>
+                        <th>Percentage</th>
+                    </tr>
+                </thead>
+                <tbody id="telemedicine-table"></tbody>
+            </table>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
