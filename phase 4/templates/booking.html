@@ -3,29 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Healthcare Clinic - Đặt lịch khám</title>
+    <title>Healthcare Clinic - Tiếp nhận & Đặt lịch khám</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8fafc; color: #1e293b; font-size: 14px; }
+        .navbar-brand { font-weight: 700; font-size: 16px; letter-spacing: 0.3px; }
+        .card { border-radius: 8px; border: 1px solid #e2e8f0; }
+        .card-header { font-weight: 600; font-size: 14px; padding: 12px 16px; }
+        .form-label { font-weight: 600; font-size: 12px; color: #475569; margin-bottom: 4px; }
+        .form-control, .form-select { border-color: #cbd5e1; border-radius: 6px; font-size: 13px; }
+        .form-control:focus, .form-select:focus { border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
+        .section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #0284c7; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
+        .table > :not(caption) > * > * { padding: 10px 12px; }
+        .badge-tele { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; font-weight: 600; }
+        .badge-inperson { background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; font-weight: 600; }
+        .badge-scheduled { background-color: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; font-weight: 600; }
+    </style>
 </head>
-<body class="bg-light">
-    <nav class="navbar navbar-expand navbar-dark bg-dark mb-4">
-        <div class="container">
-            <a class="navbar-brand" href="/booking">Clinic Portal</a>
-            <div class="navbar-nav">
-                <a class="nav-link active" href="/booking">Đặt lịch khám</a>
-                <a class="nav-link" href="/doctor">Bác sĩ</a>
-                <a class="nav-link" href="/dashboard">Dashboard</a>
+<body>
+    <nav class="navbar navbar-expand navbar-dark bg-primary shadow-sm mb-4">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand d-flex align-items-center" href="/booking">
+                <span class="badge bg-white text-primary me-2 px-2 py-1">PHASE 4</span>
+                Healthcare Telemedicine Portal
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link active px-3 fw-semibold text-white" href="/booking">Tiếp nhận & Đặt lịch</a>
+                <a class="nav-link px-3 text-white-50" href="/doctor">Bác sĩ khám bệnh</a>
+                <a class="nav-link px-3 text-white-50" href="/dashboard">Admin Dashboard</a>
             </div>
         </div>
     </nav>
 
-    <div class="container mb-5">
-        <h4 class="mb-4 text-center">Đặt Lịch Khám & Telemedicine</h4>
-
+    <div class="container-fluid px-4">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                        {{ message }}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm mb-4" role="alert">
+                        <div class="d-flex align-items-center">
+                            <span>{{ message }}</span>
+                        </div>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 {% endfor %}
@@ -33,102 +50,111 @@
         {% endwith %}
 
         <div class="row g-4">
-            <div class="col-lg-5">
-                <div class="card shadow-sm border-0">
-                    <div class="card-header bg-primary text-white">
-                        <h6 class="card-title mb-0">Đăng Ký Khám Bệnh</h6>
+            <div class="col-xl-5 col-lg-6">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white border-bottom text-dark">
+                        Phiếu Đăng Ký Lịch Hẹn (Màn hình 1 - Demo Bước 1)
                     </div>
-                    <div class="card-body">
+                    <div class="card-body p-4">
                         <form method="POST" action="/booking">
-                            <h6 class="text-secondary border-bottom pb-2 mb-3">Thông Tin Bệnh Nhân</h6>
-                            <div class="mb-3">
-                                <label class="form-label">Họ và tên *</label>
-                                <input type="text" name="full_name" class="form-control form-control-sm" required>
-                            </div>
+                            <div class="section-title">1. Thông tin bệnh nhân</div>
                             <div class="row g-2 mb-3">
                                 <div class="col-md-7">
-                                    <label class="form-label">Số điện thoại *</label>
-                                    <input type="text" name="phone_number" class="form-control form-control-sm" required>
+                                    <label class="form-label">Họ và tên bệnh nhân *</label>
+                                    <input type="text" name="full_name" class="form-control" placeholder="Nguyễn Văn A" required>
                                 </div>
                                 <div class="col-md-5">
                                     <label class="form-label">Giới tính</label>
-                                    <select name="gender" class="form-select form-select-sm">
+                                    <select name="gender" class="form-select">
                                         <option value="M">Nam</option>
                                         <option value="F">Nữ</option>
                                         <option value="O" selected>Khác</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Ngày sinh *</label>
-                                <input type="date" name="date_of_birth" class="form-control form-control-sm" required>
+                            <div class="row g-2 mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Số điện thoại *</label>
+                                    <input type="text" name="phone_number" class="form-control" placeholder="0901234567" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Ngày sinh *</label>
+                                    <input type="date" name="date_of_birth" class="form-control" required>
+                                </div>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Địa chỉ</label>
-                                <input type="text" name="address" class="form-control form-control-sm">
+                                <label class="form-label">Địa chỉ cư trú</label>
+                                <input type="text" name="address" class="form-control" placeholder="Quận 1, TP. Hồ Chí Minh">
                             </div>
 
-                            <h6 class="text-secondary border-bottom pb-2 mb-3 mt-4">Thông Tin Cuộc Hẹn</h6>
+                            <div class="section-title mt-4">2. Điều phối cuộc hẹn</div>
                             <div class="mb-3">
                                 <label class="form-label">Bác sĩ phụ trách *</label>
-                                <select name="doctor_id" class="form-select form-select-sm" required>
-                                    <option value="">-- Chọn bác sĩ --</option>
+                                <select name="doctor_id" class="form-select" required>
+                                    <option value="">-- Chọn bác sĩ khám --</option>
                                     {% for doc in doctors %}
-                                        <option value="{{ doc.doctor_id }}">{{ doc.full_name }} ({{ doc.doctor_type }} - {{ doc.detail }})</option>
+                                        <option value="{{ doc.doctor_id }}">
+                                            BS. {{ doc.full_name }} [{{ doc.doctor_type }} - {{ doc.detail }}]
+                                        </option>
                                     {% endfor %}
                                 </select>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Ngày khám *</label>
-                                <input type="date" name="appointment_date" class="form-control form-control-sm" required>
+                            <div class="row g-2 mb-3">
+                                <div class="col-md-5">
+                                    <label class="form-label">Ngày hẹn khám *</label>
+                                    <input type="date" name="appointment_date" class="form-control" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Bắt đầu *</label>
+                                    <input type="time" name="start_time" class="form-control" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Kết thúc *</label>
+                                    <input type="time" name="end_time" class="form-control" required>
+                                </div>
                             </div>
                             <div class="row g-2 mb-3">
                                 <div class="col-md-6">
-                                    <label class="form-label">Giờ bắt đầu *</label>
-                                    <input type="time" name="start_time" class="form-control form-control-sm" required>
+                                    <label class="form-label">Hình thức khám</label>
+                                    <select name="consultation_type" class="form-select">
+                                        <option value="In-Person">Khám trực tiếp tại phòng</option>
+                                        <option value="Telemedicine">Khám từ xa (Telemedicine)</option>
+                                    </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">Giờ kết thúc *</label>
-                                    <input type="time" name="end_time" class="form-control form-control-sm" required>
+                                    <label class="form-label">Video call link (Telemedicine)</label>
+                                    <input type="text" name="telemedicine_video_link" class="form-control" placeholder="https://meet.google.com/xyz">
                                 </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Hình thức khám</label>
-                                <select name="consultation_type" class="form-select form-select-sm">
-                                    <option value="In-Person">Khám trực tiếp tại phòng khám</option>
-                                    <option value="Telemedicine">Khám từ xa (Telemedicine)</option>
-                                </select>
+                            <div class="mb-4">
+                                <label class="form-label">Lý do khám / Triệu chứng ban đầu</label>
+                                <textarea name="reason_for_visit" class="form-control" rows="2" placeholder="Sốt nhẹ, ho kéo dài..."></textarea>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Link video (nếu khám Telemedicine)</label>
-                                <input type="text" name="telemedicine_video_link" class="form-control form-control-sm" placeholder="https://meet.google.com/...">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Lý do khám / Triệu chứng</label>
-                                <textarea name="reason_for_visit" class="form-control form-control-sm" rows="2"></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">Xác Nhận Đặt Lịch</button>
+                            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                                Xác Nhận Tạo Lịch Khám (INSERT)
+                            </button>
                         </form>
                     </div>
                 </div>
             </div>
 
-            <div class="col-lg-7">
-                <div class="card shadow-sm border-0">
-                    <div class="card-header bg-secondary text-white">
-                        <h6 class="card-title mb-0">Lịch Hẹn Vừa Tạo (10 Ca Gần Nhất)</h6>
+            <div class="col-xl-7 col-lg-6">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+                        <span>Danh Sách Lịch Hẹn Đã Ghi Nhận (10 Ca Mới Nhất)</span>
+                        <span class="badge bg-light text-dark border">Realtime DB View</span>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-hover table-sm align-middle mb-0">
-                                <thead class="table-light">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light text-secondary" style="font-size: 12px;">
                                     <tr>
-                                        <th>Bệnh nhân</th>
-                                        <th>Bác sĩ</th>
-                                        <th>Ngày</th>
-                                        <th>Khung giờ</th>
-                                        <th>Hình thức</th>
-                                        <th>Trạng thái</th>
+                                        <th>BỆNH NHÂN</th>
+                                        <th>BÁC SĨ</th>
+                                        <th>NGÀY KHÁM</th>
+                                        <th>KHUNG GIỜ</th>
+                                        <th>HÌNH THỨC</th>
+                                        <th class="text-center">TRẠNG THÁI</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -136,27 +162,31 @@
                                         {% for appt in appointments %}
                                             <tr>
                                                 <td>
-                                                    <strong>{{ appt.patient_name }}</strong><br>
-                                                    <small class="text-muted">{{ appt.phone_number }}</small>
+                                                    <div class="fw-semibold text-dark">{{ appt.patient_name }}</div>
+                                                    <div class="text-muted" style="font-size: 11px;">{{ appt.phone_number }}</div>
                                                 </td>
-                                                <td>{{ appt.doctor_name }}</td>
-                                                <td>{{ appt.appointment_date }}</td>
-                                                <td>{{ appt.start_time }} - {{ appt.end_time }}</td>
+                                                <td>
+                                                    <div class="text-dark">{{ appt.doctor_name }}</div>
+                                                </td>
+                                                <td class="text-nowrap">{{ appt.appointment_date }}</td>
+                                                <td class="text-nowrap font-monospace" style="font-size: 12px;">{{ appt.start_time }} - {{ appt.end_time }}</td>
                                                 <td>
                                                     {% if appt.consultation_type == 'Telemedicine' %}
-                                                        <span class="badge bg-info text-dark">Telemedicine</span>
+                                                        <span class="badge badge-tele px-2 py-1">Telemedicine</span>
                                                     {% else %}
-                                                        <span class="badge bg-secondary">Trực tiếp</span>
+                                                        <span class="badge badge-inperson px-2 py-1">Trực tiếp</span>
                                                     {% endif %}
                                                 </td>
-                                                <td>
-                                                    <span class="badge bg-primary">{{ appt.status }}</span>
+                                                <td class="text-center">
+                                                    <span class="badge badge-scheduled px-2 py-1">{{ appt.status }}</span>
                                                 </td>
                                             </tr>
                                         {% endfor %}
                                     {% else %}
                                         <tr>
-                                            <td colspan="6" class="text-center py-4 text-muted">Chưa có lịch hẹn nào.</td>
+                                            <td colspan="6" class="text-center py-5 text-muted">
+                                                Chưa có dữ liệu lịch hẹn trong cơ sở dữ liệu.
+                                            </td>
                                         </tr>
                                     {% endif %}
                                 </tbody>
