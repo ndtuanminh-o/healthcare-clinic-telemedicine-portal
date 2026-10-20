@@ -6,8 +6,10 @@
 <title>Doctor screen</title>
 <style>
   body { font-family: Arial, sans-serif; margin: 0; background: #f4f6f8; color: #222; }
-  header { background: #0b6e4f; color: #fff; padding: 14px 24px; }
+  header { background: #0b6e4f; color: #fff; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; }
   header label { color: #fff; max-width: 320px; }
+  nav a { color: #fff; text-decoration: none; margin-left: 16px; font-size: 14px; opacity: 0.85; }
+  nav a:hover, nav a.active { opacity: 1; font-weight: bold; text-decoration: underline; }
   main { display: grid; grid-template-columns: 1fr 1.2fr; gap: 20px; padding: 20px 24px; }
   section { background: #fff; border: 1px solid #d5dbe0; border-radius: 6px; padding: 16px; }
   h2 { margin-top: 0; font-size: 17px; }
@@ -26,7 +28,14 @@
 </head>
 <body>
 <header>
-  <h1 style="margin:0;font-size:20px">Doctor screen</h1>
+  <div style="display:flex;align-items:center;gap:20px;">
+    <h1 style="margin:0;font-size:20px">Clinic Portal</h1>
+    <nav>
+      <a href="/booking">Booking</a>
+      <a href="/doctor" class="active">Doctor screen</a>
+      <a href="/dashboard">Dashboard</a>
+    </nav>
+  </div>
   <label>Doctor
     <select id="doctor" onchange="loadAppointments()"></select>
   </label>

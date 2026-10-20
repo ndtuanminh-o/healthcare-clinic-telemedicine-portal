@@ -1,49 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Healthcare Dashboard</title>
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/dashboard.css') }}">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clinic Portal - Dashboard</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 0; background: #f4f6f8; color: #222; }
+  header { background: #0b6e4f; color: #fff; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; }
+  header h1 { margin: 0; font-size: 20px; }
+  nav a { color: #fff; text-decoration: none; margin-left: 16px; font-size: 14px; opacity: 0.85; }
+  nav a:hover, nav a.active { opacity: 1; font-weight: bold; text-decoration: underline; }
+  main { max-width: 1000px; margin: 20px auto; padding: 0 20px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .card { background: #fff; border: 1px solid #d5dbe0; border-radius: 6px; padding: 16px; }
+  .card h3 { margin: 0 0 8px 0; font-size: 13px; color: #666; font-weight: normal; }
+  .card p { margin: 0; font-size: 22px; font-weight: bold; color: #0b6e4f; }
+  section { background: #fff; border: 1px solid #d5dbe0; border-radius: 6px; padding: 16px; }
+  h2 { margin-top: 0; font-size: 17px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 8px; }
+  th, td { border-bottom: 1px solid #e3e7ea; padding: 8px 10px; text-align: left; }
+</style>
 </head>
 <body>
-    <main class="container">
-        <h1>Admin Dashboard</h1>
+<header>
+  <h1>Clinic Portal</h1>
+  <nav>
+    <a href="/booking">Booking</a>
+    <a href="/doctor">Doctor screen</a>
+    <a href="/dashboard" class="active">Dashboard</a>
+  </nav>
+</header>
 
-        <section class="cards">
-            <div class="card">
-                <h3>Telemedicine Ratio</h3>
-                <p id="telemedicine-summary">Loading...</p>
-            </div>
+<main>
+  <div class="cards">
+    <div class="card">
+      <h3>Total Doctors Reported</h3>
+      <p id="telemedicine-summary">Loading...</p>
+    </div>
+  </div>
 
-            <div class="card">
-                <h3>Revenue</h3>
-                <p id="revenue-summary">Loading...</p>
-            </div>
+  <section>
+    <h2>Telemedicine by Doctor</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Doctor</th>
+          <th>Total Appointments</th>
+          <th>Telemedicine</th>
+          <th>Percentage</th>
+        </tr>
+      </thead>
+      <tbody id="telemedicine-table">
+        <tr><td colspan="4" style="text-align:center;color:#888;">Loading...</td></tr>
+      </tbody>
+    </table>
+  </section>
+</main>
 
-            <div class="card">
-                <h3>VIP Patients</h3>
-                <p id="vip-summary">Loading...</p>
-            </div>
-        </section>
+<script>
+  async function loadTelemedicineReport() {
+    try {
+      const response = await fetch("/api/dashboard/telemedicine");
+      const data = await response.json();
+      const table = document.getElementById("telemedicine-table");
+      table.innerHTML = "";
+      if (!data || data.length === 0) {
+        table.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#888;">No data found</td></tr>';
+        return;
+      }
+      data.forEach(function (row) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${row.doctor_name || ""}</td>
+          <td>${row.total_appointments || 0}</td>
+          <td>${row.telemedicine_appointments || 0}</td>
+          <td>${row.telemedicine_percentage ?? 0}%</td>
+        `;
+        table.appendChild(tr);
+      });
+      document.getElementById("telemedicine-summary").textContent = `${data.length} doctors`;
+    } catch (e) {
+      console.error(e);
+    }
+  }
 
-        <section>
-            <h2>Telemedicine by Doctor</h2>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>Doctor</th>
-                        <th>Total Appointments</th>
-                        <th>Telemedicine</th>
-                        <th>Percentage</th>
-                    </tr>
-                </thead>
-                <tbody id="telemedicine-table"></tbody>
-            </table>
-        </section>
-    </main>
-
-    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+  loadTelemedicineReport();
+</script>
 </body>
 </html>

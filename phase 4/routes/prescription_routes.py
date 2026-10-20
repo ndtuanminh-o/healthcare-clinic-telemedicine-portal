@@ -1,10 +1,8 @@
-# Prescription routes for the doctor screen (Phase 4 - Loc)
 import uuid
 from flask import Blueprint, jsonify, request
-from db import get_db_connection  
+from db import get_db_connection
 
 prescription_bp = Blueprint("prescription", __name__)
-
 
 @prescription_bp.route("/api/medicines")
 def list_medicines():
@@ -16,10 +14,8 @@ def list_medicines():
     conn.close()
     return jsonify(rows)
 
-
 @prescription_bp.route("/api/prescriptions/<record_id>")
 def get_prescription(record_id):
-    # Prescription items of a medical record
     conn = get_db_connection()
     cur = conn.cursor(dictionary=True)
     cur.execute(
@@ -38,10 +34,8 @@ def get_prescription(record_id):
     conn.close()
     return jsonify(rows)
 
-
 @prescription_bp.route("/api/prescriptions", methods=["POST"])
 def create_prescription():
-    # Body: {record_id, items: [{medicine_id, dosage, frequency, duration_days, quantity}]}
     data = request.get_json()
     record_id = data.get("record_id")
     items = data.get("items", [])
@@ -52,7 +46,6 @@ def create_prescription():
     conn = get_db_connection()
     cur = conn.cursor()
     try:
-        # One prescription per medical record (record_id is UNIQUE)
         cur.execute("SELECT prescription_id FROM DIGITAL_PRESCRIPTION WHERE record_id = %s", (record_id,))
         row = cur.fetchone()
         if row:
@@ -70,7 +63,6 @@ def create_prescription():
             )
 
         for it in items:
-            # Snapshot the current medicine price into the item
             cur.execute("SELECT unit_price FROM MEDICINE WHERE medicine_id = %s", (it["medicine_id"],))
             price = cur.fetchone()
             if not price:
@@ -88,14 +80,14 @@ def create_prescription():
         conn.rollback()
         return jsonify({"error": str(e)}), 400
     finally:
-        cur.close()
-        conn.close()
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
     return jsonify({"prescription_id": prescription_id, "message": "Prescription saved"})
-
 
 @prescription_bp.route("/api/prescription-audit/<record_id>")
 def get_audit(record_id):
-    # Minimal audit log (written by triggers) of the prescription of a record
     conn = get_db_connection()
     cur = conn.cursor(dictionary=True)
     cur.execute(

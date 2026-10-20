@@ -1,4 +1,3 @@
--- Triggers that log changes on PRESCRIPTION_ITEM into PRESCRIPTION_AUDIT
 DELIMITER //
 
 CREATE TRIGGER trg_prescription_item_insert

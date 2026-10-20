@@ -1,14 +1,11 @@
-# Medical record routes for the doctor screen (Phase 4 - Loc)
 import uuid
 from flask import Blueprint, jsonify, request
-from db import get_db_connection  
+from db import get_db_connection
 
 clinical_bp = Blueprint("clinical", __name__)
 
-
 @clinical_bp.route("/api/doctors")
 def list_doctors():
-    # Active doctors for the doctor dropdown
     conn = get_db_connection()
     cur = conn.cursor(dictionary=True)
     cur.execute(
@@ -20,10 +17,8 @@ def list_doctors():
     conn.close()
     return jsonify(rows)
 
-
 @clinical_bp.route("/api/doctor/<doctor_id>/appointments")
 def doctor_appointments(doctor_id):
-    # Appointments of one doctor with patient name
     conn = get_db_connection()
     cur = conn.cursor(dictionary=True)
     cur.execute(
@@ -44,10 +39,8 @@ def doctor_appointments(doctor_id):
     conn.close()
     return jsonify(rows)
 
-
 @clinical_bp.route("/api/medical-records/<appointment_id>")
 def get_record(appointment_id):
-    # Medical record of an appointment (empty object if none yet)
     conn = get_db_connection()
     cur = conn.cursor(dictionary=True)
     cur.execute(
@@ -60,10 +53,8 @@ def get_record(appointment_id):
     conn.close()
     return jsonify(row or {})
 
-
 @clinical_bp.route("/api/medical-records", methods=["POST"])
 def save_record():
-    # Create or update the medical record of an appointment
     data = request.get_json()
     appointment_id = data.get("appointment_id")
     diagnosis = (data.get("diagnosis") or "").strip()

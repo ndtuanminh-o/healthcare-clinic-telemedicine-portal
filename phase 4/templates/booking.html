@@ -1,202 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Healthcare Clinic - Reception & Appointment Booking</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #f8fafc; color: #1e293b; font-size: 14px; }
-        .navbar-brand { font-weight: 700; font-size: 16px; letter-spacing: 0.3px; }
-        .card { border-radius: 8px; border: 1px solid #e2e8f0; }
-        .card-header { font-weight: 600; font-size: 14px; padding: 12px 16px; }
-        .form-label { font-weight: 600; font-size: 12px; color: #475569; margin-bottom: 4px; }
-        .form-control, .form-select { border-color: #cbd5e1; border-radius: 6px; font-size: 13px; }
-        .form-control:focus, .form-select:focus { border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
-        .section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #0284c7; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
-        .table > :not(caption) > * > * { padding: 10px 12px; }
-        .badge-tele { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; font-weight: 600; }
-        .badge-inperson { background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; font-weight: 600; }
-        .badge-scheduled { background-color: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; font-weight: 600; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clinic Portal - Booking</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 0; background: #f4f6f8; color: #222; }
+  header { background: #0b6e4f; color: #fff; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; }
+  header h1 { margin: 0; font-size: 20px; }
+  nav a { color: #fff; text-decoration: none; margin-left: 16px; font-size: 14px; opacity: 0.85; }
+  nav a:hover, nav a.active { opacity: 1; font-weight: bold; text-decoration: underline; }
+  main { display: grid; grid-template-columns: 1fr 1.3fr; gap: 20px; padding: 20px 24px; }
+  section { background: #fff; border: 1px solid #d5dbe0; border-radius: 6px; padding: 16px; }
+  h2 { margin-top: 0; font-size: 17px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 8px; }
+  th, td { border-bottom: 1px solid #e3e7ea; padding: 6px 8px; text-align: left; }
+  label { display: block; margin-top: 10px; font-size: 14px; }
+  input, textarea, select { width: 100%; box-sizing: border-box; padding: 6px; font: inherit; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .three { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  button { margin-top: 14px; padding: 8px 14px; background: #0b6e4f; color: #fff; border: 0; border-radius: 4px; cursor: pointer; width: 100%; font-size: 14px; }
+  button:hover { background: #08533c; }
+  #msg { margin-top: 12px; font-size: 14px; padding: 8px 12px; border-radius: 4px; display: none; }
+  #msg.success { background: #e8f5e9; color: #1b5e20; border: 1px solid #c8e6c9; display: block; }
+  #msg.error { background: #ffebee; color: #b71c1c; border: 1px solid #ffcdd2; display: block; }
+  .tag { display: inline-block; padding: 2px 6px; border-radius: 3px; font-size: 12px; }
+  .tag-tele { background: #e0f2fe; color: #0369a1; }
+  .tag-inperson { background: #f1f5f9; color: #475569; }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+</style>
 </head>
 <body>
-    <nav class="navbar navbar-expand navbar-dark bg-primary shadow-sm mb-4">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand d-flex align-items-center" href="/booking">
-                <span class="badge bg-white text-primary me-2 px-2 py-1">PHASE 4</span>
-                Healthcare Telemedicine Portal
-            </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link active px-3 fw-semibold text-white" href="/booking">Reception & Booking</a>
-                <a class="nav-link px-3 text-white-50" href="/doctor">Doctor Consultation</a>
-                <a class="nav-link px-3 text-white-50" href="/dashboard">Admin Dashboard</a>
-            </div>
-        </div>
-    </nav>
+<header>
+  <h1>Clinic Portal</h1>
+  <nav>
+    <a href="/booking" class="active">Booking</a>
+    <a href="/doctor">Doctor screen</a>
+    <a href="/dashboard">Dashboard</a>
+  </nav>
+</header>
 
-    <div class="container-fluid px-4">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm mb-4" role="alert">
-                        <div class="d-flex align-items-center">
-                            <span>{{ message }}</span>
-                        </div>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+<main>
+  <section>
+    <h2>Book appointment</h2>
+    <form id="bookingForm" onsubmit="submitBooking(event)">
+      <label>Full name *<input id="full_name" required placeholder="John Doe"></label>
+      <div class="two">
+        <label>Phone number *<input id="phone_number" required placeholder="0901234567"></label>
+        <label>Date of birth *<input id="date_of_birth" type="date" required></label>
+      </div>
+      <div class="two">
+        <label>Gender
+          <select id="gender">
+            <option value="M">Male</option>
+            <option value="F">Female</option>
+            <option value="O" selected>Other</option>
+          </select>
+        </label>
+        <label>Residential address<input id="address" placeholder="123 Medical Center Blvd"></label>
+      </div>
+      <label>Doctor *
+        <select id="doctor_id" required>
+          <option value="">Select doctor</option>
+        </select>
+      </label>
+      <div class="three">
+        <label>Date *<input id="appointment_date" type="date" required></label>
+        <label>Start time *<input id="start_time" type="time" required></label>
+        <label>End time *<input id="end_time" type="time" required></label>
+      </div>
+      <div class="two">
+        <label>Consultation type
+          <select id="consultation_type" onchange="toggleVideoLink()">
+            <option value="In-Person">In-Person</option>
+            <option value="Telemedicine">Telemedicine</option>
+          </select>
+        </label>
+        <label id="videoField" style="display:none">Video room link
+          <input id="telemedicine_video_link" placeholder="https://meet.google.com/xyz">
+        </label>
+      </div>
+      <label>Reason for visit / symptoms
+        <textarea id="reason_for_visit" rows="2" placeholder="Routine check-up, headache..."></textarea>
+      </label>
+      <button type="submit">Confirm appointment</button>
+      <div id="msg"></div>
+    </form>
+  </section>
 
-        <div class="row g-4">
-            <div class="col-xl-5 col-lg-6">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-white border-bottom text-dark">
-                        Appointment Registration (Screen 1 - Step 1 Demo)
-                    </div>
-                    <div class="card-body p-4">
-                        <form method="POST" action="/booking">
-                            <div class="section-title">1. Patient Information</div>
-                            <div class="row g-2 mb-3">
-                                <div class="col-md-7">
-                                    <label class="form-label">Full Name *</label>
-                                    <input type="text" name="full_name" class="form-control" placeholder="John Doe" required>
-                                </div>
-                                <div class="col-md-5">
-                                    <label class="form-label">Gender</label>
-                                    <select name="gender" class="form-select">
-                                        <option value="M">Male</option>
-                                        <option value="F">Female</option>
-                                        <option value="O" selected>Other</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row g-2 mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Phone Number *</label>
-                                    <input type="text" name="phone_number" class="form-control" placeholder="0901234567" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Date of Birth *</label>
-                                    <input type="date" name="date_of_birth" class="form-control" required>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Residential Address</label>
-                                <input type="text" name="address" class="form-control" placeholder="123 Medical Center Blvd">
-                            </div>
+  <section>
+    <h2>Recent appointments</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Patient</th>
+          <th>Doctor</th>
+          <th>Type</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="appointments">
+        <tr><td colspan="6" style="text-align:center;color:#888;">Loading...</td></tr>
+      </tbody>
+    </table>
+  </section>
+</main>
 
-                            <div class="section-title mt-4">2. Appointment Details</div>
-                            <div class="mb-3">
-                                <label class="form-label">Attending Doctor *</label>
-                                <select name="doctor_id" class="form-select" required>
-                                    <option value="">-- Select Doctor --</option>
-                                    {% for doc in doctors %}
-                                        <option value="{{ doc.doctor_id }}">
-                                            Dr. {{ doc.full_name }} [{{ doc.doctor_type }} - {{ doc.detail }}]
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="row g-2 mb-3">
-                                <div class="col-md-5">
-                                    <label class="form-label">Appointment Date *</label>
-                                    <input type="date" name="appointment_date" class="form-control" required>
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Start Time *</label>
-                                    <input type="time" name="start_time" class="form-control" required>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">End Time *</label>
-                                    <input type="time" name="end_time" class="form-control" required>
-                                </div>
-                            </div>
-                            <div class="row g-2 mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Consultation Type</label>
-                                    <select name="consultation_type" class="form-select">
-                                        <option value="In-Person">In-Person Consultation</option>
-                                        <option value="Telemedicine">Telemedicine (Video Call)</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Video Room Link (Telemedicine)</label>
-                                    <input type="text" name="telemedicine_video_link" class="form-control" placeholder="https://meet.google.com/xyz">
-                                </div>
-                            </div>
-                            <div class="mb-4">
-                                <label class="form-label">Reason for Visit / Symptoms</label>
-                                <textarea name="reason_for_visit" class="form-control" rows="2" placeholder="Routine check-up, mild fever..."></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
-                                Confirm Appointment (INSERT)
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+<script>
+  function toggleVideoLink() {
+    const type = document.getElementById("consultation_type").value;
+    document.getElementById("videoField").style.display = type === "Telemedicine" ? "block" : "none";
+  }
 
-            <div class="col-xl-7 col-lg-6">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
-                        <span>Recent Appointment Records (10 Most Recent)</span>
-                        <span class="badge bg-light text-dark border">Realtime DB View</span>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
-                                <thead class="table-light text-secondary" style="font-size: 12px;">
-                                    <tr>
-                                        <th>PATIENT</th>
-                                        <th>DOCTOR</th>
-                                        <th>DATE</th>
-                                        <th>TIME SLOT</th>
-                                        <th>TYPE</th>
-                                        <th class="text-center">STATUS</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% if appointments %}
-                                        {% for appt in appointments %}
-                                            <tr>
-                                                <td>
-                                                    <div class="fw-semibold text-dark">{{ appt.patient_name }}</div>
-                                                    <div class="text-muted" style="font-size: 11px;">{{ appt.phone_number }}</div>
-                                                </td>
-                                                <td>
-                                                    <div class="text-dark">{{ appt.doctor_name }}</div>
-                                                </td>
-                                                <td class="text-nowrap">{{ appt.appointment_date }}</td>
-                                                <td class="text-nowrap font-monospace" style="font-size: 12px;">{{ appt.start_time }} - {{ appt.end_time }}</td>
-                                                <td>
-                                                    {% if appt.consultation_type == 'Telemedicine' %}
-                                                        <span class="badge badge-tele px-2 py-1">Telemedicine</span>
-                                                    {% else %}
-                                                        <span class="badge badge-inperson px-2 py-1">In-Person</span>
-                                                    {% endif %}
-                                                </td>
-                                                <td class="text-center">
-                                                    <span class="badge badge-scheduled px-2 py-1">{{ appt.status }}</span>
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                    {% else %}
-                                        <tr>
-                                            <td colspan="6" class="text-center py-5 text-muted">
-                                                No appointment records found in database.
-                                            </td>
-                                        </tr>
-                                    {% endif %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  function showMessage(text, isError) {
+    const el = document.getElementById("msg");
+    el.className = isError ? "error" : "success";
+    el.textContent = text;
+  }
+
+  async function loadDoctors() {
+    try {
+      const res = await fetch("/api/doctors");
+      const docs = await res.json();
+      const sel = document.getElementById("doctor_id");
+      sel.innerHTML = '<option value="">Select doctor</option>';
+      docs.forEach(function (d) {
+        const opt = document.createElement("option");
+        opt.value = d.doctor_id;
+        opt.textContent = d.full_name;
+        sel.appendChild(opt);
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function loadAppointments() {
+    try {
+      const res = await fetch("/api/appointments/recent");
+      const appts = await res.json();
+      const tbody = document.getElementById("appointments");
+      tbody.innerHTML = "";
+      if (!appts || appts.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#888;">No appointments found.</td></tr>';
+        return;
+      }
+      appts.forEach(function (a) {
+        const tr = document.createElement("tr");
+        const badgeClass = a.consultation_type === "Telemedicine" ? "tag tag-tele" : "tag tag-inperson";
+        tr.innerHTML = `
+          <td>${a.appointment_date || ""}</td>
+          <td>${a.start_time || ""} - ${a.end_time || ""}</td>
+          <td>${a.patient_name || ""}<br><small style="color:#666">${a.phone_number || ""}</small></td>
+          <td>${a.doctor_name || ""}</td>
+          <td><span class="${badgeClass}">${a.consultation_type || ""}</span></td>
+          <td>${a.status || ""}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function submitBooking(event) {
+    event.preventDefault();
+    const payload = {
+      full_name: document.getElementById("full_name").value,
+      phone_number: document.getElementById("phone_number").value,
+      date_of_birth: document.getElementById("date_of_birth").value,
+      gender: document.getElementById("gender").value,
+      address: document.getElementById("address").value,
+      doctor_id: document.getElementById("doctor_id").value,
+      appointment_date: document.getElementById("appointment_date").value,
+      start_time: document.getElementById("start_time").value,
+      end_time: document.getElementById("end_time").value,
+      consultation_type: document.getElementById("consultation_type").value,
+      telemedicine_video_link: document.getElementById("telemedicine_video_link").value,
+      reason_for_visit: document.getElementById("reason_for_visit").value
+    };
+
+    try {
+      const res = await fetch("/api/appointments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        showMessage(data.error || "Failed to book appointment", true);
+        return;
+      }
+      showMessage(data.message || "Appointment booked successfully", false);
+      document.getElementById("bookingForm").reset();
+      toggleVideoLink();
+      loadAppointments();
+    } catch (err) {
+      showMessage("Error: " + err.message, true);
+    }
+  }
+
+  loadDoctors();
+  loadAppointments();
+</script>
 </body>
 </html>
