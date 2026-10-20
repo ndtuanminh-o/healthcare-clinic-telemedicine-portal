@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Doctor screen</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 0; background: #f4f6f8; color: #222; }
+  header { background: #0b6e4f; color: #fff; padding: 14px 24px; }
+  header label { color: #fff; max-width: 320px; }
+  main { display: grid; grid-template-columns: 1fr 1.2fr; gap: 20px; padding: 20px 24px; }
+  section { background: #fff; border: 1px solid #d5dbe0; border-radius: 6px; padding: 16px; }
+  h2 { margin-top: 0; font-size: 17px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 8px; }
+  th, td { border-bottom: 1px solid #e3e7ea; padding: 6px 8px; text-align: left; }
+  tr.row { cursor: pointer; }
+  tr.row:hover, tr.selected { background: #eef7f3; }
+  label { display: block; margin-top: 10px; font-size: 14px; }
+  input, textarea, select { width: 100%; box-sizing: border-box; padding: 6px; font: inherit; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  button { margin-top: 12px; margin-right: 6px; padding: 8px 14px; background: #0b6e4f; color: #fff; border: 0; border-radius: 4px; cursor: pointer; }
+  button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid #0b6e4f; outline-offset: 2px; }
+  #msg { margin-top: 10px; font-size: 14px; min-height: 18px; }
+  @media (max-width: 800px) { main { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1 style="margin:0;font-size:20px">Doctor screen</h1>
+  <label>Doctor
+    <select id="doctor" onchange="loadAppointments()"></select>
+  </label>
+</header>
+
+<main>
+  <section>
+    <h2>Appointments</h2>
+    <table>
+      <thead><tr><th>Date</th><th>Time</th><th>Patient</th><th>Status</th></tr></thead>
+      <tbody id="appointments"></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Medical record <span id="apptLabel"></span></h2>
+    <label>Diagnosis <input id="diagnosis"></label>
+    <label>Clinical notes <textarea id="clinical_notes" rows="2"></textarea></label>
+    <label>Treatment plan <textarea id="treatment_plan" rows="2"></textarea></label>
+    <button onclick="saveRecord()">Save medical record</button>
+
+    <h2 style="margin-top:24px">Prescription</h2>
+    <label>Medicine <select id="medicine"></select></label>
+    <div class="two">
+      <label>Dosage <input id="dosage" placeholder="e.g. 500mg"></label>
+      <label>Frequency <input id="frequency" placeholder="e.g. 2 times a day"></label>
+      <label>Duration (days) <input id="duration" type="number" min="1" value="5"></label>
+      <label>Quantity <input id="quantity" type="number" min="1" value="10"></label>
+    </div>
+    <button onclick="addItem()">Add medicine</button>
+    <button onclick="savePrescription()">Save prescription</button>
+
+    <table>
+      <thead><tr><th>Medicine</th><th>Dosage</th><th>Frequency</th><th>Days</th><th>Qty</th></tr></thead>
+      <tbody id="items"></tbody>
+    </table>
+
+    <h2 style="margin-top:24px">Prescription audit</h2>
+    <table>
+      <thead><tr><th>Time</th><th>Medicine</th><th>Action</th><th>Old qty</th><th>New qty</th></tr></thead>
+      <tbody id="audit"></tbody>
+    </table>
+    <div id="msg" role="status"></div>
+  </section>
+</main>
+
+<script>
+  let currentAppointment = null;
+  let currentRecord = null;
+  let pending = [];
+
+  function say(text) { document.getElementById("msg").textContent = text; }
+
+  function fillRows(tbodyId, rows, keys) {
+    const tbody = document.getElementById(tbodyId);
+    tbody.innerHTML = "";
+    rows.forEach(function (r) {
+      const tr = document.createElement("tr");
+      keys.forEach(function (k) {
+        const td = document.createElement("td");
+        td.textContent = r[k] === null || r[k] === undefined ? "" : r[k];
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+  }
+
+  async function loadDoctors() {
+    const res = await fetch("/api/doctors");
+    const doctors = await res.json();
+    const sel = document.getElementById("doctor");
+    doctors.forEach(function (d) {
+      const o = document.createElement("option");
+      o.value = d.doctor_id;
+      o.textContent = d.full_name;
+      sel.appendChild(o);
+    });
+    loadAppointments();
+  }
+
+  async function loadAppointments() {
+    const id = document.getElementById("doctor").value;
+    if (!id) return;
+    const res = await fetch("/api/doctor/" + id + "/appointments");
+    const rows = await res.json();
+    const tbody = document.getElementById("appointments");
+    tbody.innerHTML = "";
+    rows.forEach(function (r) {
+      const tr = document.createElement("tr");
+      tr.className = "row";
+      [r.appointment_date, r.start_time, r.patient_name, r.status].forEach(function (v) {
+        const td = document.createElement("td");
+        td.textContent = v;
+        tr.appendChild(td);
+      });
+      tr.onclick = function () {
+        document.querySelectorAll("#appointments tr").forEach(function (x) { x.classList.remove("selected"); });
+        tr.classList.add("selected");
+        selectAppointment(r.appointment_id);
+      };
+      tbody.appendChild(tr);
+    });
+  }
+
+  async function selectAppointment(id) {
+    currentAppointment = id;
+    document.getElementById("apptLabel").textContent = "(selected appointment)";
+    const res = await fetch("/api/medical-records/" + id);
+    const rec = await res.json();
+    currentRecord = rec.record_id || null;
+    document.getElementById("diagnosis").value = rec.diagnosis || "";
+    document.getElementById("clinical_notes").value = rec.clinical_notes || "";
+    document.getElementById("treatment_plan").value = rec.treatment_plan || "";
+    pending = [];
+    renderPending();
+    loadSaved();
+    say("");
+  }
+
+  async function saveRecord() {
+    if (!currentAppointment) { say("Select an appointment first."); return; }
+    const res = await fetch("/api/medical-records", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        appointment_id: currentAppointment,
+        diagnosis: document.getElementById("diagnosis").value,
+        clinical_notes: document.getElementById("clinical_notes").value,
+        treatment_plan: document.getElementById("treatment_plan").value
+      })
+    });
+    const data = await res.json();
+    if (res.ok) { currentRecord = data.record_id; say(data.message); } else { say(data.error); }
+  }
+
+  async function loadMedicines() {
+    const res = await fetch("/api/medicines");
+    const medicines = await res.json();
+    const sel = document.getElementById("medicine");
+    medicines.forEach(function (m) {
+      const o = document.createElement("option");
+      o.value = m.medicine_id;
+      o.textContent = m.medicine_name;
+      sel.appendChild(o);
+    });
+  }
+
+  function addItem() {
+    const sel = document.getElementById("medicine");
+    const item = {
+      medicine_id: sel.value,
+      medicine_name: sel.options[sel.selectedIndex].textContent,
+      dosage: document.getElementById("dosage").value.trim(),
+      frequency: document.getElementById("frequency").value.trim(),
+      duration_days: Number(document.getElementById("duration").value),
+      quantity: Number(document.getElementById("quantity").value)
+    };
+    if (!item.medicine_id || !item.dosage || !item.frequency || item.duration_days < 1 || item.quantity < 1) {
+      say("Fill in dosage, frequency, duration and quantity.");
+      return;
+    }
+    pending.push(item);
+    renderPending();
+    say("");
+  }
+
+  function renderPending() {
+    fillRows("items", pending, ["medicine_name", "dosage", "frequency", "duration_days", "quantity"]);
+  }
+
+  async function loadSaved() {
+    if (!currentRecord) { fillRows("items", [], []); fillRows("audit", [], []); return; }
+    const res = await fetch("/api/prescriptions/" + currentRecord);
+    fillRows("items", await res.json(), ["medicine_name", "dosage", "frequency", "duration_days", "quantity"]);
+    const au = await fetch("/api/prescription-audit/" + currentRecord);
+    fillRows("audit", await au.json(), ["changed_at", "medicine_name", "action", "old_quantity", "new_quantity"]);
+  }
+
+  async function savePrescription() {
+    if (!currentRecord) { say("Save the medical record first."); return; }
+    if (!pending.length) { say("Add at least one medicine."); return; }
+    const res = await fetch("/api/prescriptions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        record_id: currentRecord,
+        items: pending.map(function (i) {
+          return { medicine_id: i.medicine_id, dosage: i.dosage, frequency: i.frequency,
+                   duration_days: i.duration_days, quantity: i.quantity };
+        })
+      })
+    });
+    const data = await res.json();
+    say(res.ok ? data.message : data.error);
+    if (res.ok) { pending = []; loadSaved(); }
+  }
+
+  loadMedicines();
+  loadDoctors();
+</script>
+</body>
+</html>
