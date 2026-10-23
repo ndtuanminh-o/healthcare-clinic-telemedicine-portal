@@ -1,0 +1,116 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    color: #1f2937;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 40px;
+    background: #1769aa;
+    color: white;
+}
+
+.topbar h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.container {
+    width: 92%;
+    max-width: 1300px;
+    margin: 30px auto;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 28px;
+}
+
+.summary-card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px #00000015;
+}
+
+.summary-card h3 {
+    margin-top: 0;
+    color: #6b7280;
+    font-size: 15px;
+}
+
+.summary-card p {
+    margin-bottom: 0;
+    color: #1769aa;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.report-section {
+    background: white;
+    margin-bottom: 28px;
+    padding: 22px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px #00000015;
+}
+
+.report-section h2 {
+    margin-top: 0;
+    color: #1769aa;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 12px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+}
+
+th {
+    background: #eaf3fb;
+    color: #174a70;
+}
+
+tr:hover {
+    background: #f8fafc;
+}
+
+.error-message {
+    color: #b91c1c;
+    font-weight: bold;
+}
+
+@media (max-width: 800px) {
+    .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .topbar {
+        padding: 18px;
+    }
+}
+
+@media (max-width: 500px) {
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+}
