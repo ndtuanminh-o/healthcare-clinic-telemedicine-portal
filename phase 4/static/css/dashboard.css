@@ -13,6 +13,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
     padding: 18px 40px;
     background: #1769aa;
     color: white;
@@ -21,6 +23,21 @@ body {
 .topbar h1 {
     margin: 0;
     font-size: 24px;
+}
+
+.topbar nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 16px;
+    font-size: 14px;
+    opacity: 0.85;
+}
+
+.topbar nav a:hover,
+.topbar nav a.active {
+    opacity: 1;
+    font-weight: bold;
+    text-decoration: underline;
 }
 
 .container {
@@ -92,6 +109,11 @@ th {
 
 tr:hover {
     background: #f8fafc;
+}
+
+.empty-message {
+    text-align: center;
+    color: #6b7280;
 }
 
 .error-message {
