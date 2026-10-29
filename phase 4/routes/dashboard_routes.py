@@ -1,20 +1,31 @@
-from flask import Blueprint, render_template, jsonify
-from db import get_connection
+import mysql.connector
+from flask import Blueprint, current_app, jsonify, render_template
+
+from db import close_quietly, get_connection
 
 dashboard_bp = Blueprint("dashboard", __name__)
 
 
-def fetch_all(sql):
-"""Helper function to connect to MySQL, execute SQL query, and return a list of dicts."""
-    connection = get_connection()
-    cursor = connection.cursor(dictionary=True)
-
+def fetch_all(sql, params=None):
+    """Connect to MySQL, execute a SQL query and return a list of dicts."""
+    connection = None
+    cursor = None
     try:
-        cursor.execute(sql)
+        connection = get_connection()
+        cursor = connection.cursor(dictionary=True)
+        cursor.execute(sql, params or ())
         return cursor.fetchall()
     finally:
-        cursor.close()
-        connection.close()
+        close_quietly(cursor, connection)
+
+
+def json_report(sql, params=None):
+    """Run a report query and return it as JSON, hiding database details on failure."""
+    try:
+        return jsonify(fetch_all(sql, params))
+    except mysql.connector.Error:
+        current_app.logger.exception("dashboard report failed")
+        return jsonify({"error": "Could not load the report."}), 500
 
 
 @dashboard_bp.route("/dashboard")
@@ -29,7 +40,14 @@ def dashboard():
 @dashboard_bp.route("/api/dashboard/telemedicine")
 def telemedicine_report():
     sql = """
-        WITH month_stats AS (
+        WITH report_period AS (
+            SELECT
+                DATE_FORMAT(MAX(appointment_date), '%Y-%m-01') AS start_date,
+                DATE_ADD(DATE_FORMAT(MAX(appointment_date), '%Y-%m-01'), INTERVAL 1 MONTH) AS end_date
+            FROM appointment
+            WHERE deleted_at IS NULL
+        ),
+        month_stats AS (
             SELECT
                 a.doctor_id,
                 COUNT(*) AS total_appointments,
@@ -40,8 +58,11 @@ def telemedicine_report():
                     END
                 ) AS telemedicine_appointments
             FROM appointment a
+            CROSS JOIN report_period rp
             WHERE a.status <> 'Cancelled'
               AND a.deleted_at IS NULL
+              AND a.appointment_date >= rp.start_date
+              AND a.appointment_date < rp.end_date
             GROUP BY a.doctor_id
         )
         SELECT
@@ -57,9 +78,9 @@ def telemedicine_report():
         LEFT JOIN month_stats m
             ON m.doctor_id = d.doctor_id
         WHERE d.deleted_at IS NULL
-        ORDER BY telemedicine_percentage DESC
+        ORDER BY telemedicine_percentage DESC, d.full_name
     """
-    return jsonify(fetch_all(sql))
+    return json_report(sql)
 
 
 # ========================================================================
@@ -69,7 +90,7 @@ def telemedicine_report():
 def medicine_revenue_report():
     sql = """
         WITH report_period AS (
-            SELECT 
+            SELECT
                 DATE_FORMAT(MAX(appointment_date), '%Y-%m-01') AS start_date,
                 DATE_ADD(DATE_FORMAT(MAX(appointment_date), '%Y-%m-01'), INTERVAL 1 MONTH) AS end_date
             FROM appointment
@@ -89,7 +110,7 @@ def medicine_revenue_report():
               AND dp.issue_date >= rp.start_date
               AND dp.issue_date < rp.end_date
             GROUP BY m.medicine_id, m.medicine_name
-        ), 
+        ),
         average_revenue AS (
             SELECT AVG(total_medicine_revenue) AS average_revenue_per_medicine
             FROM medicine_monthly_revenue
@@ -104,11 +125,11 @@ def medicine_revenue_report():
         WHERE r.total_medicine_revenue > a.average_revenue_per_medicine
         ORDER BY r.total_medicine_revenue DESC
     """
-    return jsonify(fetch_all(sql))
+    return json_report(sql)
 
 
 # ========================================================================
-# 3. Q09. Months where Telemedicine exceeds 20% of realised appointment revenue
+# 3. Q09. Months where Telemedicine exceeds the configured share (20%) of realised revenue
 # ========================================================================
 @dashboard_bp.route("/api/dashboard/telemedicine-revenue")
 def telemedicine_revenue_report():
@@ -140,10 +161,11 @@ def telemedicine_revenue_report():
             ROUND(100.0 * telemedicine_revenue / NULLIF(total_monthly_revenue, 0), 2)
                 AS telemedicine_revenue_percentage
         FROM monthly_revenue
-        WHERE telemedicine_revenue / NULLIF(total_monthly_revenue, 0) > 0.20
+        WHERE telemedicine_revenue / NULLIF(total_monthly_revenue, 0) > %s
         ORDER BY revenue_year, revenue_month
     """
-    return jsonify(fetch_all(sql))
+    threshold = current_app.config["TELEMEDICINE_SHARE_THRESHOLD"]
+    return json_report(sql, (threshold,))
 
 
 # ========================================================================
@@ -236,4 +258,4 @@ def vip_patients_report():
         WHERE ps.spending_percent_rank >= 0.80
         ORDER BY ps.total_medical_spending DESC
     """
-    return jsonify(fetch_all(sql))
+    return json_report(sql)
