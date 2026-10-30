@@ -47,9 +47,10 @@ This project designs a relational database management system for a healthcare fa
 
 ### Phase 3: Physical Implementation & Advanced SQL
 - [01 Schema DDL (11 Tables & Views)](phase%203/01_schema.sql)
-- [02 Business Triggers & Views](phase%203/02_trigger_and%20_view.sql)
-- [03 Mock Data Scripts (11 Tables)](phase%203/03_mock_data/)
-- [04 Analytical Queries (10 CTE & Window Function Queries)](phase%203/04_advanced_queries.sql)
+- [02 Business Triggers & Views](phase%203/02_trigger_and_view.sql)
+- [03 Master Mock Data Script (1-Click Workbench Import)](phase%203/03_mock_data.sql)
+- [03 Mock Data Modular Scripts (11 Tables)](phase%203/03_mock_data/)
+- [04 Analytical Queries (10 Self-Contained Queries)](phase%203/04_advanced_queries.sql)
 - [Query Test Cases & Validation](phase%203/test_case.md)
 
 ### Phase 4: Web Application & Management Portal
@@ -105,7 +106,8 @@ Open [http://localhost:5000](http://localhost:5000) in your browser:
 │   └── normalization_verification.md
 ├── phase 3/
 │   ├── 01_schema.sql
-│   ├── 02_trigger_and _view.sql
+│   ├── 02_trigger_and_view.sql
+│   ├── 03_mock_data.sql
 │   ├── 03_mock_data/
 │   ├── 04_advanced_queries.sql
 │   ├── query_results/

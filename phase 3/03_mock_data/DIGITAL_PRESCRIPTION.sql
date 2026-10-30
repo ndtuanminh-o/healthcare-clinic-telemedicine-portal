@@ -1,5 +1,7 @@
-START TRANSACTION;
+USE healthcare_clinic_v2;
 SET FOREIGN_KEY_CHECKS = 0;
+SET @DISABLE_TRIGGERS = 1;
+START TRANSACTION;
 
 INSERT INTO DIGITAL_PRESCRIPTION (prescription_id, record_id, issue_date, valid_until, instructions, status, deleted_at) VALUES
 ('e5bfda27-9920-4c0d-b154-d204a2f67949', 'a8141ccd-4834-422a-8acc-25ec632bae54', '2026-09-02 16:05:00', '2026-09-16', 'Uống thuốc sau bữa ăn 30 phút. Tái khám sau khi hết thuốc nếu triệu chứng chưa giảm.', 'Dispensed', NULL),
@@ -2216,5 +2218,5 @@ INSERT INTO DIGITAL_PRESCRIPTION (prescription_id, record_id, issue_date, valid_
 ('50fb2328-d269-4aed-bf4e-e10063dbeb7d', '24ff7c7d-6ffc-43b4-90b0-ee48be558992', '2026-09-12 14:05:00', '2026-09-26', 'Uống thuốc sau bữa ăn 30 phút. Tái khám sau khi hết thuốc nếu triệu chứng chưa giảm.', 'Dispensed', NULL);
 
 COMMIT;
-
+SET @DISABLE_TRIGGERS = 0;
 SET FOREIGN_KEY_CHECKS = 1;

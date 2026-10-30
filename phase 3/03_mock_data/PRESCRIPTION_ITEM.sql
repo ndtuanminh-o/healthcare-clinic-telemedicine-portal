@@ -1,5 +1,7 @@
-﻿START TRANSACTION;
+USE healthcare_clinic_v2;
 SET FOREIGN_KEY_CHECKS = 0;
+SET @DISABLE_TRIGGERS = 1;
+START TRANSACTION;
 
 INSERT INTO PRESCRIPTION_ITEM (item_id, prescription_id, medicine_id, dosage, frequency, duration_days, quantity, unit_price_at_prescription) VALUES
 ('bf74af54-e7f4-4423-b0a5-022d9a57e673', 'e5bfda27-9920-4c0d-b154-d204a2f67949', 'd5b88391-b3c8-429a-8569-19bd19748d4a', '1-2 viÃªn / láº§n', 'Uá»‘ng 3 láº§n/ngÃ y sau Äƒn', 14, 42, 1200.0),
@@ -4209,7 +4211,7 @@ INSERT INTO PRESCRIPTION_ITEM (item_id, prescription_id, medicine_id, dosage, fr
 ('7b07b5b3-db01-4a67-a012-283643fb6bea', 'a4efa8b4-542d-4991-a444-2dc5c8a6c691', '4c81071b-113e-4065-aa78-6a0f94aa0721', '1-2 viÃªn / láº§n', 'Uá»‘ng 2 láº§n/ngÃ y sau Äƒn', 10, 20, 1800.0),
 ('b81c719a-3085-4ea7-a88d-96477dbb79af', 'a4efa8b4-542d-4991-a444-2dc5c8a6c691', '7271970e-e331-4cff-82c9-dd6afc20d6f2', '1-2 viÃªn / láº§n', 'Uá»‘ng 2 láº§n/ngÃ y sau Äƒn', 14, 28, 1500.0),
 ('3b9c91fa-97c6-4f3c-bf2d-d20a5ac8d4d5', '50fb2328-d269-4aed-bf4e-e10063dbeb7d', '7271970e-e331-4cff-82c9-dd6afc20d6f2', '1-2 viÃªn / láº§n', 'Uá»‘ng 2 láº§n/ngÃ y sau Äƒn', 10, 20, 1500.0);
+
 COMMIT;
-
+SET @DISABLE_TRIGGERS = 0;
 SET FOREIGN_KEY_CHECKS = 1;
-

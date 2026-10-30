@@ -1,5 +1,7 @@
-START TRANSACTION;
+USE healthcare_clinic_v2;
 SET FOREIGN_KEY_CHECKS = 0;
+SET @DISABLE_TRIGGERS = 1;
+START TRANSACTION;
 
 INSERT INTO MEDICAL_RECORD (record_id, appointment_id, patient_id, specialist_id, diagnosis, clinical_notes, treatment_plan, record_date, deleted_at) VALUES
 ('a8141ccd-4834-422a-8acc-25ec632bae54', 'e8b895c9-96c9-4641-9bb2-881c7c4e3bc3', '1d05d1bb-2fb9-427d-b13c-bcaafcf53868', NULL, 'Đau đầu do căng thẳng cơ căng thẳng tâm lý (Tension Headache) (ICD-10: G44.2)', 'Đau ê ẩm vùng chẩm hai bên như bị thắt dải băng quanh đầu, làm việc máy tính nhiều, ngủ chập chờn.', 'Điều chỉnh thời gian làm việc và nghỉ ngơi, tránh thức khuya, tập thư giãn vùng cổ vai gáy, uống vitamin bổ thần kinh.', '2026-09-02 16:00:00', NULL),
@@ -2506,5 +2508,5 @@ INSERT INTO MEDICAL_RECORD (record_id, appointment_id, patient_id, specialist_id
 ('24ff7c7d-6ffc-43b4-90b0-ee48be558992', '835d13bd-63e0-427b-a86a-0d5272b32527', '4d4bbfe1-01bd-4b8f-bf7d-62c6bbcc4617', NULL, 'Cảm cúm thông thường kèm viêm họng cấp (ICD-10: J00 / J02.9)', 'Mệt mỏi, sốt gai rét 38.2 độ, đau rát cổ họng, nuốt đau, hắt hơi chảy nước mũi trong. Khám họng niêm mạc đỏ.', 'Nghỉ ngơi hợp lý, uống nhiều nước ấm, súc họng bằng dung dịch sát khuẩn, dùng thuốc theo đơn 5 ngày.', '2026-09-12 14:00:00', NULL);
 
 COMMIT;
-
+SET @DISABLE_TRIGGERS = 0;
 SET FOREIGN_KEY_CHECKS = 1;

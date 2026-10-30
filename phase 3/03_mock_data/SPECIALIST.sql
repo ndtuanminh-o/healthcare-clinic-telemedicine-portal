@@ -1,5 +1,7 @@
-START TRANSACTION;
+USE healthcare_clinic_v2;
 SET FOREIGN_KEY_CHECKS = 0;
+SET @DISABLE_TRIGGERS = 1;
+START TRANSACTION;
 
 INSERT INTO SPECIALIST (doctor_id, specialty, consultation_fee, board_certified_year) VALUES
 ('533f9540-8d88-44de-bfba-fe2f88c70b12', 'Tim mạch', 300000.0, 2011),
@@ -34,5 +36,5 @@ INSERT INTO SPECIALIST (doctor_id, specialty, consultation_fee, board_certified_
 ('408223ea-9136-44c3-a8a1-e9db1e61b113', 'Mắt', 350000.0, 2016);
 
 COMMIT;
-
+SET @DISABLE_TRIGGERS = 0;
 SET FOREIGN_KEY_CHECKS = 1;

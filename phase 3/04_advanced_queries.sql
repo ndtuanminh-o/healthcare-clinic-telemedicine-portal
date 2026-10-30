@@ -1,33 +1,30 @@
 USE healthcare_clinic_v2;
 
--- Latest month that has data (backward index scan, stops at the first live row)
-SET @report_month_start = DATE_FORMAT(
-    (SELECT appointment_date
-     FROM appointment
-     WHERE deleted_at IS NULL
-     ORDER BY appointment_date DESC
-     LIMIT 1),
-    '%Y-%m-01'
-);
-SET @report_month_end = DATE_ADD(@report_month_start, INTERVAL 1 MONTH);
-
 /* ========================================================================
    Q01. Telemedicine ratio for every doctor in the latest data month
    Techniques: CTE, LEFT JOIN, conditional aggregation.
    The month is aggregated first (date-range scan on the covering index), then
    joined to doctor. The correlated subquery of the original is removed.
    ======================================================================== */
-WITH month_stats AS (
+WITH report_period AS (
+    SELECT
+        DATE_FORMAT(MAX(appointment_date), '%Y-%m-01') AS start_date,
+        DATE_ADD(DATE_FORMAT(MAX(appointment_date), '%Y-%m-01'), INTERVAL 1 MONTH) AS end_date
+    FROM appointment
+    WHERE deleted_at IS NULL
+),
+month_stats AS (
     SELECT
         a.doctor_id,
         COUNT(*) AS total_appointments,
         SUM(CASE WHEN a.consultation_type = 'Telemedicine' THEN 1 ELSE 0 END)
             AS telemedicine_appointments
     FROM appointment a
+    JOIN report_period rp
+      ON a.appointment_date >= rp.start_date
+     AND a.appointment_date < rp.end_date
     WHERE a.status <> 'Cancelled'
       AND a.deleted_at IS NULL
-      AND a.appointment_date >= @report_month_start
-      AND a.appointment_date < @report_month_end
     GROUP BY a.doctor_id
 )
 SELECT
@@ -37,7 +34,7 @@ SELECT
     COALESCE(m.total_appointments, 0) AS total_non_cancelled_appointments,
     COALESCE(m.telemedicine_appointments, 0) AS telemedicine_appointments,
     ROUND(
-        100.0 * m.telemedicine_appointments / NULLIF(m.total_appointments, 0),
+        100.0 * COALESCE(m.telemedicine_appointments, 0) / NULLIF(m.total_appointments, 0),
         2
     ) AS telemedicine_percentage
 FROM doctor d
@@ -50,7 +47,14 @@ ORDER BY telemedicine_percentage DESC, total_non_cancelled_appointments DESC;
    Techniques: JOIN, aggregation, CTE, subquery filter.
    Average is taken over active, non-deleted doctors only.
    ======================================================================== */
-WITH doctor_workload AS (
+WITH report_period AS (
+    SELECT
+        DATE_FORMAT(MAX(appointment_date), '%Y-%m-01') AS start_date,
+        DATE_ADD(DATE_FORMAT(MAX(appointment_date), '%Y-%m-01'), INTERVAL 1 MONTH) AS end_date
+    FROM appointment
+    WHERE deleted_at IS NULL
+),
+doctor_workload AS (
     SELECT
         d.doctor_id,
         d.full_name AS doctor_name,
@@ -60,10 +64,11 @@ WITH doctor_workload AS (
     LEFT JOIN (
         SELECT a.doctor_id, COUNT(*) AS appointment_count
         FROM appointment a
+        JOIN report_period rp
+          ON a.appointment_date >= rp.start_date
+         AND a.appointment_date < rp.end_date
         WHERE a.status <> 'Cancelled'
           AND a.deleted_at IS NULL
-          AND a.appointment_date >= @report_month_start
-          AND a.appointment_date < @report_month_end
         GROUP BY a.doctor_id
     ) m ON m.doctor_id = d.doctor_id
     WHERE d.status = 'Active'
@@ -209,7 +214,14 @@ ORDER BY stock_minus_recent_consumption ASC, m.medicine_name;
    Techniques: JOIN, SUM, CTE, AVG subquery.
    unit_price_at_prescription is NOT NULL, so the old COALESCE is removed.
    ======================================================================== */
-WITH medicine_monthly_revenue AS (
+WITH report_period AS (
+    SELECT
+        DATE_FORMAT(MAX(appointment_date), '%Y-%m-01') AS start_date,
+        DATE_ADD(DATE_FORMAT(MAX(appointment_date), '%Y-%m-01'), INTERVAL 1 MONTH) AS end_date
+    FROM appointment
+    WHERE deleted_at IS NULL
+),
+medicine_monthly_revenue AS (
     SELECT
         m.medicine_id,
         m.medicine_name,
@@ -218,10 +230,11 @@ WITH medicine_monthly_revenue AS (
     JOIN prescription_item pi ON pi.medicine_id = m.medicine_id
     JOIN digital_prescription dp
         ON dp.prescription_id = pi.prescription_id
+    JOIN report_period rp
+      ON dp.issue_date >= rp.start_date
+     AND dp.issue_date < rp.end_date
     WHERE dp.status IN ('Issued', 'Dispensed')
       AND dp.deleted_at IS NULL
-      AND dp.issue_date >= @report_month_start
-      AND dp.issue_date < @report_month_end
     GROUP BY m.medicine_id, m.medicine_name
 ), average_revenue AS (
     SELECT AVG(total_medicine_revenue) AS average_revenue_per_medicine

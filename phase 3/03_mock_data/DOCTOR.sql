@@ -1,5 +1,7 @@
-START TRANSACTION;
+USE healthcare_clinic_v2;
 SET FOREIGN_KEY_CHECKS = 0;
+SET @DISABLE_TRIGGERS = 1;
+START TRANSACTION;
 
 INSERT INTO DOCTOR (doctor_id, full_name, license_no, phone_number, email, doctor_type, status, deleted_at) VALUES
 ('d66e268f-2d4e-4d62-bfa8-f3b5ade5e217', 'BS. Nguyễn Ánh Lan', 'CCHN-100001/BYT', '0974744854', 'bs.001.clinic@telemed.vn', 'GP', 'Active', NULL),
@@ -64,5 +66,5 @@ INSERT INTO DOCTOR (doctor_id, full_name, license_no, phone_number, email, docto
 ('408223ea-9136-44c3-a8a1-e9db1e61b113', 'BS. Thái Hồng Hoài', 'CCHN-100060/BYT', '0978722606', 'bs.060.clinic@telemed.vn', 'Specialist', 'Active', NULL);
 
 COMMIT;
-
+SET @DISABLE_TRIGGERS = 0;
 SET FOREIGN_KEY_CHECKS = 1;

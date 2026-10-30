@@ -1,5 +1,7 @@
-START TRANSACTION;
+USE healthcare_clinic_v2;
 SET FOREIGN_KEY_CHECKS = 0;
+SET @DISABLE_TRIGGERS = 1;
+START TRANSACTION;
 
 INSERT INTO MEDICINE (medicine_id, medicine_name, active_ingredient, unit, unit_price, stock_quantity, reorder_level) VALUES
 ('7271970e-e331-4cff-82c9-dd6afc20d6f2', 'Paracetamol 500mg', 'Paracetamol', 'Viên', 1500.0, 15000, 1000),
@@ -54,5 +56,5 @@ INSERT INTO MEDICINE (medicine_id, medicine_name, active_ingredient, unit, unit_
 ('bee462fc-aa0b-4c53-8cea-8e552289f50f', 'Xịt mũi Otrivin 0.1% 10ml', 'Xylometazoline Hydrochloride', 'Lọ', 52000.0, 2500, 180);
 
 COMMIT;
-
+SET @DISABLE_TRIGGERS = 0;
 SET FOREIGN_KEY_CHECKS = 1;

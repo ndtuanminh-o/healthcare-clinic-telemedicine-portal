@@ -88,9 +88,9 @@ def main():
         run_mysql_command(mysql_bin, user, password, host, port, db_name, f"source {fpath};")
 
     # 4. Run Triggers & Views
-    trg_path = os.path.join(base_dir, "phase 3", "02_trigger_and _view.sql").replace("\\", "/")
+    trg_path = os.path.join(base_dir, "phase 3", "02_trigger_and_view.sql").replace("\\", "/")
     if not os.path.exists(trg_path):
-        trg_path = os.path.join(base_dir, "phase 3", "04_trigger_and _view.sql").replace("\\", "/")
+        trg_path = os.path.join(base_dir, "phase 3", "02_trigger_and _view.sql").replace("\\", "/")
     if os.path.exists(trg_path):
         print(f"Importing Phase 3 triggers & views: {os.path.basename(trg_path)}...")
         run_mysql_command(mysql_bin, user, password, host, port, db_name, f"source {trg_path};")

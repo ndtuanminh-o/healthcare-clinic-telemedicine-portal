@@ -1,5 +1,7 @@
-START TRANSACTION;
+USE healthcare_clinic_v2;
 SET FOREIGN_KEY_CHECKS = 0;
+SET @DISABLE_TRIGGERS = 1;
+START TRANSACTION;
 
 INSERT INTO INVOICE (invoice_id, appointment_id, patient_id, issue_date, total_amount, payment_status, payment_method) VALUES
 ('0e71ca5b-3124-472e-8c3b-f0a18af2240c', 'e8b895c9-96c9-4641-9bb2-881c7c4e3bc3', '1d05d1bb-2fb9-427d-b13c-bcaafcf53868', '2026-09-02 16:10:00', 310400.0, 'Paid', 'Insurance'),
@@ -3234,5 +3236,5 @@ INSERT INTO INVOICE (invoice_id, appointment_id, patient_id, issue_date, total_a
 ('1fec9881-95df-47b5-b277-37e1c36d3974', '835d13bd-63e0-427b-a86a-0d5272b32527', '4d4bbfe1-01bd-4b8f-bf7d-62c6bbcc4617', '2026-09-12 14:10:00', 180000.0, 'Paid', 'Credit Card');
 
 COMMIT;
-
+SET @DISABLE_TRIGGERS = 0;
 SET FOREIGN_KEY_CHECKS = 1;

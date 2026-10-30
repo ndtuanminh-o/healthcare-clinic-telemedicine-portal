@@ -1,5 +1,7 @@
-START TRANSACTION;
+USE healthcare_clinic_v2;
 SET FOREIGN_KEY_CHECKS = 0;
+SET @DISABLE_TRIGGERS = 1;
+START TRANSACTION;
 
 INSERT INTO GENERAL_PRACTITIONER (doctor_id, clinic_room_no, consultation_fee) VALUES
 ('d66e268f-2d4e-4d62-bfa8-f3b5ade5e217', 'Phòng 101', 150000.0),
@@ -34,5 +36,5 @@ INSERT INTO GENERAL_PRACTITIONER (doctor_id, clinic_room_no, consultation_fee) V
 ('be63e235-45b0-4384-8441-ec71d00b8235', 'Phòng 130', 150000.0);
 
 COMMIT;
-
+SET @DISABLE_TRIGGERS = 0;
 SET FOREIGN_KEY_CHECKS = 1;

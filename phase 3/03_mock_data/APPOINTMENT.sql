@@ -1,5 +1,7 @@
-START TRANSACTION;
+USE healthcare_clinic_v2;
 SET FOREIGN_KEY_CHECKS = 0;
+SET @DISABLE_TRIGGERS = 1;
+START TRANSACTION;
 
 INSERT INTO APPOINTMENT (appointment_id, patient_id, doctor_id, booking_time, appointment_date, start_time, end_time, consultation_type, telemedicine_video_link, status, reason_for_visit, deleted_at) VALUES
 ('e8b895c9-96c9-4641-9bb2-881c7c4e3bc3', '1d05d1bb-2fb9-427d-b13c-bcaafcf53868', '357ec898-1c7b-4f7f-9563-a94f82d473b6', '2026-08-31 15:15:00', '2026-09-02', '15:30:00', '16:00:00', 'In-Person', NULL, 'Completed', 'Đau đầu, chóng mặt kéo dài nhiều ngày', NULL),
@@ -3234,5 +3236,5 @@ INSERT INTO APPOINTMENT (appointment_id, patient_id, doctor_id, booking_time, ap
 ('835d13bd-63e0-427b-a86a-0d5272b32527', '4d4bbfe1-01bd-4b8f-bf7d-62c6bbcc4617', '357ec898-1c7b-4f7f-9563-a94f82d473b6', '2026-09-09 09:30:00', '2026-09-12', '13:30:00', '14:00:00', 'In-Person', NULL, 'Completed', 'Cộm mắt, ngứa và đỏ mắt hai bên', NULL);
 
 COMMIT;
-
+SET @DISABLE_TRIGGERS = 0;
 SET FOREIGN_KEY_CHECKS = 1;

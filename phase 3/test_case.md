@@ -8,10 +8,10 @@
 | Q04 | Specialties above average cancellation rate | 6 | Pass | 
 | Q05 | Low-stock medicines in latest 14 days | 0 | Pass with note | 
 | Q06 | Medicines above average monthly revenue | 12 | Pass | 
-| Q07 | Polypharmacy prescriptions | 68 | Pass | 
+| Q07 | Polypharmacy prescriptions | 1410 | Pass | 
 | Q08 | Bad-debt risk by patient | 245 | Pass | 
 | Q09 | Telemedicine revenue share by month | 1 | Pass with requirement note | 
-| Q10 | VIP patients above the 80th percentile | 198 | Pass | 
+| Q10 | VIP patients above the 80th percentile | 210 | Pass | 
 
 ## 2. Detailed test cases
 
@@ -159,7 +159,7 @@ Crestor 10mg: 3,861,000.00 > 854,438.10
 | Preconditions | Non-cancelled digital prescriptions contain prescription items |
 | Steps | Execute Q07 and export the result to Q7.csv |
 | Expected result | Every returned prescription has a distinct medicine count greater than the clinic average |
-| Actual result | 68 prescriptions were returned; the average was 1.90 distinct medicines and all returned prescriptions exceeded 1.90 |
+| Actual result | 1,410 prescriptions were returned; the average was 1.91 distinct medicines and all returned prescriptions exceeded 1.91 |
 | Status | **Pass** |
 
 ### Example validation
@@ -226,7 +226,7 @@ Therefore 29.15% correctly passes the current query. If the teacher's requiremen
 | Preconditions | Completed visits and prescription spending exist |
 | Steps | Execute Q10 and export the result to Q10.csv |
 | Expected result | Every returned patient has a spending percentile rank of at least 80.00 |
-| Actual result | 198 patients were returned; percentile ranks ranged from 81.29 to 100.00 |
+| Actual result | 210 patients were returned; percentile ranks ranged from 80.15 to 100.00 |
 | Status | **Pass** |
 
 ### Example validation

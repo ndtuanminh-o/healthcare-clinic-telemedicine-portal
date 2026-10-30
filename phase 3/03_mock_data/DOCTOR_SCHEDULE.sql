@@ -1,5 +1,7 @@
-START TRANSACTION;
+USE healthcare_clinic_v2;
 SET FOREIGN_KEY_CHECKS = 0;
+SET @DISABLE_TRIGGERS = 1;
+START TRANSACTION;
 
 INSERT INTO DOCTOR_SCHEDULE (schedule_id, doctor_id, work_date, start_time, end_time, slot_status) VALUES
 ('e605c25c-f2ef-4572-80ed-86d84a40da32', 'd66e268f-2d4e-4d62-bfa8-f3b5ade5e217', '2026-09-02', '08:00:00', '12:00:00', 'Available'),
@@ -1471,5 +1473,5 @@ INSERT INTO DOCTOR_SCHEDULE (schedule_id, doctor_id, work_date, start_time, end_
 ('e845dbbe-7da1-45ac-b772-9a3baece277d', '408223ea-9136-44c3-a8a1-e9db1e61b113', '2026-09-25', '13:30:00', '17:30:00', 'Available');
 
 COMMIT;
-
+SET @DISABLE_TRIGGERS = 0;
 SET FOREIGN_KEY_CHECKS = 1;

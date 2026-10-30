@@ -1,5 +1,7 @@
-START TRANSACTION;
+USE healthcare_clinic_v2;
 SET FOREIGN_KEY_CHECKS = 0;
+SET @DISABLE_TRIGGERS = 1;
+START TRANSACTION;
 
 INSERT INTO PATIENT (patient_id, full_name, date_of_birth, gender, phone_number, address, status, deleted_at) VALUES
 ('3e3b7697-4562-4688-84d9-677c2cd56e07', 'Vũ Văn Khánh', '1993-06-09', 'M', '0915682940', '180 Lê Duẩn, Quận Ninh Kiều, Cần Thơ', 'Active', NULL),
@@ -1214,5 +1216,5 @@ INSERT INTO PATIENT (patient_id, full_name, date_of_birth, gender, phone_number,
 ('abf678a5-dcc4-40b2-82f2-68b6eca8b625', 'Lâm Đức Tiến', '1970-10-01', 'O', '0884894252', '229 Bạch Đằng, Quận Thanh Khê, Đà Nẵng', 'Active', NULL);
 
 COMMIT;
-
+SET @DISABLE_TRIGGERS = 0;
 SET FOREIGN_KEY_CHECKS = 1;
