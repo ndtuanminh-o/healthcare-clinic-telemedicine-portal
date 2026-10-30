@@ -9,7 +9,7 @@ const REPORTS = [
         url: "/api/dashboard/telemedicine",
         tableId: "telemedicine-table",
         summaryId: "telemedicine-summary",
-        summary: (count) => `${count} doctors`,
+        summary: (count) => `${count} bác sĩ`,
         columns: [
             ["doctor_name", formatText],
             ["total_appointments", formatInteger],
@@ -21,7 +21,7 @@ const REPORTS = [
         url: "/api/dashboard/medicine-revenue",
         tableId: "medicine-table",
         summaryId: "medicine-summary",
-        summary: (count) => `${count} medicines`,
+        summary: (count) => `${count} loại thuốc`,
         columns: [
             ["medicine_name", formatText],
             ["total_medicine_revenue", formatMoney],
@@ -32,7 +32,7 @@ const REPORTS = [
         url: "/api/dashboard/telemedicine-revenue",
         tableId: "revenue-table",
         summaryId: "revenue-summary",
-        summary: (count) => `${count} months`,
+        summary: (count) => `${count} tháng`,
         columns: [
             ["revenue_year", formatText],
             ["revenue_month", formatText],
@@ -45,7 +45,7 @@ const REPORTS = [
         url: "/api/dashboard/vip-patients",
         tableId: "vip-table",
         summaryId: "vip-summary",
-        summary: (count) => `${count} patients`,
+        summary: (count) => `${count} bệnh nhân`,
         columns: [
             ["patient_name", formatText],
             ["primary_treating_doctor", formatText],
@@ -82,7 +82,7 @@ async function loadReport(report) {
 
         summary.textContent = report.summary(data.length);
         if (data.length === 0) {
-            showMessageRow(tbody, columnCount, "No data found", "empty-message");
+            showMessageRow(tbody, columnCount, "Không có dữ liệu phù hợp", "empty-message");
             return;
         }
 
@@ -99,7 +99,7 @@ async function loadReport(report) {
     } catch (error) {
         console.error(error);
         summary.textContent = "-";
-        showMessageRow(tbody, columnCount, "Could not load this report.", "error-message");
+        showMessageRow(tbody, columnCount, "Không thể tải báo cáo này.", "error-message");
     }
 }
 

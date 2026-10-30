@@ -34,7 +34,7 @@ def recent_appointments():
         rows = cursor.fetchall()
         return jsonify(rows)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "Unable to retrieve recent appointments."}), 500
     finally:
         if conn and conn.is_connected():
             cursor.close()
@@ -64,11 +64,16 @@ def create_appointment():
     if end_time <= start_time:
         return jsonify({"error": "End time must be after start time."}), 400
 
+    if consultation_type == "Telemedicine" and not telemedicine_video_link:
+        # Default placeholder video room if not explicitly entered
+        telemedicine_video_link = f"https://meet.clinic-portal.vn/room-{uuid.uuid4().hex[:8]}"
+
     conn = None
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
 
+        # 1. Lookup or create patient
         cursor.execute("SELECT patient_id FROM PATIENT WHERE phone_number = %s", (phone_number,))
         patient = cursor.fetchone()
 
@@ -84,24 +89,28 @@ def create_appointment():
                 (patient_id, full_name, date_of_birth, gender, phone_number, address)
             )
 
+        # 2. Check no overlap for both doctor and patient (BR-01)
         cursor.execute(
             """
-            SELECT COUNT(*) AS overlap_count
+            SELECT doctor_id, patient_id
             FROM APPOINTMENT
-            WHERE doctor_id = %s
+            WHERE (doctor_id = %s OR patient_id = %s)
               AND appointment_date = %s
               AND status != 'Cancelled'
               AND deleted_at IS NULL
-              AND ((start_time < %s AND end_time > %s)
-                OR (start_time < %s AND end_time > %s)
-                OR (start_time >= %s AND end_time <= %s))
+              AND start_time < %s AND end_time > %s
+            LIMIT 1
             """,
-            (doctor_id, appointment_date, end_time, start_time, start_time, start_time, start_time, end_time)
+            (doctor_id, patient_id, appointment_date, end_time, start_time)
         )
         overlap = cursor.fetchone()
-        if overlap and overlap["overlap_count"] > 0:
-            return jsonify({"error": "Doctor already has an overlapping appointment in this time slot."}), 400
+        if overlap:
+            if overlap["doctor_id"] == doctor_id:
+                return jsonify({"error": "Doctor already has an active appointment in this time slot."}), 400
+            else:
+                return jsonify({"error": "Patient already has another appointment in this time slot."}), 400
 
+        # 3. Create appointment
         appointment_id = str(uuid.uuid4())
         cursor.execute(
             """
@@ -117,8 +126,37 @@ def create_appointment():
                 reason_for_visit
             )
         )
+
+        # 4. Generate consolidated invoice (BR-11)
+        cursor.execute(
+            """
+            SELECT COALESCE(gp.consultation_fee, sp.consultation_fee, 150000.00) AS fee
+            FROM DOCTOR d
+            LEFT JOIN GENERAL_PRACTITIONER gp ON d.doctor_id = gp.doctor_id
+            LEFT JOIN SPECIALIST sp ON d.doctor_id = sp.doctor_id
+            WHERE d.doctor_id = %s
+            """,
+            (doctor_id,)
+        )
+        fee_row = cursor.fetchone()
+        consultation_fee = fee_row["fee"] if fee_row else 150000.00
+
+        invoice_id = str(uuid.uuid4())
+        cursor.execute(
+            """
+            INSERT INTO INVOICE (invoice_id, appointment_id, patient_id, total_amount, payment_status, payment_method)
+            VALUES (%s, %s, %s, %s, 'Unpaid', 'Cash')
+            """,
+            (invoice_id, appointment_id, patient_id, consultation_fee)
+        )
+
         conn.commit()
-        return jsonify({"success": True, "message": "Appointment booked successfully.", "appointment_id": appointment_id}), 201
+        return jsonify({
+            "success": True,
+            "message": "Appointment booked successfully.",
+            "appointment_id": appointment_id,
+            "invoice_id": invoice_id
+        }), 201
 
     except mysql.connector.Error as err:
         if conn:

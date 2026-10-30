@@ -1,110 +1,231 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Clinic Portal - Booking</title>
+<title>Clinic Portal - Đặt Lịch Khám</title>
 <style>
-  body { font-family: Arial, sans-serif; margin: 0; background: #f4f6f8; color: #222; }
-  header { background: #0b6e4f; color: #fff; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; }
-  header h1 { margin: 0; font-size: 20px; }
-  nav a { color: #fff; text-decoration: none; margin-left: 16px; font-size: 14px; opacity: 0.85; }
-  nav a:hover, nav a.active { opacity: 1; font-weight: bold; text-decoration: underline; }
-  main { display: grid; grid-template-columns: 1fr 1.3fr; gap: 20px; padding: 20px 24px; }
-  section { background: #fff; border: 1px solid #d5dbe0; border-radius: 6px; padding: 16px; }
-  h2 { margin-top: 0; font-size: 17px; }
-  table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 8px; }
-  th, td { border-bottom: 1px solid #e3e7ea; padding: 6px 8px; text-align: left; }
-  label { display: block; margin-top: 10px; font-size: 14px; }
-  input, textarea, select { width: 100%; box-sizing: border-box; padding: 6px; font: inherit; }
-  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .three { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-  button { margin-top: 14px; padding: 8px 14px; background: #0b6e4f; color: #fff; border: 0; border-radius: 4px; cursor: pointer; width: 100%; font-size: 14px; }
-  button:hover { background: #08533c; }
-  #msg { margin-top: 12px; font-size: 14px; padding: 8px 12px; border-radius: 4px; display: none; }
-  #msg.success { background: #e8f5e9; color: #1b5e20; border: 1px solid #c8e6c9; display: block; }
-  #msg.error { background: #ffebee; color: #b71c1c; border: 1px solid #ffcdd2; display: block; }
-  .tag { display: inline-block; padding: 2px 6px; border-radius: 3px; font-size: 12px; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    margin: 0;
+    background: #f8fafc;
+    color: #1e293b;
+  }
+  header {
+    background: #0f766e;
+    color: #ffffff;
+    padding: 16px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+  }
+  nav a {
+    color: #e6fffa;
+    text-decoration: none;
+    margin-left: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0.9;
+  }
+  nav a:hover, nav a.active {
+    opacity: 1;
+    font-weight: 700;
+    text-decoration: underline;
+  }
+  main {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 24px;
+    padding: 24px 32px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  section {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+  h2 {
+    margin-top: 0;
+    font-size: 17px;
+    color: #0f766e;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th, td {
+    border-bottom: 1px solid #e2e8f0;
+    padding: 10px 12px;
+    text-align: left;
+  }
+  th {
+    background: #f1f5f9;
+    color: #475569;
+    font-weight: 600;
+  }
+  label {
+    display: block;
+    margin-top: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #334155;
+  }
+  input, textarea, select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font: inherit;
+    font-size: 14px;
+    margin-top: 4px;
+  }
+  input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: #0f766e;
+    box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.15);
+  }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .three { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  button {
+    margin-top: 18px;
+    padding: 10px 16px;
+    background: #0f766e;
+    color: #ffffff;
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.15s ease;
+  }
+  button:hover { background: #115e59; }
+  #msg {
+    margin-top: 12px;
+    font-size: 13px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    display: none;
+  }
+  #msg.success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; display: block; }
+  #msg.error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; display: block; }
+  .tag {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 500;
+  }
   .tag-tele { background: #e0f2fe; color: #0369a1; }
   .tag-inperson { background: #f1f5f9; color: #475569; }
-  @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; padding: 16px; } }
 </style>
 </head>
 <body>
 <header>
-  <h1>Clinic Portal</h1>
+  <h1>Clinic & Telemedicine Portal</h1>
   <nav>
     <a href="/booking" class="active">Booking</a>
-    <a href="/doctor">Doctor screen</a>
-    <a href="/dashboard">Dashboard</a>
+    <a href="/doctor">Doctor Screen</a>
+    <a href="/dashboard">Analytics Dashboard</a>
   </nav>
 </header>
 
 <main>
+  <!-- Form Booking -->
   <section>
-    <h2>Book appointment</h2>
+    <h2>Đặt Lịch Hẹn Khám</h2>
     <form id="bookingForm" onsubmit="submitBooking(event)">
-      <label>Full name *<input id="full_name" required placeholder="John Doe"></label>
+      <label>Họ và tên bệnh nhân *
+        <input id="full_name" required placeholder="Nguyễn Văn A">
+      </label>
       <div class="two">
-        <label>Phone number *<input id="phone_number" required placeholder="0901234567"></label>
-        <label>Date of birth *<input id="date_of_birth" type="date" required></label>
+        <label>Số điện thoại *
+          <input id="phone_number" required placeholder="0901234567">
+        </label>
+        <label>Ngày sinh *
+          <input id="date_of_birth" type="date" required>
+        </label>
       </div>
       <div class="two">
-        <label>Gender
+        <label>Giới tính
           <select id="gender">
-            <option value="M">Male</option>
-            <option value="F">Female</option>
-            <option value="O" selected>Other</option>
+            <option value="M">Nam</option>
+            <option value="F">Nữ</option>
+            <option value="O" selected>Khác</option>
           </select>
         </label>
-        <label>Residential address<input id="address" placeholder="123 Medical Center Blvd"></label>
+        <label>Địa chỉ
+          <input id="address" placeholder="123 Đường Nguyễn Trãi, Q.5">
+        </label>
       </div>
-      <label>Doctor *
+      <label>Bác sĩ tiếp nhận *
         <select id="doctor_id" required>
-          <option value="">Select doctor</option>
+          <option value="">-- Chọn bác sĩ --</option>
         </select>
       </label>
       <div class="three">
-        <label>Date *<input id="appointment_date" type="date" required></label>
-        <label>Start time *<input id="start_time" type="time" required></label>
-        <label>End time *<input id="end_time" type="time" required></label>
+        <label>Ngày hẹn *
+          <input id="appointment_date" type="date" required>
+        </label>
+        <label>Giờ bắt đầu *
+          <input id="start_time" type="time" required>
+        </label>
+        <label>Giờ kết thúc *
+          <input id="end_time" type="time" required>
+        </label>
       </div>
       <div class="two">
-        <label>Consultation type
+        <label>Hình thức khám
           <select id="consultation_type" onchange="toggleVideoLink()">
-            <option value="In-Person">In-Person</option>
-            <option value="Telemedicine">Telemedicine</option>
+            <option value="In-Person">Trực tiếp tại phòng khám (In-Person)</option>
+            <option value="Telemedicine">Khám từ xa (Telemedicine)</option>
           </select>
         </label>
-        <label id="videoField" style="display:none">Video room link
+        <label id="videoField" style="display:none">Link phòng khám video
           <input id="telemedicine_video_link" placeholder="https://meet.google.com/xyz">
         </label>
       </div>
-      <label>Reason for visit / symptoms
-        <textarea id="reason_for_visit" rows="2" placeholder="Routine check-up, headache..."></textarea>
+      <label>Lý do khám / Triệu chứng ban đầu
+        <textarea id="reason_for_visit" rows="2" placeholder="Đau đầu, kiểm tra sức khỏe định kỳ..."></textarea>
       </label>
-      <button type="submit">Confirm appointment</button>
+      <button type="submit">Xác Nhận Đặt Lịch</button>
       <div id="msg"></div>
     </form>
   </section>
 
+  <!-- Danh sách lịch gần đây -->
   <section>
-    <h2>Recent appointments</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Time</th>
-          <th>Patient</th>
-          <th>Doctor</th>
-          <th>Type</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="appointments">
-        <tr><td colspan="6" style="text-align:center;color:#888;">Loading...</td></tr>
-      </tbody>
-    </table>
+    <h2>Lịch Khám Gần Đây (Real-time)</h2>
+    <div style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Ngày hẹn</th>
+            <th>Giờ khám</th>
+            <th>Bệnh nhân</th>
+            <th>Bác sĩ</th>
+            <th>Hình thức</th>
+            <th>Trạng thái</th>
+          </tr>
+        </thead>
+        <tbody id="appointments">
+          <tr><td colspan="6" style="text-align:center;color:#64748b;">Đang tải dữ liệu...</td></tr>
+        </tbody>
+      </table>
+    </div>
   </section>
 </main>
 
@@ -125,11 +246,11 @@
       const res = await fetch("/api/doctors");
       const docs = await res.json();
       const sel = document.getElementById("doctor_id");
-      sel.innerHTML = '<option value="">Select doctor</option>';
+      sel.innerHTML = '<option value="">-- Chọn bác sĩ --</option>';
       docs.forEach(function (d) {
         const opt = document.createElement("option");
         opt.value = d.doctor_id;
-        opt.textContent = d.full_name;
+        opt.textContent = `${d.full_name} (${d.department})`;
         sel.appendChild(opt);
       });
     } catch (e) {
@@ -144,7 +265,7 @@
       const tbody = document.getElementById("appointments");
       tbody.innerHTML = "";
       if (!appts || appts.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#888;">No appointments found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#64748b;">Chưa có lịch khám nào.</td></tr>';
         return;
       }
       appts.forEach(function (a) {
@@ -153,10 +274,10 @@
         tr.innerHTML = `
           <td>${a.appointment_date || ""}</td>
           <td>${a.start_time || ""} - ${a.end_time || ""}</td>
-          <td>${a.patient_name || ""}<br><small style="color:#666">${a.phone_number || ""}</small></td>
+          <td><strong>${a.patient_name || ""}</strong><br><small style="color:#64748b">${a.phone_number || ""}</small></td>
           <td>${a.doctor_name || ""}</td>
           <td><span class="${badgeClass}">${a.consultation_type || ""}</span></td>
-          <td>${a.status || ""}</td>
+          <td><strong>${a.status || ""}</strong></td>
         `;
         tbody.appendChild(tr);
       });
@@ -190,15 +311,15 @@
       });
       const data = await res.json();
       if (!res.ok) {
-        showMessage(data.error || "Failed to book appointment", true);
+        showMessage(data.error || "Không thể đặt lịch hẹn.", true);
         return;
       }
-      showMessage(data.message || "Appointment booked successfully", false);
+      showMessage(data.message || "Đặt lịch hẹn thành công!", false);
       document.getElementById("bookingForm").reset();
       toggleVideoLink();
       loadAppointments();
     } catch (err) {
-      showMessage("Error: " + err.message, true);
+      showMessage("Lỗi kết nối: " + err.message, true);
     }
   }
 

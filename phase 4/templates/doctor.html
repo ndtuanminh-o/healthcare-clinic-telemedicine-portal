@@ -1,84 +1,272 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Doctor screen</title>
+<title>Clinic Portal - Bác Sĩ Khám Bệnh & Kê Đơn</title>
 <style>
-  body { font-family: Arial, sans-serif; margin: 0; background: #f4f6f8; color: #222; }
-  header { background: #0b6e4f; color: #fff; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; }
-  header label { color: #fff; max-width: 320px; }
-  nav a { color: #fff; text-decoration: none; margin-left: 16px; font-size: 14px; opacity: 0.85; }
-  nav a:hover, nav a.active { opacity: 1; font-weight: bold; text-decoration: underline; }
-  main { display: grid; grid-template-columns: 1fr 1.2fr; gap: 20px; padding: 20px 24px; }
-  section { background: #fff; border: 1px solid #d5dbe0; border-radius: 6px; padding: 16px; }
-  h2 { margin-top: 0; font-size: 17px; }
-  table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 8px; }
-  th, td { border-bottom: 1px solid #e3e7ea; padding: 6px 8px; text-align: left; }
-  tr.row { cursor: pointer; }
-  tr.row:hover, tr.selected { background: #eef7f3; }
-  label { display: block; margin-top: 10px; font-size: 14px; }
-  input, textarea, select { width: 100%; box-sizing: border-box; padding: 6px; font: inherit; }
-  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  button { margin-top: 12px; margin-right: 6px; padding: 8px 14px; background: #0b6e4f; color: #fff; border: 0; border-radius: 4px; cursor: pointer; }
-  button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid #0b6e4f; outline-offset: 2px; }
-  #msg { margin-top: 10px; font-size: 14px; min-height: 18px; }
-  @media (max-width: 800px) { main { grid-template-columns: 1fr; } }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    margin: 0;
+    background: #f8fafc;
+    color: #1e293b;
+  }
+  header {
+    background: #0f766e;
+    color: #ffffff;
+    padding: 16px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+  }
+  header label {
+    color: #e6fffa;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  header select {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #14b8a6;
+    background: #ffffff;
+    color: #0f172a;
+    font-weight: 500;
+  }
+  nav a {
+    color: #e6fffa;
+    text-decoration: none;
+    margin-left: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0.9;
+  }
+  nav a:hover, nav a.active {
+    opacity: 1;
+    font-weight: 700;
+    text-decoration: underline;
+  }
+  main {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 24px;
+    padding: 24px 32px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  section {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+  h2 {
+    margin-top: 0;
+    font-size: 17px;
+    color: #0f766e;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 10px;
+  }
+  th, td {
+    border-bottom: 1px solid #e2e8f0;
+    padding: 10px 12px;
+    text-align: left;
+  }
+  th {
+    background: #f1f5f9;
+    color: #475569;
+    font-weight: 600;
+  }
+  tr.row {
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  tr.row:hover {
+    background: #f1f5f9;
+  }
+  tr.selected {
+    background: #ecfdf5 !important;
+    border-left: 4px solid #0f766e;
+  }
+  label {
+    display: block;
+    margin-top: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #334155;
+  }
+  input, textarea, select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font: inherit;
+    font-size: 14px;
+    margin-top: 4px;
+  }
+  input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: #0f766e;
+    box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.15);
+  }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .btn-primary {
+    margin-top: 14px;
+    padding: 9px 16px;
+    background: #0f766e;
+    color: #ffffff;
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.15s ease;
+  }
+  .btn-primary:hover { background: #115e59; }
+  .btn-secondary {
+    margin-top: 14px;
+    padding: 9px 16px;
+    background: #64748b;
+    color: #ffffff;
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .btn-secondary:hover { background: #475569; }
+  #msg {
+    margin-top: 14px;
+    font-size: 13px;
+    min-height: 20px;
+    font-weight: 500;
+  }
+  #msg.success { color: #065f46; background: #ecfdf5; padding: 8px 12px; border-radius: 6px; border: 1px solid #a7f3d0; }
+  #msg.error { color: #991b1b; background: #fef2f2; padding: 8px 12px; border-radius: 6px; border: 1px solid #fecaca; }
+  @media (max-width: 850px) { main { grid-template-columns: 1fr; padding: 16px; } }
 </style>
 </head>
 <body>
 <header>
-  <div style="display:flex;align-items:center;gap:20px;">
-    <h1 style="margin:0;font-size:20px">Clinic Portal</h1>
+  <div style="display:flex;align-items:center;gap:24px;">
+    <h1>Clinic & Telemedicine Portal</h1>
     <nav>
       <a href="/booking">Booking</a>
-      <a href="/doctor" class="active">Doctor screen</a>
-      <a href="/dashboard">Dashboard</a>
+      <a href="/doctor" class="active">Doctor Screen</a>
+      <a href="/dashboard">Analytics Dashboard</a>
     </nav>
   </div>
-  <label>Doctor
+  <label>
+    Bác Sĩ Trực:
     <select id="doctor" onchange="loadAppointments()"></select>
   </label>
 </header>
 
 <main>
+  <!-- Danh sách cuộc hẹn của bác sĩ -->
   <section>
-    <h2>Appointments</h2>
-    <table>
-      <thead><tr><th>Date</th><th>Time</th><th>Patient</th><th>Status</th></tr></thead>
-      <tbody id="appointments"></tbody>
-    </table>
+    <h2>Lịch Khám Được Phân Công</h2>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Ngày hẹn</th>
+            <th>Giờ</th>
+            <th>Bệnh nhân</th>
+            <th>Hình thức</th>
+            <th>Trạng thái</th>
+          </tr>
+        </thead>
+        <tbody id="appointments">
+          <tr><td colspan="5" style="text-align:center;color:#64748b;">Đang tải danh sách...</td></tr>
+        </tbody>
+      </table>
+    </div>
   </section>
 
+  <!-- Khám bệnh & Kê đơn -->
   <section>
-    <h2>Medical record <span id="apptLabel"></span></h2>
-    <label>Diagnosis <input id="diagnosis"></label>
-    <label>Clinical notes <textarea id="clinical_notes" rows="2"></textarea></label>
-    <label>Treatment plan <textarea id="treatment_plan" rows="2"></textarea></label>
-    <button onclick="saveRecord()">Save medical record</button>
+    <h2>Hồ Sơ Bệnh Án <span id="apptLabel" style="font-weight:normal;color:#64748b;font-size:14px;"></span></h2>
+    <label>Chẩn đoán bệnh (ICD Diagnostic) *
+      <input id="diagnosis" placeholder="Viêm phế quản cấp, tăng huyết áp vô căn...">
+    </label>
+    <label>Ghi chú lâm sàng & Triệu chứng
+      <textarea id="clinical_notes" rows="2" placeholder="Bệnh nhân ho kéo dài 3 ngày, sốt nhẹ..."></textarea>
+    </label>
+    <label>Phác đồ & Kế hoạch điều trị
+      <textarea id="treatment_plan" rows="2" placeholder="Uống thuốc theo toa, nghỉ ngơi, tái khám sau 7 ngày..."></textarea>
+    </label>
+    <button class="btn-primary" onclick="saveRecord()">Lưu Hồ Sơ Khám Bệnh</button>
 
-    <h2 style="margin-top:24px">Prescription</h2>
-    <label>Medicine <select id="medicine"></select></label>
+    <h2 style="margin-top:28px">Kê Đơn Thuốc Điện Tử</h2>
+    <label>Dược phẩm trong kho
+      <select id="medicine"></select>
+    </label>
     <div class="two">
-      <label>Dosage <input id="dosage" placeholder="e.g. 500mg"></label>
-      <label>Frequency <input id="frequency" placeholder="e.g. 2 times a day"></label>
-      <label>Duration (days) <input id="duration" type="number" min="1" value="5"></label>
-      <label>Quantity <input id="quantity" type="number" min="1" value="10"></label>
+      <label>Liều dùng (Dosage)
+        <input id="dosage" placeholder="500mg, 1 viên/lần">
+      </label>
+      <label>Tần suất (Frequency)
+        <input id="frequency" placeholder="Uống 2 lần/ngày sau ăn">
+      </label>
     </div>
-    <button onclick="addItem()">Add medicine</button>
-    <button onclick="savePrescription()">Save prescription</button>
+    <div class="two">
+      <label>Số ngày uống
+        <input id="duration" type="number" min="1" value="5">
+      </label>
+      <label>Số lượng cấp
+        <input id="quantity" type="number" min="1" value="10">
+      </label>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:12px;">
+      <button class="btn-secondary" onclick="addItem()">+ Thêm Thuốc Vào Đơn</button>
+      <button class="btn-primary" onclick="savePrescription()">Phát Hành Đơn Thuốc (Issued)</button>
+    </div>
 
+    <!-- Bảng chi tiết đơn thuốc -->
     <table>
-      <thead><tr><th>Medicine</th><th>Dosage</th><th>Frequency</th><th>Days</th><th>Qty</th></tr></thead>
+      <thead>
+        <tr>
+          <th>Tên Thuốc</th>
+          <th>Liều Dùng</th>
+          <th>Tần Suất</th>
+          <th>Số Ngày</th>
+          <th>SL</th>
+          <th>Thành Tiền</th>
+        </tr>
+      </thead>
       <tbody id="items"></tbody>
     </table>
 
-    <h2 style="margin-top:24px">Prescription audit</h2>
+    <h2 style="margin-top:28px">Nhật Ký Kiểm Toán Đơn Thuốc (Audit Trail)</h2>
     <table>
-      <thead><tr><th>Time</th><th>Medicine</th><th>Action</th><th>Old qty</th><th>New qty</th></tr></thead>
+      <thead>
+        <tr>
+          <th>Thời Điểm</th>
+          <th>Tên Thuốc</th>
+          <th>Hành Động</th>
+          <th>SL Cũ</th>
+          <th>SL Mới</th>
+        </tr>
+      </thead>
       <tbody id="audit"></tbody>
     </table>
-    <div id="msg" role="status"></div>
+
+    <div id="msg"></div>
   </section>
 </main>
 
@@ -86,154 +274,286 @@
   let currentAppointment = null;
   let currentRecord = null;
   let pending = [];
+  let medicineCatalog = [];
 
-  function say(text) { document.getElementById("msg").textContent = text; }
-
-  function fillRows(tbodyId, rows, keys) {
-    const tbody = document.getElementById(tbodyId);
-    tbody.innerHTML = "";
-    rows.forEach(function (r) {
-      const tr = document.createElement("tr");
-      keys.forEach(function (k) {
-        const td = document.createElement("td");
-        td.textContent = r[k] === null || r[k] === undefined ? "" : r[k];
-        tr.appendChild(td);
-      });
-      tbody.appendChild(tr);
-    });
+  function say(text, isError) {
+    const el = document.getElementById("msg");
+    if (!text) {
+      el.className = "";
+      el.textContent = "";
+      return;
+    }
+    el.className = isError ? "error" : "success";
+    el.textContent = text;
   }
 
   async function loadDoctors() {
-    const res = await fetch("/api/doctors");
-    const doctors = await res.json();
-    const sel = document.getElementById("doctor");
-    doctors.forEach(function (d) {
-      const o = document.createElement("option");
-      o.value = d.doctor_id;
-      o.textContent = d.full_name;
-      sel.appendChild(o);
-    });
-    loadAppointments();
+    try {
+      const res = await fetch("/api/doctors");
+      const doctors = await res.json();
+      const sel = document.getElementById("doctor");
+      sel.innerHTML = "";
+      doctors.forEach(function (d) {
+        const o = document.createElement("option");
+        o.value = d.doctor_id;
+        o.textContent = `${d.full_name} (${d.department})`;
+        sel.appendChild(o);
+      });
+      loadAppointments();
+      loadMedicines();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function loadMedicines() {
+    try {
+      const res = await fetch("/api/medicines");
+      medicineCatalog = await res.json();
+      const sel = document.getElementById("medicine");
+      sel.innerHTML = "";
+      medicineCatalog.forEach(function (m) {
+        const o = document.createElement("option");
+        o.value = m.medicine_id;
+        o.textContent = `${m.medicine_name} (${m.unit}) - Kho: ${m.stock_quantity} - ${Number(m.unit_price).toLocaleString('vi-VN')} đ`;
+        sel.appendChild(o);
+      });
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   async function loadAppointments() {
     const id = document.getElementById("doctor").value;
     if (!id) return;
-    const res = await fetch("/api/doctor/" + id + "/appointments");
-    const rows = await res.json();
-    const tbody = document.getElementById("appointments");
-    tbody.innerHTML = "";
-    rows.forEach(function (r) {
-      const tr = document.createElement("tr");
-      tr.className = "row";
-      [r.appointment_date, r.start_time, r.patient_name, r.status].forEach(function (v) {
-        const td = document.createElement("td");
-        td.textContent = v;
-        tr.appendChild(td);
+    try {
+      const res = await fetch("/api/doctor/" + id + "/appointments");
+      const rows = await res.json();
+      const tbody = document.getElementById("appointments");
+      tbody.innerHTML = "";
+      if (!rows || rows.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#64748b;">Không có cuộc hẹn nào.</td></tr>';
+        return;
+      }
+      rows.forEach(function (r) {
+        const tr = document.createElement("tr");
+        tr.className = "row";
+        if (currentAppointment === r.appointment_id) {
+          tr.classList.add("selected");
+        }
+        tr.innerHTML = `
+          <td>${r.appointment_date}</td>
+          <td>${r.start_time}</td>
+          <td><strong>${r.patient_name}</strong></td>
+          <td>${r.consultation_type}</td>
+          <td><strong>${r.status}</strong></td>
+        `;
+        tr.onclick = function () {
+          document.querySelectorAll("#appointments tr").forEach(function (x) { x.classList.remove("selected"); });
+          tr.classList.add("selected");
+          selectAppointment(r.appointment_id, r.patient_name);
+        };
+        tbody.appendChild(tr);
       });
-      tr.onclick = function () {
-        document.querySelectorAll("#appointments tr").forEach(function (x) { x.classList.remove("selected"); });
-        tr.classList.add("selected");
-        selectAppointment(r.appointment_id);
-      };
-      tbody.appendChild(tr);
-    });
+    } catch (e) {
+      console.error(e);
+    }
   }
 
-  async function selectAppointment(id) {
+  async function selectAppointment(id, patientName) {
     currentAppointment = id;
-    document.getElementById("apptLabel").textContent = "(selected appointment)";
-    const res = await fetch("/api/medical-records/" + id);
-    const rec = await res.json();
-    currentRecord = rec.record_id || null;
-    document.getElementById("diagnosis").value = rec.diagnosis || "";
-    document.getElementById("clinical_notes").value = rec.clinical_notes || "";
-    document.getElementById("treatment_plan").value = rec.treatment_plan || "";
-    pending = [];
-    renderPending();
-    loadSaved();
-    say("");
+    document.getElementById("apptLabel").textContent = patientName ? `[${patientName}]` : "";
+    try {
+      const res = await fetch("/api/medical-records/" + id);
+      const rec = await res.json();
+      currentRecord = rec.record_id || null;
+      document.getElementById("diagnosis").value = rec.diagnosis || "";
+      document.getElementById("clinical_notes").value = rec.clinical_notes || "";
+      document.getElementById("treatment_plan").value = rec.treatment_plan || "";
+      pending = [];
+      renderPending();
+      if (currentRecord) {
+        loadSavedPrescription();
+        loadAuditTrail();
+      } else {
+        document.getElementById("items").innerHTML = '<tr><td colspan="6" style="text-align:center;color:#64748b;">Chưa có đơn thuốc.</td></tr>';
+        document.getElementById("audit").innerHTML = '<tr><td colspan="5" style="text-align:center;color:#64748b;">Chưa có lịch sử kiểm toán.</td></tr>';
+      }
+      say("");
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   async function saveRecord() {
-    if (!currentAppointment) { say("Select an appointment first."); return; }
-    const res = await fetch("/api/medical-records", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        appointment_id: currentAppointment,
-        diagnosis: document.getElementById("diagnosis").value,
-        clinical_notes: document.getElementById("clinical_notes").value,
-        treatment_plan: document.getElementById("treatment_plan").value
-      })
-    });
-    const data = await res.json();
-    if (res.ok) { currentRecord = data.record_id; say(data.message); } else { say(data.error); }
-  }
-
-  async function loadMedicines() {
-    const res = await fetch("/api/medicines");
-    const medicines = await res.json();
-    const sel = document.getElementById("medicine");
-    medicines.forEach(function (m) {
-      const o = document.createElement("option");
-      o.value = m.medicine_id;
-      o.textContent = m.medicine_name;
-      sel.appendChild(o);
-    });
+    if (!currentAppointment) {
+      say("Vui lòng chọn một cuộc hẹn trước khi lưu.", true);
+      return;
+    }
+    const diagnosis = document.getElementById("diagnosis").value.trim();
+    if (!diagnosis) {
+      say("Chẩn đoán bệnh không được để trống (BR-06).", true);
+      return;
+    }
+    try {
+      const res = await fetch("/api/medical-records", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          appointment_id: currentAppointment,
+          diagnosis: diagnosis,
+          clinical_notes: document.getElementById("clinical_notes").value.trim(),
+          treatment_plan: document.getElementById("treatment_plan").value.trim()
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        say(data.error || "Lỗi lưu hồ sơ.", true);
+        return;
+      }
+      currentRecord = data.record_id;
+      say("Đã lưu hồ sơ bệnh án thành công!", false);
+      loadAppointments();
+    } catch (e) {
+      say("Lỗi kết nối: " + e.message, true);
+    }
   }
 
   function addItem() {
-    const sel = document.getElementById("medicine");
-    const item = {
-      medicine_id: sel.value,
-      medicine_name: sel.options[sel.selectedIndex].textContent,
-      dosage: document.getElementById("dosage").value.trim(),
-      frequency: document.getElementById("frequency").value.trim(),
-      duration_days: Number(document.getElementById("duration").value),
-      quantity: Number(document.getElementById("quantity").value)
-    };
-    if (!item.medicine_id || !item.dosage || !item.frequency || item.duration_days < 1 || item.quantity < 1) {
-      say("Fill in dosage, frequency, duration and quantity.");
+    const medId = document.getElementById("medicine").value;
+    const med = medicineCatalog.find(m => m.medicine_id === medId);
+    if (!med) return;
+
+    const dosage = document.getElementById("dosage").value.trim() || "1 viên/lần";
+    const frequency = document.getElementById("frequency").value.trim() || "2 lần/ngày";
+    const duration = parseInt(document.getElementById("duration").value, 10) || 5;
+    const quantity = parseInt(document.getElementById("quantity").value, 10) || 10;
+
+    if (quantity > med.stock_quantity) {
+      say(`Kho chỉ còn ${med.stock_quantity} đơn vị thuốc ${med.medicine_name}.`, true);
       return;
     }
-    pending.push(item);
+
+    pending.push({
+      medicine_id: med.medicine_id,
+      medicine_name: med.medicine_name,
+      dosage: dosage,
+      frequency: frequency,
+      duration_days: duration,
+      quantity: quantity,
+      unit_price: med.unit_price,
+      line_total: quantity * med.unit_price
+    });
     renderPending();
     say("");
   }
 
   function renderPending() {
-    fillRows("items", pending, ["medicine_name", "dosage", "frequency", "duration_days", "quantity"]);
-  }
-
-  async function loadSaved() {
-    if (!currentRecord) { fillRows("items", [], []); fillRows("audit", [], []); return; }
-    const res = await fetch("/api/prescriptions/" + currentRecord);
-    fillRows("items", await res.json(), ["medicine_name", "dosage", "frequency", "duration_days", "quantity"]);
-    const au = await fetch("/api/prescription-audit/" + currentRecord);
-    fillRows("audit", await au.json(), ["changed_at", "medicine_name", "action", "old_quantity", "new_quantity"]);
+    const tbody = document.getElementById("items");
+    tbody.innerHTML = "";
+    if (pending.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#64748b;">Chưa có mục thuốc nào được thêm.</td></tr>';
+      return;
+    }
+    pending.forEach(function (it, idx) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><strong>${it.medicine_name}</strong></td>
+        <td>${it.dosage}</td>
+        <td>${it.frequency}</td>
+        <td>${it.duration_days} ngày</td>
+        <td>${it.quantity}</td>
+        <td>${Number(it.line_total).toLocaleString('vi-VN')} đ</td>
+      `;
+      tbody.appendChild(tr);
+    });
   }
 
   async function savePrescription() {
-    if (!currentRecord) { say("Save the medical record first."); return; }
-    if (!pending.length) { say("Add at least one medicine."); return; }
-    const res = await fetch("/api/prescriptions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        record_id: currentRecord,
-        items: pending.map(function (i) {
-          return { medicine_id: i.medicine_id, dosage: i.dosage, frequency: i.frequency,
-                   duration_days: i.duration_days, quantity: i.quantity };
+    if (!currentRecord) {
+      say("Vui lòng lưu hồ sơ bệnh án trước khi kê đơn.", true);
+      return;
+    }
+    if (pending.length === 0) {
+      say("Vui lòng thêm ít nhất một loại thuốc.", true);
+      return;
+    }
+    try {
+      const res = await fetch("/api/prescriptions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          record_id: currentRecord,
+          items: pending
         })
-      })
-    });
-    const data = await res.json();
-    say(res.ok ? data.message : data.error);
-    if (res.ok) { pending = []; loadSaved(); }
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        say(data.error || "Lỗi phát hành đơn thuốc.", true);
+        return;
+      }
+      say("Phát hành đơn thuốc thành công & trừ kho thực tế!", false);
+      pending = [];
+      loadMedicines();
+      loadSavedPrescription();
+      loadAuditTrail();
+    } catch (e) {
+      say("Lỗi kết nối: " + e.message, true);
+    }
   }
 
-  loadMedicines();
+  async function loadSavedPrescription() {
+    if (!currentRecord) return;
+    try {
+      const res = await fetch("/api/prescriptions/" + currentRecord);
+      const items = await res.json();
+      const tbody = document.getElementById("items");
+      if (!items || items.length === 0) return;
+      tbody.innerHTML = "";
+      items.forEach(function (it) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><strong>${it.medicine_name}</strong></td>
+          <td>${it.dosage}</td>
+          <td>${it.frequency}</td>
+          <td>${it.duration_days} ngày</td>
+          <td>${it.quantity}</td>
+          <td>${Number(it.line_total || 0).toLocaleString('vi-VN')} đ</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function loadAuditTrail() {
+    if (!currentRecord) return;
+    try {
+      const res = await fetch("/api/prescription-audit/" + currentRecord);
+      const logs = await res.json();
+      const tbody = document.getElementById("audit");
+      tbody.innerHTML = "";
+      if (!logs || logs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#64748b;">Chưa có thay đổi nào được ghi lại.</td></tr>';
+        return;
+      }
+      logs.forEach(function (l) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${l.changed_at}</td>
+          <td><strong>${l.medicine_name}</strong></td>
+          <td><span style="padding:2px 6px;border-radius:4px;font-size:11px;background:#e2e8f0;font-weight:600;">${l.action}</span></td>
+          <td>${l.old_quantity ?? "-"}</td>
+          <td>${l.new_quantity ?? "-"}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   loadDoctors();
 </script>
 </body>

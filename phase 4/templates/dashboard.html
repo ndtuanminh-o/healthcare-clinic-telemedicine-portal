@@ -1,90 +1,200 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Clinic Portal - Dashboard</title>
-<style>
-  body { font-family: Arial, sans-serif; margin: 0; background: #f4f6f8; color: #222; }
-  header { background: #0b6e4f; color: #fff; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; }
-  header h1 { margin: 0; font-size: 20px; }
-  nav a { color: #fff; text-decoration: none; margin-left: 16px; font-size: 14px; opacity: 0.85; }
-  nav a:hover, nav a.active { opacity: 1; font-weight: bold; text-decoration: underline; }
-  main { max-width: 1000px; margin: 20px auto; padding: 0 20px; }
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
-  .card { background: #fff; border: 1px solid #d5dbe0; border-radius: 6px; padding: 16px; }
-  .card h3 { margin: 0 0 8px 0; font-size: 13px; color: #666; font-weight: normal; }
-  .card p { margin: 0; font-size: 22px; font-weight: bold; color: #0b6e4f; }
-  section { background: #fff; border: 1px solid #d5dbe0; border-radius: 6px; padding: 16px; }
-  h2 { margin-top: 0; font-size: 17px; }
-  table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 8px; }
-  th, td { border-bottom: 1px solid #e3e7ea; padding: 8px 10px; text-align: left; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clinic Portal - Analytics Dashboard</title>
+  <link rel="stylesheet" href="/static/css/dashboard.css">
+  <style>
+    /* Modern typography and polish */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      margin: 0;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+    .topbar {
+      background: #0f766e;
+      color: #fff;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .topbar h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    .topbar nav a {
+      color: #e6fffa;
+      text-decoration: none;
+      margin-left: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      opacity: 0.9;
+    }
+    .topbar nav a:hover, .topbar nav a.active {
+      opacity: 1;
+      font-weight: 700;
+      text-decoration: underline;
+    }
+    .summary-card h3 {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+    .summary-card p {
+      font-size: 28px;
+      color: #0f766e;
+      font-weight: 700;
+    }
+    .report-section {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .report-section h2 {
+      margin: 0 0 16px 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #0f766e;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    table th {
+      background: #f1f5f9;
+      color: #334155;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    table td {
+      font-size: 13px;
+      color: #1e293b;
+    }
+  </style>
 </head>
 <body>
-<header>
-  <h1>Clinic Portal</h1>
+<header class="topbar">
+  <h1>Clinic & Telemedicine Portal</h1>
   <nav>
     <a href="/booking">Booking</a>
-    <a href="/doctor">Doctor screen</a>
-    <a href="/dashboard" class="active">Dashboard</a>
+    <a href="/doctor">Doctor Screen</a>
+    <a href="/dashboard" class="active">Analytics Dashboard</a>
   </nav>
 </header>
 
-<main>
-  <div class="cards">
-    <div class="card">
-      <h3>Total Doctors Reported</h3>
+<main class="container">
+  <!-- Metric Summary Cards -->
+  <div class="summary-grid">
+    <div class="summary-card">
+      <h3>Bác Sĩ Báo Cáo (Q01)</h3>
       <p id="telemedicine-summary">Loading...</p>
+    </div>
+    <div class="summary-card">
+      <h3>Thuốc Vượt DS TB (Q06)</h3>
+      <p id="medicine-summary">Loading...</p>
+    </div>
+    <div class="summary-card">
+      <h3>Tháng Telemed &gt;20% (Q09)</h3>
+      <p id="revenue-summary">Loading...</p>
+    </div>
+    <div class="summary-card">
+      <h3>Bệnh Nhân VIP Top 20% (Q10)</h3>
+      <p id="vip-summary">Loading...</p>
     </div>
   </div>
 
-  <section>
-    <h2>Telemedicine by Doctor</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Doctor</th>
-          <th>Total Appointments</th>
-          <th>Telemedicine</th>
-          <th>Percentage</th>
-        </tr>
-      </thead>
-      <tbody id="telemedicine-table">
-        <tr><td colspan="4" style="text-align:center;color:#888;">Loading...</td></tr>
-      </tbody>
-    </table>
+  <!-- 1. Telemedicine Ratio Report (Q01) -->
+  <section class="report-section">
+    <h2>1. Tỷ Lệ Khám Telemedicine Theo Bác Sĩ (Tháng Gần Nhất - Q01)</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Bác Sĩ</th>
+            <th>Tổng Lượt Khám</th>
+            <th>Lượt Telemedicine</th>
+            <th>Tỷ Lệ (%)</th>
+          </tr>
+        </thead>
+        <tbody id="telemedicine-table">
+          <tr><td colspan="4" class="empty-message">Đang tải dữ liệu...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 2. High Revenue Medicines (Q06) -->
+  <section class="report-section">
+    <h2>2. Thuốc Có Doanh Thu Tháng Vượt Trung Bình Phòng Khám (Q06)</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Tên Thuốc</th>
+            <th>Doanh Thu Thuốc (VNĐ)</th>
+            <th>Doanh Thu TB Toàn Viện (VNĐ)</th>
+          </tr>
+        </thead>
+        <tbody id="medicine-table">
+          <tr><td colspan="3" class="empty-message">Đang tải dữ liệu...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 3. Telemedicine Revenue Ratio (Q09) -->
+  <section class="report-section">
+    <h2>3. Các Tháng Doanh Thu Telemedicine Chiếm Trên 20% Thực Thu (Q09)</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Năm</th>
+            <th>Tháng</th>
+            <th>Tổng Thực Thu (VNĐ)</th>
+            <th>Doanh Thu Telemedicine (VNĐ)</th>
+            <th>Tỷ Lệ Telemedicine (%)</th>
+          </tr>
+        </thead>
+        <tbody id="revenue-table">
+          <tr><td colspan="5" class="empty-message">Đang tải dữ liệu...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 4. Top 20% VIP Patients by Medical Spending (Q10) -->
+  <section class="report-section">
+    <h2>4. Danh Sách Bệnh Nhân VIP (Phân Vị Chi Tiêu &gt;= 80% - Q10)</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Họ Tên Bệnh Nhân</th>
+            <th>Bác Sĩ Điều Trị Chính</th>
+            <th>Tiền Khám (VNĐ)</th>
+            <th>Tiền Thuốc (VNĐ)</th>
+            <th>Tổng Chi Tiêu (VNĐ)</th>
+            <th>Phần Trăm Phân Vị</th>
+          </tr>
+        </thead>
+        <tbody id="vip-table">
+          <tr><td colspan="6" class="empty-message">Đang tải dữ liệu...</td></tr>
+        </tbody>
+      </table>
+    </div>
   </section>
 </main>
 
-<script>
-  async function loadTelemedicineReport() {
-    try {
-      const response = await fetch("/api/dashboard/telemedicine");
-      const data = await response.json();
-      const table = document.getElementById("telemedicine-table");
-      table.innerHTML = "";
-      if (!data || data.length === 0) {
-        table.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#888;">No data found</td></tr>';
-        return;
-      }
-      data.forEach(function (row) {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${row.doctor_name || ""}</td>
-          <td>${row.total_appointments || 0}</td>
-          <td>${row.telemedicine_appointments || 0}</td>
-          <td>${row.telemedicine_percentage ?? 0}%</td>
-        `;
-        table.appendChild(tr);
-      });
-      document.getElementById("telemedicine-summary").textContent = `${data.length} doctors`;
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  loadTelemedicineReport();
-</script>
+<script src="/static/js/dashboard.js"></script>
 </body>
 </html>
