@@ -46,10 +46,10 @@ This project designs a relational database management system for a healthcare fa
 - [Normalization Verification](phase%202/normalization_verification.md)
 
 ### Phase 3: Physical Implementation & Advanced SQL
-- [Database Schema DDL (11 Tables & Views)](phase%203/01_schema.sql)
-- [Mock Data Scripts](phase%203/02_mock_data/)
-- [10 Analytical Queries (CTE, Window Functions)](phase%203/03_advanced_queries.sql)
-- [Business Triggers & Views](phase%203/04_trigger_and%20_view.sql)
+- [01 Schema DDL (11 Tables & Views)](phase%203/01_schema.sql)
+- [02 Business Triggers & Views](phase%203/02_trigger_and%20_view.sql)
+- [03 Mock Data Scripts (11 Tables)](phase%203/03_mock_data/)
+- [04 Analytical Queries (10 CTE & Window Function Queries)](phase%203/04_advanced_queries.sql)
 - [Query Test Cases & Validation](phase%203/test_case.md)
 
 ### Phase 4: Web Application & Management Portal
@@ -64,13 +64,14 @@ This project designs a relational database management system for a healthcare fa
 ## Quickstart
 
 ### 1. Database Setup (MySQL 8.0)
-Run with UTF-8 character encoding:
+Populate schema, mock data, and triggers automatically with UTF-8:
 ```bash
-mysql -u root -p --default-character-set=utf8mb4 -e "CREATE DATABASE IF NOT EXISTS healthcare_portal CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-mysql -u root -p --default-character-set=utf8mb4 healthcare_portal < "phase 3/01_schema.sql"
-
-# Import mock data and triggers
 python load_data.py <your_mysql_password>
+```
+*Or manual import via MySQL CLI:*
+```bash
+mysql -u root -p --default-character-set=utf8mb4 -e "CREATE DATABASE IF NOT EXISTS healthcare_clinic_v2 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+mysql -u root -p --default-character-set=utf8mb4 healthcare_clinic_v2 < "phase 3/01_schema.sql"
 ```
 
 ### 2. Run Web Application
@@ -104,9 +105,9 @@ Open [http://localhost:5000](http://localhost:5000) in your browser:
 │   └── normalization_verification.md
 ├── phase 3/
 │   ├── 01_schema.sql
-│   ├── 02_mock_data/
-│   ├── 03_advanced_queries.sql
-│   ├── 04_trigger_and _view.sql
+│   ├── 02_trigger_and _view.sql
+│   ├── 03_mock_data/
+│   ├── 04_advanced_queries.sql
 │   ├── query_results/
 │   └── test_case.md
 ├── phase 4/
@@ -128,6 +129,7 @@ Open [http://localhost:5000](http://localhost:5000) in your browser:
 │   ├── app.py
 │   ├── config.py
 │   └── db.py
+├── load_data.py
 ├── .gitignore
 └── README.md
 ```

@@ -4,12 +4,10 @@ import subprocess
 import shutil
 
 def find_mysql_binary():
-    # 1. Check PATH
     cmd = shutil.which("mysql")
     if cmd:
         return cmd
 
-    # 2. Check standard Windows installations
     candidates = [
         r"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe",
         r"C:\Program Files\MySQL\MySQL Server 8.4\bin\mysql.exe",
@@ -66,7 +64,10 @@ def main():
     run_mysql_command(mysql_bin, user, password, host, port, db_name, f"source {schema_path};")
 
     # 3. Run Mock Data in FK dependency order
-    mock_dir = os.path.join(base_dir, "phase 3", "02_mock_data")
+    mock_dir = os.path.join(base_dir, "phase 3", "03_mock_data")
+    if not os.path.exists(mock_dir):
+        mock_dir = os.path.join(base_dir, "phase 3", "02_mock_data")
+
     mock_files = [
         "DOCTOR.sql",
         "GENERAL_PRACTITIONER.sql",
@@ -87,9 +88,11 @@ def main():
         run_mysql_command(mysql_bin, user, password, host, port, db_name, f"source {fpath};")
 
     # 4. Run Triggers & Views
-    trg_path = os.path.join(base_dir, "phase 3", "04_trigger_and _view.sql").replace("\\", "/")
+    trg_path = os.path.join(base_dir, "phase 3", "02_trigger_and _view.sql").replace("\\", "/")
+    if not os.path.exists(trg_path):
+        trg_path = os.path.join(base_dir, "phase 3", "04_trigger_and _view.sql").replace("\\", "/")
     if os.path.exists(trg_path):
-        print("Importing Phase 3 triggers & views...")
+        print(f"Importing Phase 3 triggers & views: {os.path.basename(trg_path)}...")
         run_mysql_command(mysql_bin, user, password, host, port, db_name, f"source {trg_path};")
 
     # 5. Run Phase 4 Audit tables and triggers
