@@ -15,7 +15,7 @@ app.register_blueprint(dashboard_bp)
 
 @app.route("/")
 def index():
-    return redirect(url_for("appointment.booking"))
+    return redirect(url_for("appointment.booking_page"))
 
 @app.route("/doctor")
 def doctor():
