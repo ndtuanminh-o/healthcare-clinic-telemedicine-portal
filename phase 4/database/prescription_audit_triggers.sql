@@ -1,3 +1,7 @@
+DROP TRIGGER IF EXISTS trg_prescription_item_insert;
+DROP TRIGGER IF EXISTS trg_prescription_item_update;
+DROP TRIGGER IF EXISTS trg_prescription_item_delete;
+
 DELIMITER //
 
 CREATE TRIGGER trg_prescription_item_insert

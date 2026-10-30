@@ -1,43 +1,71 @@
 import os
 import sys
-import mysql.connector
+import subprocess
+import shutil
 
-def run_sql_file(cursor, filepath):
-    print(f"Executing: {os.path.basename(filepath)}...")
-    with open(filepath, 'r', encoding='utf-8') as f:
-        sql = f.read()
+def find_mysql_binary():
+    # 1. Check PATH
+    cmd = shutil.which("mysql")
+    if cmd:
+        return cmd
+
+    # 2. Check standard Windows installations
+    candidates = [
+        r"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe",
+        r"C:\Program Files\MySQL\MySQL Server 8.4\bin\mysql.exe",
+        r"C:\Program Files (x86)\MySQL\MySQL Server 8.0\bin\mysql.exe",
+        r"C:\xampp\mysql\bin\mysql.exe",
+        r"C:\laragon\bin\mysql\mysql-8.0.30-winx64\bin\mysql.exe"
+    ]
+    for p in candidates:
+        if os.path.exists(p):
+            return p
+    return "mysql"
+
+def run_mysql_command(mysql_bin, user, password, host, port, db_name, sql):
+    cmd = [
+        mysql_bin,
+        f"-u{user}",
+        f"-p{password}",
+        f"-h{host}",
+        f"-P{port}",
+        "--default-character-set=utf8mb4",
+    ]
+    if db_name:
+        cmd.append(db_name)
+    cmd.extend(["-e", sql])
     
-    # Split on semicolon or statements
-    statements = sql.split(';')
-    for statement in statements:
-        stmt = statement.strip()
-        if stmt:
-            cursor.execute(stmt)
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        print(f"Error executing SQL: {result.stderr.strip()}", file=sys.stderr)
+        return False
+    return True
 
 def main():
-    password = sys.argv[1] if len(sys.argv) > 1 else ""
-    user = sys.argv[2] if len(sys.argv) > 2 else "root"
-    host = sys.argv[3] if len(sys.argv) > 3 else "localhost"
-    port = int(sys.argv[4]) if len(sys.argv) > 4 else 3306
+    password = sys.argv[1] if len(sys.argv) > 1 else os.getenv("DB_PASSWORD", "Ton10124@")
+    user = sys.argv[2] if len(sys.argv) > 2 else os.getenv("DB_USER", "root")
+    host = sys.argv[3] if len(sys.argv) > 3 else os.getenv("DB_HOST", "localhost")
+    port = sys.argv[4] if len(sys.argv) > 4 else os.getenv("DB_PORT", "3306")
+    db_name = sys.argv[5] if len(sys.argv) > 5 else "healthcare_clinic_v2"
 
+    mysql_bin = find_mysql_binary()
+    print(f"Using MySQL client: {mysql_bin}")
     print(f"Connecting to MySQL at {host}:{port} as {user}...")
-    conn = mysql.connector.connect(
-        host=host,
-        user=user,
-        password=password,
-        port=port
-    )
-    cursor = conn.cursor()
 
-    db_name = "healthcare_portal"
-    print(f"Creating database `{db_name}` if not exists...")
-    cursor.execute(f"CREATE DATABASE IF NOT EXISTS {db_name} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;")
-    cursor.execute(f"USE {db_name};")
+    # 1. Create target database
+    print(f"Creating database `{db_name}`...")
+    create_sql = f"CREATE DATABASE IF NOT EXISTS {db_name} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+    if not run_mysql_command(mysql_bin, user, password, host, port, None, create_sql):
+        sys.exit(1)
 
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    schema_path = os.path.join(base_dir, "phase 3", "01_schema.sql")
-    run_sql_file(cursor, schema_path)
 
+    # 2. Run Phase 3 Schema
+    schema_path = os.path.join(base_dir, "phase 3", "01_schema.sql").replace("\\", "/")
+    print(f"Importing schema: {schema_path}...")
+    run_mysql_command(mysql_bin, user, password, host, port, db_name, f"source {schema_path};")
+
+    # 3. Run Mock Data in FK dependency order
     mock_dir = os.path.join(base_dir, "phase 3", "02_mock_data")
     mock_files = [
         "DOCTOR.sql",
@@ -53,23 +81,28 @@ def main():
         "INVOICE.sql"
     ]
 
-    cursor.execute("SET FOREIGN_KEY_CHECKS = 0;")
     for mf in mock_files:
-        fpath = os.path.join(mock_dir, mf)
-        if os.path.exists(fpath):
-            run_sql_file(cursor, fpath)
-            conn.commit()
-    cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
+        fpath = os.path.join(mock_dir, mf).replace("\\", "/")
+        print(f"Importing mock data: {mf}...")
+        run_mysql_command(mysql_bin, user, password, host, port, db_name, f"source {fpath};")
 
-    # Prescription audit table
-    audit_sql = os.path.join(base_dir, "phase 4", "database", "prescription_audit.sql")
-    if os.path.exists(audit_sql):
-        run_sql_file(cursor, audit_sql)
+    # 4. Run Triggers & Views
+    trg_path = os.path.join(base_dir, "phase 3", "04_trigger_and _view.sql").replace("\\", "/")
+    if os.path.exists(trg_path):
+        print("Importing Phase 3 triggers & views...")
+        run_mysql_command(mysql_bin, user, password, host, port, db_name, f"source {trg_path};")
 
-    conn.commit()
-    cursor.close()
-    conn.close()
-    print("Database loaded successfully!")
+    # 5. Run Phase 4 Audit tables and triggers
+    audit_table = os.path.join(base_dir, "phase 4", "database", "prescription_audit.sql").replace("\\", "/")
+    audit_trg = os.path.join(base_dir, "phase 4", "database", "prescription_audit_triggers.sql").replace("\\", "/")
+    if os.path.exists(audit_table):
+        print("Importing Phase 4 audit schema...")
+        run_mysql_command(mysql_bin, user, password, host, port, db_name, f"source {audit_table};")
+    if os.path.exists(audit_trg):
+        print("Importing Phase 4 audit triggers...")
+        run_mysql_command(mysql_bin, user, password, host, port, db_name, f"source {audit_trg};")
+
+    print(f"\nSuccessfully populated database `{db_name}` with full schema, mock data, and triggers!")
 
 if __name__ == "__main__":
     main()

@@ -5,8 +5,6 @@ CREATE TABLE IF NOT EXISTS PRESCRIPTION_AUDIT (
     action          ENUM('INSERT', 'UPDATE', 'DELETE') NOT NULL,
     old_quantity    INT NULL,
     new_quantity    INT NULL,
-    changed_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    changed_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_audit_prescription (prescription_id, changed_at)
 );
-
-CREATE INDEX idx_audit_prescription
-    ON PRESCRIPTION_AUDIT (prescription_id, changed_at);
