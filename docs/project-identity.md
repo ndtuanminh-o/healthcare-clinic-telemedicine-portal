@@ -2,7 +2,7 @@
 
 ## Team Name
 
-To be discussed by the team.
+G5 (Pingo)
 
 ## Team Members
 

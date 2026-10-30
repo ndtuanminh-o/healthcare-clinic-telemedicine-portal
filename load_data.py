@@ -40,7 +40,7 @@ def run_mysql_command(mysql_bin, user, password, host, port, db_name, sql):
     return True
 
 def main():
-    password = sys.argv[1] if len(sys.argv) > 1 else os.getenv("DB_PASSWORD", "Ton10124@")
+    password = sys.argv[1] if len(sys.argv) > 1 else os.getenv("DB_PASSWORD", "")
     user = sys.argv[2] if len(sys.argv) > 2 else os.getenv("DB_USER", "root")
     host = sys.argv[3] if len(sys.argv) > 3 else os.getenv("DB_HOST", "localhost")
     port = sys.argv[4] if len(sys.argv) > 4 else os.getenv("DB_PORT", "3306")
