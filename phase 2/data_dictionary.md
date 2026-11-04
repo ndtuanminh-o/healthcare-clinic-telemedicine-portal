@@ -17,7 +17,7 @@ Base entity storing identity credentials, licensing information, and operational
 
 | Attribute Name | Data Type | Key Type | Nullable | Default Value | Integrity & Business Rules |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `doctor_id` | UUID / CHAR(36) | PK | No | `GEN_RANDOM_UUID()` | Primary surrogate identifier. Global UUID across all specialization subclasses. |
+| `doctor_id` | UUID / CHAR(36) | PK | No | `UUID()` | Primary surrogate identifier. Global UUID across all specialization subclasses. |
 | `full_name` | VARCHAR(100) | - | No | None | Full legal practitioner name. Cannot be empty. |
 | `license_no` | VARCHAR(30) | UQ | No | None | Ministry of Health medical practice license number. Globally unique. |
 | `phone_number` | VARCHAR(15) | - | No | None | Official clinic contact telephone number. |
@@ -56,7 +56,7 @@ Manages scheduled duty shifts, on-call slots, and calendar availability for clin
 
 | Attribute Name | Data Type | Key Type | Nullable | Default Value | Integrity & Business Rules |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `schedule_id` | UUID / CHAR(36) | PK | No | `GEN_RANDOM_UUID()` | Primary surrogate identifier for doctor working schedule slot. |
+| `schedule_id` | UUID / CHAR(36) | PK | No | `UUID()` | Primary surrogate identifier for doctor working schedule slot. |
 | `doctor_id` | UUID / CHAR(36) | FK | No | None | Foreign key referencing `DOCTOR(doctor_id)`. |
 | `work_date` | DATE | - | No | None | Calendar date of scheduled shift. |
 | `start_time` | TIME | - | No | None | Shift commencement time. |
@@ -70,7 +70,7 @@ Stores demographic profiles, medical contact identities, and account status for 
 
 | Attribute Name | Data Type | Key Type | Nullable | Default Value | Integrity & Business Rules |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `patient_id` | UUID / CHAR(36) | PK | No | `GEN_RANDOM_UUID()` | Primary surrogate identifier for registered patient profile. |
+| `patient_id` | UUID / CHAR(36) | PK | No | `UUID()` | Primary surrogate identifier for registered patient profile. |
 | `full_name` | VARCHAR(100) | - | No | None | Legal full name of patient. Cannot be blank. |
 | `date_of_birth` | DATE | - | No | None | Patient date of birth. Constraint: `CHECK (date_of_birth <= CURRENT_DATE)`. |
 | `gender` | ENUM('M', 'F', 'O') | - | Yes | 'O' | Clinical demographic gender identification ('M' = Male, 'F' = Female, 'O' = Other). |
@@ -86,7 +86,7 @@ Central coordinator for both in-person physical clinical consultations and virtu
 
 | Attribute Name | Data Type | Key Type | Nullable | Default Value | Integrity & Business Rules |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `appointment_id` | UUID / CHAR(36) | PK | No | `GEN_RANDOM_UUID()` | Primary surrogate appointment reservation token. |
+| `appointment_id` | UUID / CHAR(36) | PK | No | `UUID()` | Primary surrogate appointment reservation token. |
 | `patient_id` | UUID / CHAR(36) | FK | No | None | Foreign key referencing `PATIENT(patient_id)`. |
 | `doctor_id` | UUID / CHAR(36) | FK | No | None | Foreign key referencing `DOCTOR(doctor_id)`. |
 | `booking_time` | DATETIME | - | No | `CURRENT_TIMESTAMP` | Timestamp when appointment reservation was officially recorded. |
@@ -106,7 +106,7 @@ Official diagnostic ledger, physical exam notes, and clinical documentation crea
 
 | Attribute Name | Data Type | Key Type | Nullable | Default Value | Integrity & Business Rules |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `record_id` | UUID / CHAR(36) | PK | No | `GEN_RANDOM_UUID()` | Primary surrogate identifier for clinical consultation encounter record. |
+| `record_id` | UUID / CHAR(36) | PK | No | `UUID()` | Primary surrogate identifier for clinical consultation encounter record. |
 | `appointment_id` | UUID / CHAR(36) | FK, UQ | No | None | Foreign key referencing `APPOINTMENT(appointment_id)`. `UNIQUE` enforces strict 1:0..1 constraint per encounter. |
 | `patient_id` | UUID / CHAR(36) | FK | No | None | Foreign key referencing `PATIENT(patient_id)`. |
 | `specialist_id` | UUID / CHAR(36) | FK | Yes | NULL | Optional attending specialist physician referencing `SPECIALIST(doctor_id)`. |
@@ -123,7 +123,7 @@ Pharmaceutical prescription authorization issued by attending medical staff upon
 
 | Attribute Name | Data Type | Key Type | Nullable | Default Value | Integrity & Business Rules |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `prescription_id` | UUID / CHAR(36) | PK | No | `GEN_RANDOM_UUID()` | Primary surrogate identifier for electronic prescription order. |
+| `prescription_id` | UUID / CHAR(36) | PK | No | `UUID()` | Primary surrogate identifier for electronic prescription order. |
 | `record_id` | UUID / CHAR(36) | FK, UQ | No | None | References `MEDICAL_RECORD(record_id)`. `UNIQUE` enforces at most one prescription per medical record (BR-07). |
 | `issue_date` | DATETIME | - | No | `CURRENT_TIMESTAMP` | Timestamp when prescription authorization was issued. |
 | `valid_until` | DATE | - | No | None | Legal prescription validity expiry date. Must be `>= issue_date`. |
@@ -138,7 +138,7 @@ Associative relation linking prescriptions with specific pharmaceuticals, admini
 
 | Attribute Name | Data Type | Key Type | Nullable | Default Value | Integrity & Business Rules |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `item_id` | UUID / CHAR(36) | PK | No | `GEN_RANDOM_UUID()` | Primary surrogate identifier for individual prescription line item. |
+| `item_id` | UUID / CHAR(36) | PK | No | `UUID()` | Primary surrogate identifier for individual prescription line item. |
 | `prescription_id` | UUID / CHAR(36) | FK | No | None | Foreign key referencing `DIGITAL_PRESCRIPTION(prescription_id)`. Cascades soft operations. |
 | `medicine_id` | UUID / CHAR(36) | FK | No | None | Foreign key referencing dispensary catalog `MEDICINE(medicine_id)`. |
 | `dosage` | VARCHAR(50) | - | No | None | Specific medication dosage unit per intake (e.g., '500mg', '10ml'). |
@@ -154,7 +154,7 @@ Dispensary pharmacy inventory catalog storing registered medications, active com
 
 | Attribute Name | Data Type | Key Type | Nullable | Default Value | Integrity & Business Rules |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `medicine_id` | UUID / CHAR(36) | PK | No | `GEN_RANDOM_UUID()` | Primary surrogate identifier for pharmaceutical catalog product. |
+| `medicine_id` | UUID / CHAR(36) | PK | No | `UUID()` | Primary surrogate identifier for pharmaceutical catalog product. |
 | `medicine_name` | VARCHAR(100) | UQ | No | None | Proprietary brand or generic pharmaceutical name. Globally unique. |
 | `active_ingredient`| VARCHAR(100) | - | Yes | NULL | Core active pharmacological chemical compound. |
 | `unit` | VARCHAR(20) | - | No | 'Tablet' | Unit of dispensing measurement (e.g., 'Tablet', 'Capsule', 'Vial', 'Bottle'). |
@@ -170,7 +170,7 @@ Fiscal invoice accounting for clinical services rendered and dispensed pharmaceu
 
 | Attribute Name | Data Type | Key Type | Nullable | Default Value | Integrity & Business Rules |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `invoice_id` | UUID / CHAR(36) | PK | No | `GEN_RANDOM_UUID()` | Primary surrogate financial invoice identifier. |
+| `invoice_id` | UUID / CHAR(36) | PK | No | `UUID()` | Primary surrogate financial invoice identifier. |
 | `appointment_id` | UUID / CHAR(36) | FK, UQ | No | None | Foreign key referencing `APPOINTMENT(appointment_id)`. `UNIQUE` guarantees single billing statement per visit (BR-11). |
 | `patient_id` | UUID / CHAR(36) | FK | No | None | Foreign key referencing billed `PATIENT(patient_id)`. |
 | `issue_date` | DATETIME | - | No | `CURRENT_TIMESTAMP` | Official billing and generation timestamp. |
