@@ -114,6 +114,7 @@ erDiagram
         varchar frequency "Frequency (e.g. Twice daily)"
         int duration_days "Duration in days (> 0)"
         int quantity "Dispensed quantity (> 0)"
+        decimal unit_price_at_prescription "Historical unit price snapshot (>= 0)"
     }
 
     MEDICINE {
@@ -124,6 +125,7 @@ erDiagram
         decimal unit_price "Retail price per unit (>= 0)"
         int stock_quantity "On-hand inventory balance (>= 0)"
         int reorder_level "Replenishment threshold (>= 0)"
+        date expiry_date "Shelf-life expiry date (BR-09)"
     }
 
     INVOICE {
@@ -224,15 +226,17 @@ The schema contains **11 relational tables** mapped 1-to-1 from the conceptual E
 - `frequency` (VARCHAR(50)): Frequency schedule (e.g., 'Twice daily').
 - `duration_days` (INT): Duration in days (`duration_days > 0`).
 - `quantity` (INT): Total dispensed units (`quantity > 0`).
+- `unit_price_at_prescription` (DECIMAL(12,2)): Historical snapshot unit price frozen at issuance (`unit_price_at_prescription >= 0`).
 
 ### 10. `MEDICINE` (Dispensary Catalog & Stock)
 - `medicine_id` (UUID, PK): Pharmaceutical catalog code.
 - `medicine_name` (VARCHAR(100), UNIQUE): Proprietary or generic drug name.
 - `active_ingredient` (VARCHAR(100), Nullable): Chemical active compound.
 - `unit` (VARCHAR(20)): Dispensing unit (e.g., 'Tablet', 'Capsule', 'Vial').
-- `unit_price` (DECIMAL(10,2)): Retail price per dispensing unit (`unit_price >= 0`).
+- `unit_price` (DECIMAL(12,2)): Retail price per dispensing unit (`unit_price >= 0`).
 - `stock_quantity` (INT): On-hand warehouse stock balance (`stock_quantity >= 0`).
 - `reorder_level` (INT): Procurement reorder threshold (`reorder_level >= 0`).
+- `expiry_date` (DATE, Nullable): Shelf-life expiry date for dispensing validation (BR-09).
 
 ### 11. `INVOICE` (Consolidated Encounter Billing)
 - `invoice_id` (UUID, PK): Financial billing identifier.

@@ -15,27 +15,27 @@ flowchart LR
     classDef circle fill:#ffffff,stroke:#1a202c,stroke-width:2px,font-family:Times New Roman,font-weight:bold,font-size:13px;
 
     %% 1. Entities & Subclasses
-    DOCTOR["<b>DOCTOR</b><br/>🔑 doctor_id (UUID)<br/>• full_name<br/>• license_no<br/>• phone_number<br/>• email"]:::entity
+    DOCTOR["<b>DOCTOR</b><br/>🔑 doctor_id (UUID)<br/>• full_name<br/>• license_no<br/>• phone_number<br/>• email<br/>• doctor_type (ENUM)<br/>• status<br/>• deleted_at"]:::entity
     
     spec_d(("d")):::circle
 
-    GP["<b>GENERAL_PRACTITIONER</b><br/>🔑 doctor_id (FK)<br/>• consultation_fee<br/>• clinic_room_no"]:::subclass
+    GP["<b>GENERAL_PRACTITIONER</b><br/>🔑 doctor_id (FK)<br/>• clinic_room_no<br/>• consultation_fee"]:::subclass
 
     SPEC["<b>SPECIALIST</b><br/>🔑 doctor_id (FK)<br/>• specialty<br/>• consultation_fee<br/>• board_certified_year"]:::subclass
 
     DOC_SCHED["<b>DOCTOR_SCHEDULE</b><br/>🔑 schedule_id (UUID)<br/>🔑 doctor_id (FK)<br/>• work_date<br/>• start_time<br/>• end_time<br/>• slot_status"]:::entity
 
-    PATIENT["<b>PATIENT</b><br/>🔑 patient_id (UUID)<br/>• full_name<br/>• date_of_birth<br/>• gender<br/>• phone_number<br/>• address"]:::entity
+    PATIENT["<b>PATIENT</b><br/>🔑 patient_id (UUID)<br/>• full_name<br/>• date_of_birth<br/>• gender<br/>• phone_number<br/>• address<br/>• status<br/>• deleted_at"]:::entity
 
-    APPT["<b>APPOINTMENT</b><br/>🔑 appointment_id (UUID)<br/>🔑 patient_id (FK)<br/>🔑 doctor_id (FK)<br/>• booking_time<br/>• appointment_date<br/>• start_time<br/>• end_time<br/>• consultation_type<br/>• telemedicine_video_link<br/>• status<br/>• reason_for_visit"]:::entity
+    APPT["<b>APPOINTMENT</b><br/>🔑 appointment_id (UUID)<br/>🔑 patient_id (FK)<br/>🔑 doctor_id (FK)<br/>• booking_time<br/>• appointment_date<br/>• start_time<br/>• end_time<br/>• consultation_type<br/>• telemedicine_video_link<br/>• status<br/>• reason_for_visit<br/>• deleted_at"]:::entity
 
-    MED_REC["<b>MEDICAL_RECORD</b><br/>🔑 record_id (UUID)<br/>🔑 appointment_id (FK)<br/>🔑 patient_id (FK)<br/>🔑 specialist_id (FK)<br/>• diagnosis<br/>• clinical_notes<br/>• treatment_plan<br/>• record_date"]:::entity
+    MED_REC["<b>MEDICAL_RECORD</b><br/>🔑 record_id (UUID)<br/>🔑 appointment_id (FK)<br/>🔑 patient_id (FK)<br/>🔑 specialist_id (FK)<br/>• diagnosis<br/>• clinical_notes<br/>• treatment_plan<br/>• record_date<br/>• deleted_at"]:::entity
 
-    PRESCRIPTION["<b>DIGITAL_PRESCRIPTION</b><br/>🔑 prescription_id (UUID)<br/>🔑 record_id (FK)<br/>• issue_date<br/>• valid_until<br/>• instructions<br/>• status"]:::entity
+    PRESCRIPTION["<b>DIGITAL_PRESCRIPTION</b><br/>🔑 prescription_id (UUID)<br/>🔑 record_id (FK)<br/>• issue_date<br/>• valid_until<br/>• instructions<br/>• status<br/>• deleted_at"]:::entity
 
-    PRES_ITEM["<b>PRESCRIPTION_ITEM</b><br/>🔑 item_id (UUID)<br/>🔑 prescription_id (FK)<br/>🔑 medicine_id (FK)<br/>• dosage<br/>• frequency<br/>• duration_days<br/>• quantity"]:::entity
+    PRES_ITEM["<b>PRESCRIPTION_ITEM</b><br/>🔑 item_id (UUID)<br/>🔑 prescription_id (FK)<br/>🔑 medicine_id (FK)<br/>• dosage<br/>• frequency<br/>• duration_days<br/>• quantity<br/>• unit_price_at_prescription"]:::entity
 
-    MEDICINE["<b>MEDICINE</b><br/>🔑 medicine_id (UUID)<br/>• medicine_name<br/>• active_ingredient<br/>• unit<br/>• unit_price"]:::entity
+    MEDICINE["<b>MEDICINE</b><br/>🔑 medicine_id (UUID)<br/>• medicine_name<br/>• active_ingredient<br/>• unit<br/>• unit_price<br/>• stock_quantity<br/>• reorder_level<br/>• expiry_date"]:::entity
 
     INVOICE["<b>INVOICE</b><br/>🔑 invoice_id (UUID)<br/>🔑 appointment_id (FK)<br/>🔑 patient_id (FK)<br/>• issue_date<br/>• total_amount<br/>• payment_status<br/>• payment_method"]:::entity
 
@@ -99,6 +99,9 @@ flowchart LR
   - `license_no` (VARCHAR(30), UQ): Ministry of Health practicing license number.
   - `phone_number` (VARCHAR(15)): Official contact telephone number.
   - `email` (VARCHAR(100)): Professional clinic email.
+  - `doctor_type` (ENUM('GP', 'Specialist')): Specialization discriminator enforcing disjoint EER hierarchy.
+  - `status` (ENUM('Active', 'Inactive')): Physician employment operational state.
+  - `deleted_at` (DATETIME, Nullable): Soft-delete audit retention timestamp.
 - **Specialization Constraint `(d)` (Disjoint)**:
   - `GENERAL_PRACTITIONER` ∩ `SPECIALIST` = ∅.
   - A doctor cannot concurrently practice as both a General Practitioner and a Specialist in the system scope.
@@ -131,6 +134,8 @@ flowchart LR
   - `gender` (ENUM('M', 'F', 'O')): Biological sex.
   - `phone_number` (VARCHAR(15), UQ): Primary contact phone number.
   - `address` (VARCHAR(255)): Residential address.
+  - `status` (ENUM('Active', 'Inactive')): Patient record registration status.
+  - `deleted_at` (DATETIME, Nullable): Soft-delete audit retention timestamp.
 - **`APPOINTMENT`**:
   - `appointment_id` (UUID, PK): Surrogate reservation token.
   - `patient_id` (UUID, FK): References `PATIENT(patient_id)`.
@@ -142,6 +147,7 @@ flowchart LR
   - `telemedicine_video_link` (TEXT, Nullable): Encrypted video call link (mandatory when `consultation_type = 'Telemedicine'` during `In-Progress`).
   - `status` (ENUM): `'Scheduled'`, `'In-Progress'`, `'Completed'`, `'Cancelled'`.
   - `reason_for_visit` (TEXT): Patient's chief complaint.
+  - `deleted_at` (DATETIME, Nullable): Soft-delete audit timestamp.
 
 ---
 
@@ -155,6 +161,7 @@ flowchart LR
   - `clinical_notes` (TEXT): Examination anamnesis and observations.
   - `treatment_plan` (TEXT): Non-pharmacological plan and recommendations.
   - `record_date` (DATETIME): Clinical record sign-off timestamp.
+  - `deleted_at` (DATETIME, Nullable): Soft-delete audit timestamp.
 - **`DIGITAL_PRESCRIPTION`**:
   - `prescription_id` (UUID, PK): Electronic prescription order identifier.
   - `record_id` (UUID, FK, UQ): References `MEDICAL_RECORD(record_id)`.
@@ -162,6 +169,7 @@ flowchart LR
   - `valid_until` (DATE): Expiration date.
   - `instructions` (TEXT): Patient administration directions.
   - `status` (ENUM): `'Draft'`, `'Issued'`, `'Dispensed'`, `'Cancelled'`.
+  - `deleted_at` (DATETIME, Nullable): Soft-delete audit timestamp.
 - **`PRESCRIPTION_ITEM`**:
   - `item_id` (UUID, PK): Line item identifier.
   - `prescription_id` (UUID, FK): References `DIGITAL_PRESCRIPTION(prescription_id)`.
@@ -170,12 +178,16 @@ flowchart LR
   - `frequency` (VARCHAR(50)): Frequency (e.g., 'Twice daily').
   - `duration_days` (INT): Duration in days (`duration_days > 0`).
   - `quantity` (INT): Total dispensed units (`quantity > 0`).
+  - `unit_price_at_prescription` (DECIMAL(12,2)): Historical snapshot unit price frozen at issuance (`unit_price_at_prescription >= 0`).
 - **`MEDICINE`**:
   - `medicine_id` (UUID, PK): Pharmaceutical catalog code.
   - `medicine_name` (VARCHAR(100), UQ): Proprietary / generic drug name.
   - `active_ingredient` (VARCHAR(100)): Chemical active compound.
   - `unit` (VARCHAR(20)): Dispensing unit (tablet, bottle, ampoule).
-  - `unit_price` (DECIMAL(10,2)): Unit price (`unit_price >= 0`).
+  - `unit_price` (DECIMAL(12,2)): Unit price (`unit_price >= 0`).
+  - `stock_quantity` (INT): On-hand inventory balance (`stock_quantity >= 0`).
+  - `reorder_level` (INT): Inventory threshold for procurement alerts (`reorder_level >= 0`).
+  - `expiry_date` (DATE, Nullable): Shelf-life expiry date (BR-09).
 
 ---
 

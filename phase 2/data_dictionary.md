@@ -145,7 +145,7 @@ Associative relation linking prescriptions with specific pharmaceuticals, admini
 | `frequency` | VARCHAR(50) | - | No | None | Administration frequency schedule (e.g., 'Twice daily after meals'). |
 | `duration_days` | INT | - | No | None | Scheduled duration of pharmaceutical therapy in days. Constraint: `CHECK (duration_days > 0)`. |
 | `quantity` | INT | - | No | None | Total units of medication prescribed for dispensing. Constraint: `CHECK (quantity > 0)`. |
-| `unit_price_at_prescription` | DECIMAL(10,2) | - | No | None | Historical unit price snapshot frozen at prescription issuance. Constraint: `CHECK (unit_price_at_prescription >= 0)`. |
+| `unit_price_at_prescription` | DECIMAL(12,2) | - | No | None | Historical unit price snapshot frozen at prescription issuance. Constraint: `CHECK (unit_price_at_prescription >= 0)`. |
 
 ---
 
@@ -158,9 +158,10 @@ Dispensary pharmacy inventory catalog storing registered medications, active com
 | `medicine_name` | VARCHAR(100) | UQ | No | None | Proprietary brand or generic pharmaceutical name. Globally unique. |
 | `active_ingredient`| VARCHAR(100) | - | Yes | NULL | Core active pharmacological chemical compound. |
 | `unit` | VARCHAR(20) | - | No | 'Tablet' | Unit of dispensing measurement (e.g., 'Tablet', 'Capsule', 'Vial', 'Bottle'). |
-| `unit_price` | DECIMAL(10,2) | - | No | 0.00 | Retail sale price per single dispensing unit. Constraint: `CHECK (unit_price >= 0)`. |
+| `unit_price` | DECIMAL(12,2) | - | No | 0.00 | Retail sale price per single dispensing unit. Constraint: `CHECK (unit_price >= 0)`. |
 | `stock_quantity` | INT | - | No | 0 | Real-time on-hand inventory balance. Constraint: `CHECK (stock_quantity >= 0)` (BR-09). |
 | `reorder_level` | INT | - | No | 10 | Automated threshold trigger for procurement reordering. Constraint: `CHECK (reorder_level >= 0)`. |
+| `expiry_date` | DATE | - | Yes | NULL | Pharmaceutical batch expiration date for dispensing safety checks (BR-09). |
 
 ---
 
