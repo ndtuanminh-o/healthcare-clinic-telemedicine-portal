@@ -6,7 +6,7 @@ To maintain database consistency and eliminate erroneous data states, the system
 
 | Rule ID | Rule Name | Formal Business Specification | Enforcement |
 | :--- | :--- | :--- | :--- |
-| **BR-01** | No Overlap Booking | A patient or doctor cannot have two active appointments with overlapping time intervals `[start_time, end_time]` on the same date (`appointment_date`). | DB Trigger / `EXCLUDE USING gist` |
+| **BR-01** | No Overlap Booking | A patient or doctor cannot have two active appointments with overlapping time intervals `[start_time, end_time]` on the same date (`appointment_date`). | MySQL Trigger |
 | **BR-02** | Doctor Shift Alignment | Appointments must strictly fall within registered active duty shifts in `DOCTOR_SCHEDULE`. | DB Trigger & Lookup |
 | **BR-03** | Valid State Progression | Appointment status transitions forward: `Scheduled` → `In-Progress` → `Completed`, or `Scheduled` → `Cancelled`. Backward or skipped transitions are rejected. | `CHECK` & State Trigger |
 | **BR-04** | Doctor Specialization | Every doctor is strictly either a General Practitioner (with clinic room) or a Specialist (with specialty area). Disjoint (`d`) and Total (`===`) constraints apply. | EER Hierarchy & `CHECK` |
