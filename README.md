@@ -38,10 +38,10 @@ This project designs a relational database management system for a healthcare fa
 ### Phase 1: Conceptual Design (EER)
 - [Project Scope](phase%201/project_scope.md)
 - [Business Rules](phase%201/business_rules.md)
-- [EER Documentation](phase%201/eer/EER_Diagram_EN.md)
+- [EER Documentation & Diagram](phase%201/eer/EER_Diagram_EN.md) ([PNG](phase%201/eer/eer_diagram.png) | [SVG](phase%201/eer/eer_diagram.svg))
 
 ### Phase 2: Logical & Physical Relational Design
-- [Physical Schema Documentation](phase%202/relational_schema_mapping/physical_schema_diagram.md)
+- [Physical Schema Documentation & Diagram](phase%202/relational_schema_mapping/physical_schema_diagram.md) ([PNG](phase%202/relational_schema_mapping/physical_schema_diagram.png) | [SVG](phase%202/relational_schema_mapping/physical_schema_diagram.svg))
 - [Data Dictionary](phase%202/data_dictionary.md)
 - [Normalization Verification](phase%202/normalization_verification.md)
 
@@ -96,12 +96,16 @@ Open [http://localhost:5000](http://localhost:5000) in your browser:
 │   └── project-identity.md
 ├── phase 1/
 │   ├── eer/
-│   │   └── EER_Diagram_EN.md
+│   │   ├── EER_Diagram_EN.md
+│   │   ├── eer_diagram.png
+│   │   └── eer_diagram.svg
 │   ├── business_rules.md
 │   └── project_scope.md
 ├── phase 2/
 │   ├── relational_schema_mapping/
-│   │   └── physical_schema_diagram.md
+│   │   ├── physical_schema_diagram.md
+│   │   ├── physical_schema_diagram.png
+│   │   └── physical_schema_diagram.svg
 │   ├── data_dictionary.md
 │   └── normalization_verification.md
 ├── phase 3/

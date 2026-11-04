@@ -5,9 +5,23 @@
 
 ---
 
-## 1. Schema Visualization (Mermaid IE Crow's Foot)
+## 1. Schema Visualization (Relational Physical Schema)
 
 This physical relational schema is mapped directly from the Phase 1 Enhanced Entity-Relationship (EER) model according to Elmasri-Navathe relational mapping principles:
+
+> [!TIP]
+> **High-Resolution Diagram Available:**
+> - 🖼️ [Download Ultra-HD PNG Image (5928 x 5394)](./physical_schema_diagram.png)
+> - 📐 [View Scalable Vector Graphics (SVG)](./physical_schema_diagram.svg)
+
+<p align="center">
+  <a href="./physical_schema_diagram.png" target="_blank" title="Click to view full-resolution image">
+    <img src="./physical_schema_diagram.svg" alt="Physical Relational Schema Diagram" width="100%"/>
+  </a>
+</p>
+
+<details>
+<summary><b>Click to expand raw Mermaid code specification</b></summary>
 
 ```mermaid
 erDiagram
@@ -138,6 +152,8 @@ erDiagram
         enum payment_method "'Cash', 'Credit Card', 'Insurance', 'Bank Transfer'"
     }
 ```
+
+</details>
 
 ---
 

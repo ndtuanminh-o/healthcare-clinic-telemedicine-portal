@@ -4,7 +4,21 @@
 
 ---
 
-## 1. Conceptual EER Diagram (Mermaid Specification)
+## 1. Conceptual EER Diagram
+
+> [!TIP]
+> **High-Resolution Diagram Available:**
+> - 🖼️ [Download Ultra-HD PNG Image (4734 x 2410)](./eer_diagram.png)
+> - 📐 [View Scalable Vector Graphics (SVG)](./eer_diagram.svg)
+
+<p align="center">
+  <a href="./eer_diagram.png" target="_blank" title="Click to view full-resolution image">
+    <img src="./eer_diagram.svg" alt="Conceptual EER Diagram" width="100%"/>
+  </a>
+</p>
+
+<details>
+<summary><b>Click to expand raw Mermaid code specification</b></summary>
 
 ```mermaid
 flowchart LR
@@ -87,6 +101,8 @@ flowchart LR
     PATIENT ---|1| rel_pays
     rel_pays ---|N| INVOICE
 ```
+
+</details>
 
 ---
 
