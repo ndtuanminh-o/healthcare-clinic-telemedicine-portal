@@ -9,6 +9,8 @@
 
 This verification provides formal mathematical proofs that all relations in the Healthcare Clinic & Telemedicine Portal system adhere to relational design quality rules up to Third Normal Form (3NF). Normalization eliminates data redundancy and prevents insertion, update, and deletion anomalies.
 
+The PAYMENT and audit-support relations are implementation-level auxiliary relations and are outside the scope of this Phase 2 normalization analysis.
+
 **First Normal Form (1NF):** Every attribute domain contains only atomic (indivisible) values, and there are no repeating groups or multivalued attributes.
 
 **Second Normal Form (2NF):** The relation is in 1NF, and every non-prime attribute is fully functionally dependent on the entire primary key (no partial functional dependencies).
