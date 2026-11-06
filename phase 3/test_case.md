@@ -1,3 +1,4 @@
+[test_case.md](https://github.com/user-attachments/files/34471017/test_case.md)
 ## 1. Test status summary
 
 | Query | Business function | Result rows | Status | 
@@ -137,15 +138,15 @@ The empty result is not a SQL failure. It means that no low-stock alert was foun
 | Preconditions | Issued or dispensed prescriptions contain `unit_price_at_prescription` |
 | Steps | Execute Q06 and export the result to Q6.csv |
 | Expected result | Every returned medicine has revenue greater than the calculated average |
-| Actual result | 12 medicines were returned; the average revenue was 854,438.10 and every returned medicine exceeded that value |
+| Actual result | 12 medicines were returned; the average revenue was 15,749,026.19 and every returned medicine exceeded that value |
 | Status | **Pass** |
 
 ### Example validation
 
 ```text
-Lipitor 20mg: 5,649,000.00 > 854,438.10
-Jardiance 10mg: 4,284,000.00 > 854,438.10
-Crestor 10mg: 3,861,000.00 > 854,438.10
+Lipitor 20mg: 107,940,000.00 > 15,749,026.19
+Crestor 10mg: 95,608,500.00 > 15,749,026.19
+Berocca Performance Sủi: 37,901,500.00 > 15,749,026.19
 ```
 
 ## Q07 Polypharmacy prescriptions
