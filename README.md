@@ -93,7 +93,9 @@ Open [http://localhost:5000](http://localhost:5000) in your browser:
 ```text
 .
 ├── docs/
-│   └── project-identity.md
+│   ├── project-identity.md
+│   ├── G5.pdf
+│   └── Tutorial.pdf
 ├── phase 1/
 │   ├── eer/
 │   │   ├── EER_Diagram_EN.md
