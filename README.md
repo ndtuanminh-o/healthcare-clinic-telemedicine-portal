@@ -112,7 +112,6 @@ Open [http://localhost:5000](http://localhost:5000) in your browser:
 │   ├── 01_schema.sql
 │   ├── 02_trigger_and_view.sql
 │   ├── 03_mock_data.sql
-│   ├── 03_mock_data/
 │   ├── 04_advanced_queries.sql
 │   ├── query_results/
 │   └── test_case.md
@@ -135,7 +134,6 @@ Open [http://localhost:5000](http://localhost:5000) in your browser:
 │   ├── app.py
 │   ├── config.py
 │   └── db.py
-├── load_data.py
 ├── .gitignore
 └── README.md
 ```
