@@ -158,7 +158,7 @@ Open [http://localhost:5000](http://localhost:5000) in your browser:
 
 ---
 
-## References & Academic Sources
+## References
 
 1. **Course Textbook:**
    - Ramez Elmasri and Shamkant B. Navathe. *Fundamentals of Database Systems* (7th Edition), Pearson, 2016.
