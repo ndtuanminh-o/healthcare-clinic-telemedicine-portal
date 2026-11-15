@@ -7,8 +7,9 @@
 ## 1. Conceptual EER Diagram
 
 > [!TIP]
-> **High-Resolution Diagram Available:**
-> - 🖼️ [Download Ultra-HD PNG Image (4734 x 2410)](./eer_diagram.png)
+> **High-Resolution Diagrams Available:**
+> - 🖼️ [Download Ultra-HD PNG Landscape (4579 x 2251)](./eer_diagram.png)
+> - 📱 [Download Ultra-HD PNG Portrait / Vertical (2214 x 4117)](./eer_diagram_portrait.png)
 > - 📐 [View Scalable Vector Graphics (SVG)](./eer_diagram.svg)
 
 <p align="center">

@@ -9,11 +9,13 @@ Posts and Telecommunications Institute of Technology (PTIT).
 
 - **Topic:** #05: Healthcare Clinic & Telemedicine Portal
 - **Team:** G5 (Pingo)
+- **Instructor / Supervisor:** ThS. Lê Hà Thanh (`lehathanh@ptithcm.edu.vn`)
 
-### Team Members
+### Project Team & Personnel
 
-| Student ID | Full Name | GitHub | Email |
+| Role / Student ID | Full Name | GitHub / Affiliation | Email |
 | :--- | :--- | :--- | :--- |
+| **Instructor** | ThS. Lê Hà Thanh | Giảng viên hướng dẫn | `lehathanh@ptithcm.edu.vn` |
 | **N25DCAT086** | Hồ Thị Trúc Linh | [@linh-h-annanie](https://github.com/linh-h-annanie) | `n25dcat086@student.ptithcm.edu.vn` |
 | **N25DCAT087** | Huỳnh Mai Trí Lộc | [@halo16-04](https://github.com/halo16-04) | `n25dcat087@student.ptithcm.edu.vn` |
 | **N25DCAT089** | Nguyễn Đăng Tuấn Minh | [@ndtuanminh-o](https://github.com/ndtuanminh-o) | `n25dcat089@student.ptithcm.edu.vn` |

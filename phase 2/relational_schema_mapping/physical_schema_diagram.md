@@ -10,8 +10,9 @@
 This physical relational schema is mapped directly from the Phase 1 Enhanced Entity-Relationship (EER) model according to Elmasri-Navathe relational mapping principles:
 
 > [!TIP]
-> **High-Resolution Diagram Available:**
-> - 🖼️ [Download Ultra-HD PNG Image (5928 x 5394)](./physical_schema_diagram.png)
+> **High-Resolution Diagrams Available:**
+> - 🖼️ [Download Ultra-HD PNG Standard (5771 x 5237)](./physical_schema_diagram.png)
+> - 📱 [Download Ultra-HD PNG Portrait / Vertical (6500 x 7860)](./physical_schema_diagram_portrait.png)
 > - 📐 [View Scalable Vector Graphics (SVG)](./physical_schema_diagram.svg)
 
 <p align="center">
