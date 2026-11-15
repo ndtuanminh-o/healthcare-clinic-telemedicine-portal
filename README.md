@@ -50,8 +50,8 @@ This project designs a relational database management system for a healthcare fa
 ### Phase 3: Physical Implementation & Advanced SQL
 - [01 Schema DDL (11 Tables & Views)](phase%203/01_schema.sql)
 - [02 Business Triggers & Views](phase%203/02_trigger_and_view.sql)
-- [03 Master Mock Data Script (1-Click Workbench Import)](phase%203/03_mock_data.sql)
-- [03 Mock Data Modular Scripts (11 Tables)](phase%203/03_mock_data/)
+- [03 Master Mock Data Script (Manual Import)](phase%203/03_mock_data.sql)
+- [03.1 Doctor Schedule Extension Script](phase%203/03_1_schedule_extension.sql)
 - [04 Analytical Queries (10 Self-Contained Queries)](phase%203/04_advanced_queries.sql)
 - [Query Test Cases & Validation](phase%203/test_case.md)
 
@@ -67,14 +67,27 @@ This project designs a relational database management system for a healthcare fa
 ## Quickstart
 
 ### 1. Database Setup (MySQL 8.0)
-Populate schema, mock data, and triggers automatically with UTF-8:
+Load schema, mock data, and triggers manually via **MySQL Workbench** or **MySQL CLI** in sequential order:
+
+#### Sequential Import Order
+1. `phase 3/01_schema.sql` (Creates database `healthcare_clinic_v2`, 11 base tables, constraints, and audit log)
+2. `phase 3/02_trigger_and_view.sql` (Creates business triggers BR-01..BR-09 and analytical views)
+3. `phase 3/03_mock_data.sql` (Loads full master mock data dataset with UTF-8 encoding)
+4. `phase 3/03_1_schedule_extension.sql` (Generates extended doctor schedule slots)
+5. *(Optional for Phase 4 web app audit)*: `phase 4/database/prescription_audit.sql` and `phase 4/database/prescription_audit_triggers.sql`
+
+#### Option A: MySQL Workbench (Recommended)
+1. Open MySQL Workbench and connect to your local MySQL instance (port `3306`).
+2. Open each SQL script sequentially (`File` -> `Open SQL Script...` or `Ctrl + Shift + O`).
+3. Click the ⚡ **Execute** button (or `Ctrl + Shift + Enter`) for each script in the order above.
+
+#### Option B: MySQL Command Line (CLI)
+Execute the following commands sequentially from the project root:
 ```bash
-python load_data.py <your_mysql_password>
-```
-*Or manual import via MySQL CLI:*
-```bash
-mysql -u root -p --default-character-set=utf8mb4 -e "CREATE DATABASE IF NOT EXISTS healthcare_clinic_v2 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-mysql -u root -p --default-character-set=utf8mb4 healthcare_clinic_v2 < "phase 3/01_schema.sql"
+mysql -u root -p --default-character-set=utf8mb4 < "phase 3/01_schema.sql"
+mysql -u root -p --default-character-set=utf8mb4 healthcare_clinic_v2 < "phase 3/02_trigger_and_view.sql"
+mysql -u root -p --default-character-set=utf8mb4 healthcare_clinic_v2 < "phase 3/03_mock_data.sql"
+mysql -u root -p --default-character-set=utf8mb4 healthcare_clinic_v2 < "phase 3/03_1_schedule_extension.sql"
 ```
 
 ### 2. Run Web Application
