@@ -155,3 +155,18 @@ Open [http://localhost:5000](http://localhost:5000) in your browser:
 ├── .gitignore
 └── README.md
 ```
+
+---
+
+## References & Academic Sources
+
+1. **Course Textbook (Lý thuyết CSDL chuẩn):**
+   - Ramez Elmasri & Shamkant B. Navathe. *Fundamentals of Database Systems* (7th Edition), Pearson, 2016.
+   - *Áp dụng:* Phương pháp mô hình hóa EER, quy tắc ánh xạ 7 bước sang Lược đồ quan hệ (Relational Mapping), và kiểm chứng chuẩn hóa 1NF → 2NF → 3NF.
+
+2. **Lecture Materials (Bài giảng môn học):**
+   - ThS. Lê Hà Thanh. *Bài giảng & Đề cương môn Cơ sở dữ liệu (Database Systems)*, Khoa Công nghệ Thông tin – Học viện Công nghệ Bưu chính Viễn thông (PTIT), 2026.
+
+3. **Synthetic Clinical Data Methodology (Cơ sở sinh dữ liệu mẫu y tế):**
+   - [Synthea™ Patient Generator](https://github.com/synthetichealth/synthea) (Synthetic Health): Walonoski, J., et al. *"Synthea: An approach, method, and software mechanism for generating realistic synthetic patients"*, Journal of the American Medical Informatics Association (JAMIA), 2018.
+
