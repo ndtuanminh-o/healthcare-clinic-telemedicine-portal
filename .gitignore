@@ -217,11 +217,10 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# Personal homework
-Bài t?p v? nhà/
-
-# Personal homework
-*táº­p*
-[Bb]Ã i*
-
+# Slide assets & temporary visual exports
 docs/slide_assets/
+
+# Microsoft Office temporary files
+~$*.docx
+~$*.pptx
+~$*.xlsx
