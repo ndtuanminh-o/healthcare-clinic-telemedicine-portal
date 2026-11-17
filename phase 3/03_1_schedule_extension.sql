@@ -4,15 +4,6 @@ START TRANSACTION;
 
 SET SESSION cte_max_recursion_depth = 1000;
 
-WITH RECURSIVE dates AS (
-    SELECT DATE('2026-11-01') AS work_date
-
-    UNION ALL
-
-    SELECT DATE_ADD(work_date, INTERVAL 1 DAY)
-    FROM dates
-    WHERE work_date < '2026-12-31'
-)
 INSERT INTO DOCTOR_SCHEDULE
 (
     schedule_id,
@@ -21,6 +12,15 @@ INSERT INTO DOCTOR_SCHEDULE
     start_time,
     end_time,
     slot_status
+)
+WITH RECURSIVE dates AS (
+    SELECT DATE('2026-11-01') AS work_date
+
+    UNION ALL
+
+    SELECT DATE_ADD(work_date, INTERVAL 1 DAY)
+    FROM dates
+    WHERE work_date < '2026-12-31'
 )
 SELECT
     UUID(),
